@@ -20,17 +20,25 @@
     <div class="container" id="capture-area">
         <div class="header-title-container">
             <div class="title-logo-wrapper">
-                <h1>Cotización Derecho de Sepultación Anticipada</h1>
+                <h1 id="main-title">Cotización Derecho de Sepultación Anticipada</h1>
                 <img src="logo-parque.png" alt="Logo" class="park-logo" onerror="this.style.display='none'">
             </div>
             <div id="park-name-display" class="park-display">PARQUE PRADO</div>
+        </div>
+
+        <div class="product-selector-container no-export">
+            <label for="product-type" style="font-weight: bold; margin-right: 10px;">Tipo de Producto:</label>
+            <select id="product-type" class="park-select" style="width: auto; padding: 5px 10px;">
+                <option value="sepultacion">Derecho de Sepultación Anticipada</option>
+                <option value="cremacion">Cremación Anticipada</option>
+            </select>
         </div>
 
         <div class="section-header">
             <div class="left-col">
                 <table>
                     <tr>
-                        <td class="bold">Parque</td>
+                        <td class="bold" id="park-label">Parque</td>
                         <td class="bold" colspan="2">
                             <select id="parque-name" class="park-select" style="font-size: 16px;">
                                 <option value="EL PRADO">El prado</option>
@@ -38,6 +46,7 @@
                                 <option value="SANTIAGO">Santiago</option>
                                 <option value="CANAÁN">Canaán</option>
                             </select>
+                            <span id="park-static-value" style="display: none; font-weight: normal; font-size: 16px; color: #333;"></span>
                         </td>
                     </tr>
                     <tr>
@@ -74,22 +83,34 @@
                     <tr>
                         <td style="width: 40%;">12 Cuotas (Fija)</td>
                         <td class="uf-col"></td>
-                        <td class="clp-col yellow-bg" id="cuota-12">$ 0</td>
+                        <td class="clp-col yellow-bg">
+                            <div id="cuota-12">$ 0</div>
+                            <div class="small-note" id="adj-12"></div>
+                        </td>
                     </tr>
                     <tr>
                         <td>24 Cuotas(Fija)</td>
                         <td class="uf-col"></td>
-                        <td class="clp-col yellow-bg" id="cuota-24">$ 0</td>
+                        <td class="clp-col yellow-bg">
+                            <div id="cuota-24">$ 0</div>
+                            <div class="small-note" id="adj-24"></div>
+                        </td>
                     </tr>
                     <tr>
                         <td>36 Cuotas</td>
                         <td class="uf-col gray-bg" id="factor-36">0,815</td>
-                        <td class="clp-col yellow-bg" id="cuota-36">$ 0</td>
+                        <td class="clp-col yellow-bg">
+                            <div id="cuota-36">$ 0</div>
+                            <div class="small-note" id="adj-36"></div>
+                        </td>
                     </tr>
                     <tr>
                         <td>48 Cuotas</td>
                         <td class="uf-col gray-bg" id="factor-48">0,621</td>
-                        <td class="clp-col yellow-bg" id="cuota-48">$ 0</td>
+                        <td class="clp-col yellow-bg">
+                            <div id="cuota-48">$ 0</div>
+                            <div class="small-note" id="adj-48"></div>
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -111,12 +132,12 @@
                 <div class="quantity-box">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span>Capacidad</span>
-                        <span><input type="number" id="cantidad-rights" class="input-number-center" value="3" min="1" max="10"> derechos</span>
+                        <span><input type="number" id="cantidad-rights" class="input-number-center" value="3" min="1" max="10"> <span id="capacity-unit">derechos</span></span>
                     </div>
                 </div>
 
-                <div class="quantity-box" style="height: auto;">
-                    <div>Valor referencia por 1 derecho</div>
+                <div class="quantity-box" id="ref-value-container" style="height: auto;">
+                    <div id="ref-label">Valor referencia por 1 derecho</div>
                     <div style="text-align: center; margin: 5px 0; font-size: 16px;" id="ref-clp-display">
                         $ 0
                     </div>
@@ -124,10 +145,14 @@
                         <input type="number" id="ref-uf-input" value="15.47" step="0.01" style="width: 50px; border:none; background:transparent; text-align:right;"> UF (IVA INCLUIDO)
                     </div>
                 </div>
+
+                <div id="service-image-container" style="display: none; margin-top: 10px; border: 1px solid #ccc; overflow: hidden; border-radius: 4px;">
+                    <img src="cremacion.png" alt="Servicio de Cremación" style="width: 100%; height: auto; display: block;" onerror="this.parentElement.style.display='none'">
+                </div>
             </div>
 
             <div class="visual-col">
-                <div id="sepultura-visual" class="sepultura-container active"></div>
+                <div id="visual-graphic" class="sepultura-container active"></div>
             </div>
         </div>
     </div>

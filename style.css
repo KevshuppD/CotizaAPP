@@ -17,6 +17,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-width: fit-content; /* Permite scroll si la pantalla es muy pequeña */
+    overflow-x: auto; /* Habilita la barra de desplazamiento horizontal */
 }
 
 /* Desktop specific */
@@ -25,7 +27,8 @@ body {
         padding: 40px 20px;
     }
     .container {
-        width: 1050px; /* Incrementado de 800px para dar más espacio a las tablas */
+        width: 1050px; 
+        min-width: 1050px; /* Asegura que no se achique más allá de este punto en escritorio */
         padding: 40px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
@@ -117,21 +120,64 @@ body {
 }
 
 .left-col { 
-    flex: 1.2;
+    flex: 1.5;
 }
 
 .right-col { 
-    flex: 1;
+    flex: 0.9;
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
 .visual-col {
-    flex: 0.8;
+    flex: 0.7;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.product-selector-container {
+    background: #f9f9f9;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px dashed #ccc;
+    display: flex;
+    align-items: center;
+}
+
+.anfora-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+}
+
+.anfora-img {
+    width: 100%;
+    max-width: 120px;
+    height: auto;
+    display: block;
+}
+
+.anfora-icon {
+    width: 40px;
+    height: 50px;
+    background-color: #8d6e63;
+    border-radius: 40% 40% 10% 10%;
+    position: relative;
+    border: 2px solid #5d4037;
+}
+
+.anfora-icon::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    width: 16px;
+    height: 8px;
+    background: #5d4037;
+    border-radius: 5px 5px 0 0;
 }
 
 table {
@@ -198,11 +244,19 @@ th, td {
     font-weight: bold;
 }
 
+.small-note {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #333;
+    opacity: 0.85;
+}
+
 .sepultura-container {
-    width: 150px;
+    width: 100%;
+    max-width: 100%;
     margin: 20px auto;
     border: none;
-    padding: 5px;
+    padding: 10px;
     background: #fff;
     display: flex;
     flex-direction: column-reverse;
@@ -212,6 +266,20 @@ th, td {
 
 .sepultura-container.active {
     border: 1px solid #ccc;
+}
+
+.anfora-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.anfora-img {
+    width: 150px;
+    max-width: 150px;
+    height: auto;
+    display: block;
 }
 
 .sepultura-level {
