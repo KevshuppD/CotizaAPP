@@ -25,7 +25,7 @@ body {
         padding: 40px 20px;
     }
     .container {
-        width: 800px;
+        width: 1050px; /* Incrementado de 800px para dar más espacio a las tablas */
         padding: 40px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
@@ -102,8 +102,11 @@ body {
     .section-header {
         flex-direction: column;
     }
-    .left-col, .right-col {
+    .left-col, .right-col, .visual-col {
         max-width: 100% !important;
+    }
+    .visual-col {
+        order: 3;
     }
 }
 
@@ -114,7 +117,7 @@ body {
 }
 
 .left-col { 
-    flex: 1.5;
+    flex: 1.2;
 }
 
 .right-col { 
@@ -122,6 +125,13 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
+}
+
+.visual-col {
+    flex: 0.8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 table {
