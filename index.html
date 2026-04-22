@@ -4,210 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cotización Derecho de Sepultación Anticipada</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <style>
-        :root {
-            --primary-green: #92d050;
-            --highlight-yellow: #ffff00;
-            --border-color: #666;
-            --bg-gray: #f2f2f2;
-            --text-dark: #333;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            color: var(--text-dark);
-            margin: 0;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 850px;
-            padding: 10px;
-            background-color: white;
-            border: 1px solid #ccc;
-            position: relative;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            box-sizing: border-box;
-        }
-
-        .title-header {
-            background-color: var(--primary-green);
-            text-align: center;
-            padding: 10px;
-            border: 1px solid black;
-            font-size: clamp(16px, 4vw, 24px);
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .section-header {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .left-col { 
-            width: 100%; 
-            max-width: 500px;
-            flex-grow: 2;
-        }
-        
-        .right-col { 
-            width: 100%;
-            max-width: 300px;
-            flex-grow: 1;
-        }
-
-        @media (max-width: 600px) {
-            .section-header {
-                flex-direction: column;
-                align-items: center;
-            }
-            .left-col, .right-col {
-                max-width: 100%;
-            }
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        th, td {
-            border: 1px solid black;
-            padding: 4px 8px;
-            text-align: left;
-        }
-
-        .uf-col, .clp-col {
-            text-align: right;
-            width: 30%;
-        }
-
-        .yellow-bg { background-color: var(--highlight-yellow); }
-        .gray-bg { background-color: #d9d9d9; }
-        .green-bg { background-color: var(--primary-green); }
-
-        .input-inline {
-            border: none;
-            background: transparent;
-            font-family: inherit;
-            font-size: inherit;
-            width: 100%;
-            text-align: right;
-            outline: none;
-        }
-
-        .controls {
-            margin-bottom: 15px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .btn-share { background-color: #28a745; }
-
-        .label-cell { font-weight: normal; }
-        .bold { font-weight: bold; }
-        
-        .quantity-box {
-            background-color: var(--highlight-yellow);
-            border: 1px solid black;
-            padding: 8px;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-
-        .sepultura-container {
-            width: 150px;
-            margin: 20px auto;
-            border: 1px solid #ccc;
-            padding: 5px;
-            background: #fff;
-            display: flex;
-            flex-direction: column-reverse;
-            gap: 2px;
-            min-height: 250px;
-        }
-
-        .sepultura-level {
-            height: 40px;
-            background: #ccc;
-            border: 1px solid #666;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .sepultura-header {
-            height: 30px;
-            background: #4caf50;
-            border-radius: 5px 5px 0 0;
-            margin-bottom: -2px;
-            z-index: 1;
-        }
-
-        .sepultura-base {
-            height: 20px;
-            background: #333;
-        }
-
-        .park-select {
-            border: none;
-            background: transparent;
-            font-family: inherit;
-            font-size: inherit;
-            font-weight: bold;
-            width: 100%;
-            cursor: pointer;
-            outline: none;
-        }
-
-        .input-number-center {
-            width: 50px;
-            text-align: center;
-            border: none;
-            background: transparent;
-            font-weight: bold;
-            font-size: 16px;
-        }
-    </style>
 </head>
 <body>
     <div class="controls">
         <button class="btn" onclick="exportAsImage()">Descargar Imagen</button>
         <button class="btn btn-share" onclick="shareAsImage()">Compartir Imagen</button>
+        <label style="margin-left: 15px; font-weight: bold; font-size: 14px; cursor: pointer;">
+            <input type="checkbox" id="toggle-graphic" checked> Mostrar Gráfico
+        </label>
     </div>
 
     <div class="container" id="capture-area">
-        <div class="title-header">
-            Cotización derecho de sepultación anticipada
+        <div class="header-title-container">
+            <h1>Cotización Derecho de Sepultación Anticipada</h1>
+            <div id="park-name-display" class="park-display">PARQUE PRADO</div>
         </div>
 
         <div class="section-header">
@@ -216,9 +28,11 @@
                     <tr>
                         <td class="bold">Parque</td>
                         <td class="bold" colspan="2">
-                            <select id="parque-name" class="park-select">
-                                <option value="El manantial">El manantial</option>
-                                <option value="El prado">El prado</option>
+                            <select id="parque-name" class="park-select" style="font-size: 16px;">
+                                <option value="EL PRADO">El prado</option>
+                                <option value="EL MANANTIAL">El manantial</option>
+                                <option value="SANTIAGO">Santiago</option>
+                                <option value="CANAÁN">Canaán</option>
                             </select>
                         </td>
                     </tr>
@@ -241,9 +55,14 @@
 
                 <table style="margin-top: 20px;">
                     <tr>
-                        <td style="width: 40%;">Pie mínimo</td>
-                        <td class="uf-col gray-bg"><input type="number" id="pie-uf" class="input-inline" value="3.1" step="0.1"></td>
+                        <td style="width: 40%;" rowspan="2" class="bold">Pie mínimo</td>
+                        <td class="uf-col gray-bg"><input type="number" id="pie-uf" class="input-inline" value="3.1" step="0.01"></td>
                         <td class="clp-col yellow-bg" id="pie-clp">$ 0</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-size: 11px; border-top: none; text-align: center;">
+                            % Pie: <input type="number" id="pie-percent" value="10" step="1" style="width: 40px; border: 1px solid #ccc; text-align: center;">%
+                        </td>
                     </tr>
                 </table>
 
@@ -279,150 +98,34 @@
                     </tr>
                     <tr>
                         <td class="bold">UF HOY</td>
-                        <td class="yellow-bg" style="text-align: right;">
-                            $ <input type="number" id="uf-value" class="input-inline" value="40014" style="width: 80px;">
+                        <td class="yellow-bg" style="text-align: right; font-weight: bold;">
+                            <span id="uf-value-display">$ 40.014</span>
                         </td>
                     </tr>
                 </table>
 
                 <div class="quantity-box">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span>Cantidad</span>
+                        <span>Capacidad</span>
                         <span><input type="number" id="cantidad-rights" class="input-number-center" value="3" min="1" max="10"> derechos</span>
                     </div>
                 </div>
 
                 <div class="quantity-box" style="height: auto;">
-                    <div>Valor referencia por</div>
-                    <div style="text-align: center; margin: 10px 0;">1 derecho</div>
-                    <div style="display: flex; justify-content: space-between; font-weight: normal; font-size: 14px;">
-                        <span>sepultacion</span>
-                        <span>15,47 UF (IVA INCLUIDO)</span>
+                    <div>Valor referencia por 1 derecho</div>
+                    <div style="text-align: center; margin: 5px 0; font-size: 16px;" id="ref-clp-display">
+                        $ 0
+                    </div>
+                    <div style="text-align: right; font-weight: normal; font-size: 12px;">
+                        <input type="number" id="ref-uf-input" value="15.47" step="0.01" style="width: 50px; border:none; background:transparent; text-align:right;"> UF (IVA INCLUIDO)
                     </div>
                 </div>
 
-                <div id="sepultura-visual" class="sepultura-container"></div>
+                <div id="sepultura-visual" class="sepultura-container active"></div>
             </div>
         </div>
     </div>
 
-    <script>
-        const elements = {
-            date: document.getElementById('current-date'),
-            ufInput: document.getElementById('uf-value'),
-            valorNiUf: document.getElementById('valor-ni-uf'),
-            valorNiClp: document.getElementById('valor-ni-clp'),
-            valorAntUf: document.getElementById('valor-ant-uf'),
-            valorAntClp: document.getElementById('valor-ant-clp'),
-            pieUf: document.getElementById('pie-uf'),
-            pieClp: document.getElementById('pie-clp'),
-            rightsInput: document.getElementById('cantidad-rights'),
-            sepulturaVisual: document.getElementById('sepultura-visual'),
-            factors: {
-                36: document.getElementById('factor-36'),
-                48: document.getElementById('factor-48')
-            },
-            cuotas: {
-                12: document.getElementById('cuota-12'),
-                24: document.getElementById('cuota-24'),
-                36: document.getElementById('cuota-36'),
-                48: document.getElementById('cuota-48')
-            }
-        };
-
-        function formatCurrency(value) {
-            return '$ ' + Math.round(value).toLocaleString('de-DE');
-        }
-
-        function formatUF(value) {
-            return value.toLocaleString('de-DE', { minimumFractionDigits: 3, maximumFractionDigits: 3 }).replace('.', ',');
-        }
-
-        function updateSepulturaVisual(count) {
-            elements.sepulturaVisual.innerHTML = '';
-            const base = document.createElement('div');
-            base.className = 'sepultura-base';
-            elements.sepulturaVisual.appendChild(base);
-
-            for (let i = 0; i < count; i++) {
-                const level = document.createElement('div');
-                level.className = 'sepultura-level';
-                level.textContent = 'ESPACIO ' + (i + 1);
-                elements.sepulturaVisual.appendChild(level);
-            }
-
-            const top = document.createElement('div');
-            top.className = 'sepultura-header';
-            elements.sepulturaVisual.appendChild(top);
-        }
-
-        function updateCalculations() {
-            const uf = parseFloat(elements.ufInput.value) || 0;
-            const niUf = parseFloat(elements.valorNiUf.value) || 0;
-            const antUf = parseFloat(elements.valorAntUf.value) || 0;
-            const pieUf = parseFloat(elements.pieUf.value) || 0;
-            const rights = parseInt(elements.rightsInput.value) || 1;
-
-            updateSepulturaVisual(rights);
-
-            elements.valorNiClp.textContent = formatCurrency(niUf * uf);
-            elements.valorAntClp.textContent = formatCurrency(antUf * uf);
-            elements.pieClp.textContent = formatCurrency(pieUf * uf);
-
-            const balanceUf = antUf - pieUf;
-            const balanceClp = (antUf * uf) - (pieUf * uf);
-
-            const cuota12 = (balanceClp / 12) + 1400;
-            const cuota24 = (balanceClp / 24) + 1400;
-            
-            elements.cuotas[12].textContent = formatCurrency(cuota12);
-            elements.cuotas[24].textContent = formatCurrency(cuota24);
-
-            const factor36 = (balanceUf / 36) + 0.04;
-            const factor48 = (balanceUf / 48) + 0.04;
-
-            elements.factors[36].textContent = formatUF(factor36);
-            elements.factors[48].textContent = formatUF(factor48);
-
-            elements.cuotas[36].textContent = formatCurrency(factor36 * uf);
-            elements.cuotas[48].textContent = formatCurrency(factor48 * uf);
-        }
-
-        const today = new Date();
-        elements.date.textContent = today.toLocaleDateString('es-CL', { 
-            day: '2-digit', month: '2-digit', year: 'numeric' 
-        }).replace(/\//g, '-');
-
-        const inputs = [elements.ufInput, elements.valorNiUf, elements.valorAntUf, elements.pieUf, elements.rightsInput];
-        inputs.forEach(el => el.addEventListener('input', updateCalculations));
-
-        async function exportAsImage() {
-            const canvas = await html2canvas(document.getElementById('capture-area'));
-            const link = document.createElement('a');
-            link.download = `Cotizacion-${new Date().getTime()}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        }
-
-        async function shareAsImage() {
-            const canvas = await html2canvas(document.getElementById('capture-area'));
-            canvas.toBlob(async (blob) => {
-                const file = new File([blob], 'cotizacion.png', { type: 'image/png' });
-                if (navigator.share) {
-                    try {
-                        await navigator.share({
-                            files: [file],
-                            title: 'Cotización Sepultura',
-                            text: 'Detalle de cotización anticipada'
-                        });
-                    } catch (err) {}
-                } else {
-                    alert('Navegador no compatible con compartir.');
-                }
-            });
-        }
-
-        updateCalculations();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

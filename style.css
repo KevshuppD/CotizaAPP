@@ -1,0 +1,238 @@
+:root {
+    --primary-green: #2e7d32;
+    --header-green: #92d050;
+    --primary-red: #d90000;
+    --highlight-yellow: #ffff00;
+    --border-color: #000;
+    --bg-gray: #f2f2f2;
+    --text-dark: #333;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e0e0e0;
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Desktop specific */
+@media (min-width: 801px) {
+    body {
+        padding: 40px 20px;
+    }
+    .container {
+        width: 800px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+}
+
+/* Mobile specific (Android/iOS) */
+@media (max-width: 800px) {
+    body {
+        padding: 0;
+        background-color: white;
+    }
+    .container {
+        width: 100%;
+        max-width: 100%;
+        padding: 15px;
+        border: none;
+        box-shadow: none;
+    }
+    .header-title-container {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    .park-display {
+        text-align: left !important;
+        margin-top: 5px;
+    }
+    .section-header {
+        flex-direction: column;
+    }
+    .left-col, .right-col {
+        max-width: 100% !important;
+    }
+}
+
+.container {
+    background-color: white;
+    border: 1px solid #ccc;
+    position: relative;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.header-title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 25px;
+    border-bottom: 3px solid var(--header-green);
+    padding-bottom: 10px;
+}
+
+.header-title-container h1 {
+    color: var(--primary-green);
+    font-size: clamp(18px, 4vw, 24px);
+    text-transform: uppercase;
+    margin: 0;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.park-display {
+    color: var(--primary-green);
+    font-size: clamp(18px, 4vw, 24px);
+    text-transform: uppercase;
+    font-weight: bold;
+    text-align: right;
+    line-height: 1.2;
+}
+
+.section-header {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.left-col { 
+    flex: 1.5;
+}
+
+.right-col { 
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 6px 10px;
+    text-align: left;
+}
+
+.uf-col, .clp-col {
+    text-align: right;
+    width: 30%;
+}
+
+.yellow-bg { background-color: var(--highlight-yellow); }
+.gray-bg { background-color: #d9d9d9; }
+.green-bg { background-color: var(--primary-green); }
+
+.input-inline {
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    width: 100%;
+    text-align: right;
+    outline: none;
+}
+
+.controls {
+    margin-bottom: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+}
+
+.btn {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.btn-share { background-color: #28a745; }
+
+.label-cell { font-weight: normal; }
+.bold { font-weight: bold; }
+
+.quantity-box {
+    background-color: var(--highlight-yellow);
+    border: 1px solid black;
+    padding: 8px;
+    font-weight: bold;
+}
+
+.sepultura-container {
+    width: 150px;
+    margin: 20px auto;
+    border: none;
+    padding: 5px;
+    background: #fff;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 2px;
+    min-height: 250px;
+}
+
+.sepultura-container.active {
+    border: 1px solid #ccc;
+}
+
+.sepultura-level {
+    height: 40px;
+    background: #ccc;
+    border: 1px solid #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.sepultura-header {
+    height: 30px;
+    background: #4caf50;
+    border-radius: 5px 5px 0 0;
+    margin-bottom: -2px;
+    z-index: 1;
+}
+
+.sepultura-base {
+    height: 20px;
+    background: #333;
+}
+
+.park-select {
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: bold;
+    width: 100%;
+    cursor: pointer;
+    outline: none;
+}
+
+.input-number-center {
+    width: 50px;
+    text-align: center;
+    border: none;
+    background: transparent;
+    font-weight: bold;
+    font-size: 16px;
+}
