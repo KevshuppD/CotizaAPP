@@ -71,10 +71,29 @@ body {
 .header-title-container {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
     margin-bottom: 25px;
     border-bottom: 3px solid var(--header-green);
     padding-bottom: 10px;
+}
+
+.park-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.park-logo {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+}
+
+@media (max-width: 800px) {
+    .park-logo {
+        height: 55px;
+    }
 }
 
 .header-title-container h1 {

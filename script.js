@@ -31,17 +31,39 @@ let currentUFValue = 40013.88; // Default value
 
 async function fetchUF() {
     try {
-        const response = await fetch('https://mindicador.cl/api/uf');
+        const response = await fetch("https://findic.cl/api/", {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            method: "GET"
+        });
         const data = await response.json();
-        if (data && data.serie && data.serie[0]) {
-            currentUFValue = data.serie[0].valor;
+        if (data && data.uf && data.uf.valor) {
+            // some APIs return as "40.013,88" (string) or 40013.88 (number)
+            // findic usually returns number, but we sanitize
+            const val = typeof data.uf.valor === 'string' 
+                ? parseFloat(data.uf.valor.replace('.', '').replace(',', '.')) 
+                : data.uf.valor;
+            
+            currentUFValue = val;
             elements.ufDisplay.textContent = '$ ' + currentUFValue.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             updateCalculations();
         }
     } catch (error) {
-        console.error('Error fetching UF:', error);
-        elements.ufDisplay.textContent = '$ ' + currentUFValue.toLocaleString('de-DE');
-        updateCalculations();
+        console.error('Error fetching UF from findic:', error);
+        // Fallback to mindicador if findic fails
+        try {
+            const res = await fetch('https://mindicador.cl/api/uf');
+            const d = await res.json();
+            if (d && d.serie && d.serie[0]) {
+                currentUFValue = d.serie[0].valor;
+                elements.ufDisplay.textContent = '$ ' + currentUFValue.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                updateCalculations();
+            }
+        } catch (e) {
+            elements.ufDisplay.textContent = '$ ' + currentUFValue.toLocaleString('de-DE');
+            updateCalculations();
+        }
     }
 }
 
@@ -161,14 +183,24 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchUF();
 });
 
-async function exportAsImage() {
+async function captureWithoutPiePercent() {
     const captureArea = document.getElementById('capture-area');
-    // Ensure all styles are loaded
+    const piePercentRow = document.getElementById('pie-percent-row');
+    const originalDisplay = piePercentRow.style.display;
+    piePercentRow.style.display = 'none';
+
     const canvas = await html2canvas(captureArea, {
-        scale: 2, // Better quality
+        scale: 2,
         useCORS: true,
-        backgroundColor: "#ffffff"
+        backgroundColor: '#ffffff'
     });
+
+    piePercentRow.style.display = originalDisplay;
+    return canvas;
+}
+
+async function exportAsImage() {
+    const canvas = await captureWithoutPiePercent();
     const link = document.createElement('a');
     link.download = `Cotizacion-${new Date().getTime()}.png`;
     link.href = canvas.toDataURL('image/png');
@@ -176,8 +208,7 @@ async function exportAsImage() {
 }
 
 async function shareAsImage() {
-    const captureArea = document.getElementById('capture-area');
-    const canvas = await html2canvas(captureArea, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+    const canvas = await captureWithoutPiePercent();
     canvas.toBlob(async (blob) => {
         const file = new File([blob], 'cotizacion.png', { type: 'image/png' });
         if (navigator.share) {
@@ -188,7 +219,7 @@ async function shareAsImage() {
                     text: 'Detalle de cotización anticipada'
                 });
             } catch (err) {
-                console.error("Error sharing:", err);
+                console.error('Error sharing:', err);
             }
         } else {
             alert('Navegador no compatible con compartir.');

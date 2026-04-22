@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cotización Derecho de Sepultación Anticipada</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="style.css">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
@@ -19,7 +20,10 @@
     <div class="container" id="capture-area">
         <div class="header-title-container">
             <h1>Cotización Derecho de Sepultación Anticipada</h1>
-            <div id="park-name-display" class="park-display">PARQUE PRADO</div>
+            <div class="park-logo-container">
+                <div id="park-name-display" class="park-display">PARQUE PRADO</div>
+                <img src="logo-parque.png" alt="Logo" class="park-logo" onerror="this.style.display='none'">
+            </div>
         </div>
 
         <div class="section-header">
@@ -59,7 +63,7 @@
                         <td class="uf-col gray-bg"><input type="number" id="pie-uf" class="input-inline" value="3.1" step="0.01"></td>
                         <td class="clp-col yellow-bg" id="pie-clp">$ 0</td>
                     </tr>
-                    <tr>
+                    <tr id="pie-percent-row">
                         <td colspan="2" style="font-size: 11px; border-top: none; text-align: center;">
                             % Pie: <input type="number" id="pie-percent" value="10" step="1" style="width: 40px; border: 1px solid #ccc; text-align: center;">%
                         </td>
