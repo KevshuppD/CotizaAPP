@@ -10,6 +10,8 @@ const elements = {
     capacityUnit: document.getElementById('capacity-unit'),
     valorNiUf: document.getElementById('valor-ni-uf'),
     valorNiClp: document.getElementById('valor-ni-clp'),
+    descuentoRowMain: document.getElementById('discount-row-main'),
+    porcentajeDescuentoMain: document.getElementById('porcentaje-descuento-main'),
     valorAntUf: document.getElementById('valor-ant-uf'),
     valorAntClp: document.getElementById('valor-ant-clp'),
     pieUf: document.getElementById('pie-uf'),
@@ -20,8 +22,11 @@ const elements = {
     refClpDisplay: document.getElementById('ref-clp-display'),
     refValueContainer: document.getElementById('ref-value-container'),
     refLabel: document.getElementById('ref-label'),
+    refUfDisplay: document.getElementById('ref-uf-display'),
+    sepultacionGraphicContainer: document.getElementById('sepultacion-graphic-container'),
     serviceImageContainer: document.getElementById('service-image-container'),
     sepultacionFields: document.getElementById('sepultacion-fields'),
+    aumentoCapacidadFields: document.getElementById('aumento-capacidad-fields'),
     mantencionFields: document.getElementById('mantencion-fields'),
     sepulturaLiberadorFields: document.getElementById('sepultura-liberador-fields'),
     sepultacionOutput: document.getElementById('sepultacion-output'),
@@ -35,6 +40,17 @@ const elements = {
     porcentajePieSep: document.getElementById('porcentaje-pie-sep'),
     pieValorUF: document.getElementById('pie-valor-uf'),
     pieValorCLP: document.getElementById('pie-valor-clp'),
+    rightsInputLib: document.getElementById('cantidad-rights-lib'),
+    parqueAumento: document.getElementById('parque-aumento'),
+    capacidadAumento: document.getElementById('capacidad-aumento'),
+    valorRealAumentoUf: document.getElementById('valor-real-aumento-uf'),
+    valorRealAumentoClp: document.getElementById('valor-real-aumento-clp'),
+    valorAntAumentoUf: document.getElementById('valor-ant-aumento-uf'),
+    valorAntAumentoClp: document.getElementById('valor-ant-aumento-clp'),
+    pieUfAumento: document.getElementById('pie-uf-aumento'),
+    pieClpAumento: document.getElementById('pie-clp-aumento'),
+    piePercentAumento: document.getElementById('pie-percent-aumento'),
+    porcentajeDescuentoAumento: document.getElementById('porcentaje-descuento-aumento'),
     mantencionResumen: document.getElementById('mantencion-resumen'),
     mantencionCuotasBody: document.getElementById('mantencion-cuotas-body'),
     sepulturaLiberadorResumen: document.getElementById('sepultura-liberador-resumen'),
@@ -42,6 +58,15 @@ const elements = {
     liberadorGraphicContainer: document.getElementById('liberador-graphic-container'),
     visualGraphic: document.getElementById('visual-graphic'),
     toggleGraphic: document.getElementById('toggle-graphic'),
+    labelValorNi: document.getElementById('label-valor-ni'),
+    labelDescuento: document.getElementById('label-descuento'),
+    labelDescuentoOutput: document.getElementById('label-descuento-output'),
+    labelValorAnt: document.getElementById('label-valor-ant'),
+    labelPie: document.getElementById('label-pie'),
+    labelPiePercent: document.getElementById('label-pie-percent'),
+    saldoFinanciarRow: document.getElementById('saldo-financiar-row'),
+    saldoFinanciarUf: document.getElementById('saldo-financiar-uf'),
+    saldoFinanciarClp: document.getElementById('saldo-financiar-clp'),
     factors: {
         36: document.getElementById('factor-36'),
         48: document.getElementById('factor-48')
@@ -57,7 +82,8 @@ const elements = {
         24: document.getElementById('adj-24'),
         36: document.getElementById('adj-36'),
         48: document.getElementById('adj-48')
-    }
+    },
+    mainCuotasTable: document.getElementById('main-cuotas-table')
 };
 
 let currentUFValue = 40013.88; // Default value
@@ -112,22 +138,69 @@ function setProductVisibility(type) {
     const isSepultacionFamily = type === 'sepultacion' || type === 'cremacion';
     const isLiberador = type === 'sepultura-liberador';
     const isMantencion = type === 'mantencion';
+    const isAumento = type === 'aumento-capacidad';
 
-    elements.sepultacionFields.style.display = isSepultacionFamily ? 'block' : 'none';
+    // Ajustar límites de capacidad según el producto
+    if (isAumento) {
+        elements.rightsInput.max = 2;
+        if (parseInt(elements.rightsInput.value) > 2) {
+            elements.rightsInput.value = 2;
+        }
+    } else if (isLiberador) {
+        elements.rightsInput.max = 4;
+        if (parseInt(elements.rightsInput.value) > 4) {
+            elements.rightsInput.value = 4;
+        }
+    } else if (type === 'cremacion') {
+        elements.rightsInput.max = 4;
+        if (parseInt(elements.rightsInput.value) > 4) {
+            elements.rightsInput.value = 4;
+        }
+    } else {
+        elements.rightsInput.max = 10; // Valor original para sepultación
+    }
+
+    // Aumento usa el mismo layout base que cremación para mantener diseño y cuotas
+    elements.sepultacionFields.style.display = (isSepultacionFamily || isAumento || isLiberador) ? 'block' : 'none';
     elements.mantencionFields.style.display = isMantencion ? 'block' : 'none';
-    elements.sepulturaLiberadorFields.style.display = isLiberador ? 'block' : 'none';
+    elements.sepulturaLiberadorFields.style.display = 'none';
+    elements.aumentoCapacidadFields.style.display = 'none';
 
-    elements.sepultacionOutput.style.display = isSepultacionFamily ? 'block' : 'none';
+    // Asegurar que el contenedor del gráfico sea visible para Aumento y Liberador
+    if (elements.liberadorGraphicContainer) {
+        if (isAumento || isLiberador) {
+            elements.liberadorGraphicContainer.style.setProperty('display', 'block', 'important');
+        } else {
+            elements.liberadorGraphicContainer.style.display = 'none';
+        }
+    }
+
+    elements.descuentoRowMain.style.display = (isAumento || isLiberador) ? '' : 'none';
+
+    elements.sepultacionOutput.style.display = (isSepultacionFamily || isAumento || isLiberador) ? 'block' : 'none';
     elements.mantencionOutput.style.display = isMantencion ? 'block' : 'none';
     elements.sepulturaLiberadorOutput.style.display = isLiberador ? 'block' : 'none';
+    
+    // Reset labels and visibility for other products
+    if (!isLiberador) {
+        if (elements.labelValorNi) elements.labelValorNi.textContent = 'Valor uso inmediato(IVA Inclu)';
+        if (elements.labelValorAnt) elements.labelValorAnt.textContent = 'Valor anticipado(IVA Incluido)';
+        if (elements.labelPie) elements.labelPie.innerHTML = 'Pie mínimo';
+        if (elements.saldoFinanciarRow) elements.saldoFinanciarRow.style.display = 'none';
+        if (elements.labelDescuentoOutput) elements.labelDescuentoOutput.innerHTML = '&nbsp;';
+    }
+
+    if (elements.mainCuotasTable) {
+        elements.mainCuotasTable.style.display = isLiberador ? 'none' : '';
+    }
 
     // Toggle global visual column visibility to reclaim space
     const visualCol = document.querySelector('.visual-col');
     if (visualCol) {
-        visualCol.style.display = (isLiberador || isMantencion) ? 'none' : 'flex';
+        visualCol.style.display = (isLiberador || isMantencion || isAumento || type === 'sepultacion') ? 'none' : 'flex';
     }
 
-    if (isMantencion || isLiberador) {
+    if (isMantencion) {
         elements.parkSelector.disabled = true;
         elements.parkSelector.style.display = 'none';
         elements.parkStaticValue.style.display = 'inline';
@@ -135,25 +208,23 @@ function setProductVisibility(type) {
         elements.parkLabel.textContent = 'Nuestros Parques';
         elements.parkDisplay.textContent = 'NUESTROS PARQUES';
         elements.capacityUnit.textContent = 'derechos';
-        elements.mainTitle.textContent = isMantencion ? 'Mantención' : 'Sepultura Liberador';
-        elements.refValueContainer.style.display = 'none';
+        elements.mainTitle.textContent = 'Mantención';
         elements.serviceImageContainer.style.display = 'none';
-    } else if (isSepultacionFamily) {
+        
+        elements.refValueContainer.style.display = 'none';
+    } else if (isSepultacionFamily || isAumento || isLiberador) {
         elements.parkSelector.disabled = false;
         elements.parkSelector.style.display = '';
         elements.parkStaticValue.style.display = 'none';
         elements.parkLabel.textContent = 'Parque';
         elements.parkDisplay.textContent = 'PARQUE ' + elements.parkSelector.value;
-        elements.capacityUnit.textContent = type === 'cremacion' ? 'Anforas' : 'derechos';
-        elements.mainTitle.textContent = type === 'cremacion' ? 'Cremación Anticipada' : 'Cotización Derecho de Sepultación Anticipada';
-        elements.refValueContainer.style.display = 'block';
+        elements.capacityUnit.textContent = (type === 'cremacion') ? 'Anforas' : (isAumento ? 'capacidades' : 'derechos');
+        elements.mainTitle.textContent = (type === 'cremacion')
+            ? 'Cremación Anticipada'
+            : (isAumento ? 'Aumento de Capacidad' : (isLiberador ? 'Sepultación Parques' : 'Cotización Derecho de Sepultación Anticipada'));
+        elements.refValueContainer.style.display = type === 'sepultacion' ? 'block' : 'none';
         elements.serviceImageContainer.style.display = type === 'cremacion' ? 'block' : 'none';
-        elements.refLabel.textContent = type === 'cremacion' ? 'Capacidad de la solución' : 'Valor referencia por 1 derecho';
-    }
-    
-    // Always call changing pie visibility based on type
-    if (type === 'sepultura-liberador') {
-        cambiarTipoPie();
+        elements.refLabel.textContent = 'Valor referencia por 1 derecho';
     }
 }
 
@@ -201,10 +272,39 @@ function calculateMantencion() {
     elements.mantencionCuotasBody.innerHTML = tablaCuotasHTML;
 }
 
+function calculateAumentoCapacidad(triggeredBy = '') {
+    const parque = elements.parkSelector.value;
+    const capacidad = Math.max(1, Math.min(2, parseInt(elements.rightsInput.value) || 1));
+    if (String(capacidad) !== elements.rightsInput.value) {
+        elements.rightsInput.value = String(capacidad);
+    }
+
+    const valorRealBase = (parque === 'EL PRADO')
+        ? (capacidad === 2 ? 100 : 80)
+        : (capacidad === 2 ? 80 : 45);
+
+    const descuento = Math.max(0, Math.min(100, parseFloat(elements.porcentajeDescuentoMain.value) || 0));
+
+    elements.valorNiUf.value = valorRealBase.toFixed(2);
+
+    if (triggeredBy === 'ant-manual') {
+        const antManual = parseFloat(elements.valorAntUf.value) || 0;
+        if (valorRealBase > 0) {
+            const descCalc = Math.max(0, Math.min(100, ((valorRealBase - antManual) / valorRealBase) * 100));
+            elements.porcentajeDescuentoMain.value = Math.round(descCalc).toString();
+        }
+    } else {
+        const valorAnticipado = valorRealBase * (1 - (descuento / 100));
+        elements.valorAntUf.value = valorAnticipado.toFixed(2);
+    }
+}
+
 function calculateSepulturaLiberador() {
-    const valorRealUF = parseFloat(elements.valorRealUf.value) || 0;
-    const porcentajeDescuento = parseFloat(elements.porcentajeDescuentoSep.value) / 100 || 0;
-    const tipoPie = elements.tipoPie.value;
+    // Usa los valores del layout principal para mantener diseño unificado
+    const valorRealUF = parseFloat(elements.valorNiUf.value) || 0;
+    const porcentajeDescuento = (parseFloat(elements.porcentajeDescuentoMain.value) || 0) / 100;
+    const percentagePieValue = (parseFloat(elements.piePercent.value) || 0);
+    const porcentajePie = percentagePieValue / 100;
 
     const valorRealCLP = valorRealUF * currentUFValue;
     const descuentoUF = valorRealUF * porcentajeDescuento;
@@ -212,33 +312,28 @@ function calculateSepulturaLiberador() {
     const precioVentaUF = valorRealUF - descuentoUF;
     const precioVentaCLP = precioVentaUF * currentUFValue;
 
-    let pieCalculadoUF = 0;
-    let pieDescripcion = '';
-
-    if (tipoPie === 'porcentaje') {
-        const porcentajePie = parseFloat(elements.porcentajePieSep.value) / 100 || 0;
-        pieCalculadoUF = valorRealUF * porcentajePie;
-        pieDescripcion = `${(porcentajePie * 100).toFixed(0)}%`;
-    } else if (tipoPie === 'uf') {
-        pieCalculadoUF = parseFloat(elements.pieValorUF.value) || 0;
-        pieDescripcion = 'Valor fijo';
-    } else {
-        const pieCLPInput = parseFloat(elements.pieValorCLP.value) || 0;
-        pieCalculadoUF = pieCLPInput / currentUFValue;
-        pieDescripcion = 'Valor fijo';
-    }
-
+    const pieCalculadoUF = valorRealUF * porcentajePie;
     const pieCLP = pieCalculadoUF * currentUFValue;
     const saldoFinanciarUF = precioVentaUF - pieCalculadoUF;
     const saldoFinanciarCLP = saldoFinanciarUF * currentUFValue;
 
-    elements.sepulturaLiberadorResumen.innerHTML = `
-        <p><strong>Valor Real:</strong> ${valorRealUF.toFixed(2)} UF (${new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(valorRealCLP)})</p>
-        <p><strong>Descuento (${(porcentajeDescuento * 100).toFixed(0)}%):</strong> ${descuentoUF.toFixed(2)} UF (${new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(descuentoCLP)})</p>
-        <p><strong>Precio Venta:</strong> ${precioVentaUF.toFixed(2)} UF (${new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(precioVentaCLP)})</p>
-        <p><strong>Pie (${pieDescripcion}):</strong> ${pieCalculadoUF.toFixed(2)} UF (${new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(pieCLP)})</p>
-        <p><strong>Saldo a Financiar:</strong> ${saldoFinanciarUF.toFixed(2)} UF (${new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(saldoFinanciarCLP)})</p>
-    `;
+    // Actualizar etiquetas y valores en la tabla unificada
+    if (elements.labelValorNi) elements.labelValorNi.textContent = 'Valor Real';
+    if (elements.labelDescuento) elements.labelDescuento.textContent = 'Descuento';
+    if (elements.labelDescuentoOutput) {
+        elements.labelDescuentoOutput.textContent = `${descuentoUF.toFixed(2)} UF (${new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(descuentoCLP)})`;
+    }
+    if (elements.labelValorAnt) elements.labelValorAnt.textContent = 'Precio Venta';
+    if (elements.labelPie) elements.labelPie.innerHTML = `Pie (${percentagePieValue.toFixed(0)}%)`;
+    
+    // Mostrar Saldo a Financiar
+    if (elements.saldoFinanciarRow) elements.saldoFinanciarRow.style.display = 'table-row';
+    if (elements.saldoFinanciarUf) elements.saldoFinanciarUf.textContent = `${saldoFinanciarUF.toFixed(2)} UF`;
+    if (elements.saldoFinanciarClp) {
+        elements.saldoFinanciarClp.textContent = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(saldoFinanciarCLP);
+    }
+
+    elements.sepulturaLiberadorResumen.innerHTML = ''; // Limpiar resumen antiguo unificado
 
     const plazosYTasas = [
         { plazo: 12, tasa: 0 },
@@ -259,6 +354,11 @@ function calculateSepulturaLiberador() {
             valorCuotaUF = saldoFinanciarUF / plazo;
         } else {
             valorCuotaUF = saldoFinanciarUF * tasa;
+        }
+
+        // Para el plazo de 108 meses, sumar 0.003 UF adicionales al valor de la cuota
+        if (plazo === 108) {
+            valorCuotaUF += 0.003;
         }
 
         const valorCuotaCLP = valorCuotaUF * currentUFValue;
@@ -311,34 +411,60 @@ function cambiarTipoPie() {
 
 function updateVisualGraphic(count, type) {
     if (!elements.toggleGraphic.checked) {
-        elements.visualGraphic.style.display = 'none';
-        elements.visualGraphic.classList.remove('active');
+        if (elements.visualGraphic) {
+            elements.visualGraphic.style.display = 'none';
+            elements.visualGraphic.classList.remove('active');
+        }
+        if (elements.sepultacionGraphicContainer) {
+            elements.sepultacionGraphicContainer.innerHTML = '';
+            elements.sepultacionGraphicContainer.style.display = 'none';
+        }
         if (elements.liberadorGraphicContainer) elements.liberadorGraphicContainer.innerHTML = '';
         return;
     }
     
-    // Clear previous graphics
-    elements.visualGraphic.innerHTML = '';
-    if (elements.liberadorGraphicContainer) elements.liberadorGraphicContainer.innerHTML = '';
-    
-    if (type === 'sepultacion') {
-        elements.visualGraphic.style.display = 'flex';
-        elements.visualGraphic.classList.add('active');
-        
-        const base = document.createElement('div');
-        base.className = 'sepultura-base';
-        elements.visualGraphic.appendChild(base);
+    const targetGraphic = (type === 'sepultacion' && elements.sepultacionGraphicContainer)
+        ? elements.sepultacionGraphicContainer
+        : elements.visualGraphic;
 
-        for (let i = 0; i < count; i++) {
+    if (!targetGraphic) return;
+
+    if (type === 'sepultacion' && elements.visualGraphic) {
+        elements.visualGraphic.style.display = 'none';
+        elements.visualGraphic.classList.remove('active');
+    }
+    if (type !== 'sepultacion' && elements.sepultacionGraphicContainer) {
+        elements.sepultacionGraphicContainer.style.display = 'none';
+        elements.sepultacionGraphicContainer.innerHTML = '';
+    }
+
+    targetGraphic.innerHTML = '';
+    if (elements.liberadorGraphicContainer) {
+        elements.liberadorGraphicContainer.innerHTML = '';
+        elements.liberadorGraphicContainer.style.display = 'none';
+    }
+
+    if (type === 'sepultacion') {
+        targetGraphic.style.display = 'block'; // Change to block to allow vertical stack
+        targetGraphic.style.width = '100%';
+        targetGraphic.style.maxWidth = '250px';
+        targetGraphic.style.margin = '0 auto';
+        targetGraphic.classList.add('active');
+        
+        const top = document.createElement('div');
+        top.className = 'sepultura-header';
+        targetGraphic.appendChild(top);
+
+        for (let i = count - 1; i >= 0; i--) {
             const level = document.createElement('div');
             level.className = 'sepultura-level';
             level.textContent = 'ESPACIO ' + (i + 1);
-            elements.visualGraphic.appendChild(level);
+            targetGraphic.appendChild(level);
         }
 
-        const top = document.createElement('div');
-        top.className = 'sepultura-header';
-        elements.visualGraphic.appendChild(top);
+        const base = document.createElement('div');
+        base.className = 'sepultura-base';
+        targetGraphic.appendChild(base);
     } else if (type === 'cremacion') {
         elements.visualGraphic.style.display = 'flex';
         elements.visualGraphic.classList.add('active');
@@ -371,21 +497,58 @@ function updateVisualGraphic(count, type) {
         if (!container) return;
         
         container.style.display = 'block';
-        container.style.width = '240px'; // Aumentado para que sea más grande
-        container.style.margin = '30px auto 0 auto'; // Más margen superior
-        container.style.transform = 'scale(1.2)'; // Escala aumentada al 120%
-        container.style.transformOrigin = 'top center'; // Asegurar que escale desde arriba
+        container.style.width = '240px'; 
+        container.style.margin = '30px auto 0 auto'; 
+        container.style.transform = 'scale(1.2)'; 
+        container.style.transformOrigin = 'top center'; 
         
         const base = document.createElement('div');
         base.className = 'sepultura-base';
         container.appendChild(base);
 
-        const levels = 3; // Fixed for liberador representation
+        const levels = Math.max(1, Math.min(4, parseInt(elements.rightsInput.value) || 1));
 
-        for (let i = 0; i < levels; i++) {
+        // Add the "+1" Sepultación representation FIRST
+        const sepultacionPlus = document.createElement('div');
+        sepultacionPlus.className = 'sepultura-level';
+        sepultacionPlus.style.backgroundColor = '#4caf50';
+        sepultacionPlus.style.color = 'white';
+        sepultacionPlus.style.fontWeight = 'bold';
+        sepultacionPlus.textContent = '+1 SEPULTACIÓN';
+        container.appendChild(sepultacionPlus);
+
+        for (let i = levels - 1; i >= 0; i--) {
             const level = document.createElement('div');
             level.className = 'sepultura-level';
             level.textContent = 'ESPACIO ' + (i + 1);
+            container.appendChild(level);
+        }
+
+        const top = document.createElement('div');
+        top.className = 'sepultura-header';
+        container.appendChild(top);
+    } else if (type === 'aumento-capacidad') {
+        const container = elements.liberadorGraphicContainer;
+        if (!container) return;
+        
+        container.style.display = 'block';
+        container.style.width = '240px'; 
+        container.style.margin = '30px auto 0 auto'; 
+        container.style.transform = 'scale(1.2)'; 
+        container.style.transformOrigin = 'top center'; 
+        
+        const base = document.createElement('div');
+        base.className = 'sepultura-base';
+        container.appendChild(base);
+
+        const levels = Math.max(1, Math.min(2, parseInt(elements.rightsInput.value) || 1));
+        
+        for (let i = 0; i < levels; i++) {
+            const level = document.createElement('div');
+            level.className = 'sepultura-level';
+            level.style.backgroundColor = '#2196F3'; // Blue for added capacity
+            level.style.color = 'white';
+            level.textContent = 'AUMENTO ' + (i + 1);
             container.appendChild(level);
         }
 
@@ -405,9 +568,28 @@ function updateCalculations(triggeredBy = '') {
     const uf = currentUFValue;
     const type = elements.productType.value;
     const piePercentRow = document.getElementById('pie-percent-row');
+    const isSepultacionFamily = type === 'sepultacion' || type === 'cremacion';
+
+    if (type === 'aumento-capacidad') {
+        calculateAumentoCapacidad(triggeredBy);
+    } else if (type === 'sepultura-liberador') {
+        // Mantener fórmulas de Sepultación Parques sobre el layout principal
+        const valorRealUF = parseFloat(elements.valorNiUf.value) || 0;
+        if (triggeredBy === 'ant-manual') {
+            const antManual = parseFloat(elements.valorAntUf.value) || 0;
+            if (valorRealUF > 0) {
+                const descCalc = Math.max(0, Math.min(100, ((valorRealUF - antManual) / valorRealUF) * 100));
+                elements.porcentajeDescuentoMain.value = Math.round(descCalc).toString();
+            }
+        } else {
+            const descuento = Math.max(0, Math.min(100, parseFloat(elements.porcentajeDescuentoMain.value) || 0));
+            const valorAnticipado = valorRealUF * (1 - (descuento / 100));
+            elements.valorAntUf.value = valorAnticipado.toFixed(2);
+        }
+    }
 
     setProductVisibility(type);
-    piePercentRow.style.display = (type === 'sepultacion' || type === 'cremacion') ? '' : 'none';
+    piePercentRow.style.display = (type === 'sepultacion' || type === 'cremacion' || type === 'aumento-capacidad' || type === 'sepultura-liberador') ? '' : 'none';
 
     // Update graphics logic: hide for maintenance
     if (type === 'mantencion' || !elements.toggleGraphic.checked) {
@@ -429,31 +611,54 @@ function updateCalculations(triggeredBy = '') {
 
     if (type === 'sepultura-liberador') {
         calculateSepulturaLiberador();
-        return;
     }
 
-    // Clean up liberador graphic if in other modes
-    if (elements.liberadorGraphicContainer) {
+    if (type === 'aumento-capacidad' && elements.liberadorGraphicContainer) {
+        // Aumento usa el contenedor gráfico lateral en este layout
+        elements.liberadorGraphicContainer.style.display = 'block';
+    }
+
+    // Clean up custom graphic only when not in modes that use it
+    if (elements.liberadorGraphicContainer && type !== 'sepultura-liberador' && type !== 'aumento-capacidad') {
         elements.liberadorGraphicContainer.innerHTML = '';
         elements.liberadorGraphicContainer.style.display = 'none';
     }
 
+    const rights = parseInt(elements.rightsInput.value) || 1;
+
+    // Lógica de valores automáticos para Cremación
+    if (type === 'cremacion' && triggeredBy !== 'ant-manual') {
+        const valoresCremacion = {
+            1: 27,
+            2: 41.59,
+            3: 55.98,
+            4: 65.59
+        };
+        if (valoresCremacion[rights]) {
+            elements.valorAntUf.value = valoresCremacion[rights];
+        }
+    }
+
     const niUf = parseFloat(elements.valorNiUf.value) || 0;
     const antUf = parseFloat(elements.valorAntUf.value) || 0;
-    const rights = parseInt(elements.rightsInput.value) || 1;
     const refUf = parseFloat(elements.refUfInput.value) || 0;
 
     // Handle Pie logic
+    const pieBaseUf = type === 'sepultura-liberador' ? niUf : antUf;
     if (triggeredBy === 'percent' || (triggeredBy !== 'pie' && !isManualPie)) {
         const percent = parseFloat(elements.piePercent.value) || 0;
-        const newPieUf = (antUf * percent) / 100;
+        const newPieUf = (pieBaseUf * percent) / 100;
         elements.pieUf.value = newPieUf.toFixed(2);
         isManualPie = false;
+        // Update pie label in UI for Liberador/Parques
+        if (type === 'sepultura-liberador' && elements.labelPie) {
+            elements.labelPie.innerHTML = `Pie (${percent.toFixed(0)}%)`;
+        }
     } else if (triggeredBy === 'pie') {
         isManualPie = true;
         const pieUfVal = parseFloat(elements.pieUf.value) || 0;
-        if (antUf > 0) {
-            elements.piePercent.value = ((pieUfVal / antUf) * 100).toFixed(0);
+        if (pieBaseUf > 0) {
+            elements.piePercent.value = ((pieUfVal / pieBaseUf) * 100).toFixed(0);
         }
     }
 
@@ -462,6 +667,9 @@ function updateCalculations(triggeredBy = '') {
     const balanceClp = (antUf * uf) - (pieUfVal * uf);
 
     elements.refClpDisplay.textContent = formatCurrency(refUf * uf);
+    if (elements.refUfDisplay) {
+        elements.refUfDisplay.textContent = refUf.toFixed(2).replace('.', ',') + ' UF (IVA INCLUIDO)';
+    }
 
     // Basic CLP conversions
     elements.valorNiClp.textContent = formatCurrency(niUf * uf);
@@ -473,7 +681,7 @@ function updateCalculations(triggeredBy = '') {
     let factor36_extra = 0.04;
     let factor48_extra = 0.04;
 
-    if (type === 'cremacion') {
+    if (type === 'cremacion' || type === 'aumento-capacidad') {
         adminFee = 5250;
         factor36_extra = 0.15;
         factor48_extra = 0.15;
@@ -511,7 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event listeners
     elements.valorNiUf.addEventListener('input', () => updateCalculations('ni'));
-    elements.valorAntUf.addEventListener('input', () => updateCalculations('ant'));
+    elements.valorAntUf.addEventListener('input', () => updateCalculations('ant-manual'));
     elements.pieUf.addEventListener('input', () => updateCalculations('pie'));
     elements.piePercent.addEventListener('input', () => updateCalculations('percent'));
     elements.rightsInput.addEventListener('input', () => updateCalculations('rights'));
@@ -521,11 +729,15 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.valorPlanUf.addEventListener('input', () => updateCalculations('mantencion'));
     elements.descuentoPorcentaje.addEventListener('input', () => updateCalculations('mantencion'));
     elements.valorRealUf.addEventListener('input', () => updateCalculations('sepultura-liberador'));
+    elements.rightsInputLib.addEventListener('input', () => updateCalculations('sepultura-liberador'));
     elements.porcentajeDescuentoSep.addEventListener('input', () => updateCalculations('sepultura-liberador'));
     elements.tipoPie.addEventListener('change', () => { cambiarTipoPie(); updateCalculations('sepultura-liberador'); });
     elements.porcentajePieSep.addEventListener('input', () => updateCalculations('sepultura-liberador'));
     elements.pieValorUF.addEventListener('input', () => updateCalculations('sepultura-liberador'));
     elements.pieValorCLP.addEventListener('input', () => updateCalculations('sepultura-liberador'));
+    
+    // Aumento de Capacidad listeners (en el mismo layout base de cremación)
+    elements.porcentajeDescuentoMain.addEventListener('input', () => updateCalculations('discount-manual'));
     
     elements.parkSelector.addEventListener('change', () => updateCalculations('park'));
     elements.productType.addEventListener('change', () => { cambiarTipoPie(); updateCalculations('product'); });
@@ -537,17 +749,37 @@ document.addEventListener('DOMContentLoaded', () => {
 async function captureWithoutPiePercent() {
     const captureArea = document.getElementById('capture-area');
     const piePercentRow = document.getElementById('pie-percent-row');
+    const type = elements.productType.value;
+    
+    // Logic for hiding pie settings during export
+    const hidePieSettings = () => {
+        if (type === 'aumento-capacidad') {
+            const rows = document.querySelectorAll('#aumento-capacidad-fields tr');
+            // Try to find the row containing % Pie in Aumento
+            rows.forEach(row => {
+                if (row.textContent.includes('% Pie:')) row.style.display = 'none';
+            });
+        } else {
+            piePercentRow.style.display = 'none';
+        }
+    };
+
+    const restorePieSettings = () => {
+        if (type === 'aumento-capacidad') {
+            const rows = document.querySelectorAll('#aumento-capacidad-fields tr');
+            rows.forEach(row => {
+                if (row.textContent.includes('% Pie:')) row.style.display = '';
+            });
+        } else {
+            piePercentRow.style.display = (type === 'sepultacion' || type === 'cremacion') ? '' : 'none';
+        }
+    };
+
     const adjNotes = Array.from(captureArea.querySelectorAll('.small-note'));
-    const originalPieDisplay = piePercentRow.style.display;
     const originalAdjDisplays = adjNotes.map(el => el.style.display);
 
-    piePercentRow.style.display = 'none';
+    hidePieSettings();
     adjNotes.forEach(el => el.style.display = 'none');
-
-    // Also hide the global graphic column for liberador when exporting, 
-    // it's already empty/hidden via logic, but ensure it's clean.
-    const visualCol = document.querySelector('.visual-col');
-    const originalVisualColDisplay = visualCol ? visualCol.style.display : '';
 
     const canvas = await html2canvas(captureArea, {
         scale: 2,
@@ -555,7 +787,7 @@ async function captureWithoutPiePercent() {
         backgroundColor: '#ffffff'
     });
 
-    piePercentRow.style.display = originalPieDisplay;
+    restorePieSettings();
     adjNotes.forEach((el, index) => el.style.display = originalAdjDisplays[index]);
     return canvas;
 }
