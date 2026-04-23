@@ -31,11 +31,14 @@
             <select id="product-type" class="park-select" style="width: auto; padding: 5px 10px;">
                 <option value="sepultacion">Derecho de Sepultación Anticipada</option>
                 <option value="cremacion">Cremación Anticipada</option>
+                <option value="mantencion">Mantención</option>
+                <option value="sepultura-liberador">Sepultura Liberador</option>
             </select>
         </div>
 
         <div class="section-header">
             <div class="left-col">
+                <div id="sepultacion-fields">
                 <table>
                     <tr>
                         <td class="bold" id="park-label">Parque</td>
@@ -113,6 +116,56 @@
                         </td>
                     </tr>
                 </table>
+                </div>
+
+            <div id="mantencion-fields" style="display: none; margin-top: 20px;">
+                <table>
+                    <tr>
+                        <td style="width: 60%;">Valor Plan + IVA (UF)</td>
+                        <td class="uf-col"><input type="number" id="valor-plan-uf" class="input-inline" value="0" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Descuento (%)</td>
+                        <td class="uf-col"><input type="number" id="descuento-porcentaje" class="input-inline" value="20" min="0" max="100" step="1"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="sepultura-liberador-fields" style="display: none; margin-top: 20px;">
+                <table>
+                    <tr>
+                        <td style="width: 60%;">Valor Real (UF)</td>
+                        <td class="uf-col"><input type="number" id="valor-real-uf" class="input-inline" value="0" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Descuento (%)</td>
+                        <td class="uf-col"><input type="number" id="porcentaje-descuento-sep" class="input-inline" value="10" min="0" max="100" step="1"></td>
+                    </tr>
+                    <tr>
+                        <td class="bold">Tipo de Pie</td>
+                        <td class="uf-col" style="padding: 0;">
+                            <select id="tipo-pie" class="editable-select">
+                                <option value="porcentaje">Porcentaje (%)</option>
+                                <option value="uf">Valor en UF</option>
+                                <option value="clp">Valor en CLP</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <div id="pie-porcentaje-lib" style="margin-top: 10px;">
+                    <label style="display:block; margin-bottom: 4px;">Porcentaje de Pie:</label>
+                    <input type="number" id="porcentaje-pie-sep" class="input-inline" value="10" min="0" max="100" step="1" style="width: 70px;">%
+                </div>
+                <div id="pie-uf-lib" style="display: none; margin-top: 10px;">
+                    <label style="display:block; margin-bottom: 4px;">Valor del Pie (UF):</label>
+                    <input type="number" id="pie-valor-uf" class="input-inline" value="0" step="0.01">
+                </div>
+                <div id="pie-clp-lib" style="display: none; margin-top: 10px;">
+                    <label style="display:block; margin-bottom: 4px;">Valor del Pie (CLP):</label>
+                    <input type="number" id="pie-valor-clp" class="input-inline" value="0" step="1">
+                </div>
+                <div id="liberador-graphic-container" style="margin-top: 20px;"></div>
+            </div>
             </div>
 
             <div class="right-col">
@@ -129,25 +182,69 @@
                     </tr>
                 </table>
 
-                <div class="quantity-box">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span>Capacidad</span>
-                        <span><input type="number" id="cantidad-rights" class="input-number-center" value="3" min="1" max="10"> <span id="capacity-unit">derechos</span></span>
+                <div id="sepultacion-output">
+                    <div class="quantity-box">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Capacidad</span>
+                            <span><input type="number" id="cantidad-rights" class="input-number-center" value="3" min="1" max="10"> <span id="capacity-unit">derechos</span></span>
+                        </div>
+                    </div>
+
+                    <div class="quantity-box" id="ref-value-container" style="height: auto;">
+                        <div id="ref-label">Valor referencia por 1 derecho</div>
+                        <div style="text-align: center; margin: 5px 0; font-size: 16px;" id="ref-clp-display">
+                            $ 0
+                        </div>
+                        <div style="text-align: right; font-weight: normal; font-size: 12px;">
+                            <input type="number" id="ref-uf-input" value="15.47" step="0.01" style="width: 50px; border:none; background:transparent; text-align:right;"> UF (IVA INCLUIDO)
+                        </div>
+                    </div>
+
+                    <div id="service-image-container" style="display: none; margin-top: 10px; border: 1px solid #ccc; overflow: hidden; border-radius: 4px;">
+                        <img src="cremacion.png" alt="Servicio de Cremación" style="width: 100%; height: auto; display: block;" onerror="this.parentElement.style.display='none'">
                     </div>
                 </div>
 
-                <div class="quantity-box" id="ref-value-container" style="height: auto;">
-                    <div id="ref-label">Valor referencia por 1 derecho</div>
-                    <div style="text-align: center; margin: 5px 0; font-size: 16px;" id="ref-clp-display">
-                        $ 0
-                    </div>
-                    <div style="text-align: right; font-weight: normal; font-size: 12px;">
-                        <input type="number" id="ref-uf-input" value="15.47" step="0.01" style="width: 50px; border:none; background:transparent; text-align:right;"> UF (IVA INCLUIDO)
+                <div id="mantencion-output" style="display: none; margin-top: 20px;">
+                    <div class="quantity-box">Resumen Mantención</div>
+                    <div id="mantencion-resumen" style="background: #f9f9f9; border: 1px solid #ccc; padding: 10px; margin-top: 10px; min-height: 100px;"></div>
+                    <div class="cuotas" style="margin-top: 15px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Plazo</th>
+                                    <th>Cuota UF</th>
+                                    <th>S.Desgravamen</th>
+                                    <th>G.Operacionales</th>
+                                    <th>IVA UF</th>
+                                    <th>Total Cuota UF</th>
+                                    <th>Total Cuota CLP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mantencion-cuotas-body"></tbody>
+                        </table>
                     </div>
                 </div>
 
-                <div id="service-image-container" style="display: none; margin-top: 10px; border: 1px solid #ccc; overflow: hidden; border-radius: 4px;">
-                    <img src="cremacion.png" alt="Servicio de Cremación" style="width: 100%; height: auto; display: block;" onerror="this.parentElement.style.display='none'">
+                <div id="sepultura-liberador-output" style="display: none; margin-top: 20px;">
+                    <div class="quantity-box">Resumen Sepultura Liberador</div>
+                    <div id="sepultura-liberador-resumen" style="background: #f9f9f9; border: 1px solid #ccc; padding: 10px; margin-top: 10px; min-height: 100px;"></div>
+                    <div class="cuotas" style="margin-top: 15px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Plazo</th>
+                                    <th>Valor Cuota UF</th>
+                                    <th>Valor Cuota CLP</th>
+                                    <th>Seguro</th>
+                                    <th>Gasto Adm.</th>
+                                    <th>Total Cuota UF</th>
+                                    <th>Total Cuota CLP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sepultura-liberador-cuotas-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 

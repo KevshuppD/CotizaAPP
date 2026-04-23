@@ -203,13 +203,20 @@ th, td {
 .green-bg { background-color: var(--primary-green); }
 
 .input-inline {
-    border: none;
+    border: 1px solid transparent;
     background: transparent;
     font-family: inherit;
     font-size: inherit;
     width: 100%;
     text-align: right;
     outline: none;
+    transition: background 0.2s;
+    padding: 2px;
+}
+
+.input-inline:focus, .input-inline:hover {
+    background-color: rgba(0,0,0,0.05);
+    border-bottom: 1px dashed black;
 }
 
 .controls {
@@ -242,6 +249,27 @@ th, td {
     border: 1px solid black;
     padding: 8px;
     font-weight: bold;
+}
+
+.editable-select {
+    width: 100%;
+    height: 100%;
+    border: 2px solid black;
+    background-color: white;
+    font-weight: bold;
+    font-size: 13px;
+    padding: 4px;
+    cursor: pointer;
+    outline: none;
+    appearance: none; /* Remove default arrow for custom look if desired */
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+
+.editable-select:hover {
+    background-color: #f0f0f0;
 }
 
 .small-note {
