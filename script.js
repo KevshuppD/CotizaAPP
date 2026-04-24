@@ -222,13 +222,13 @@ function setProductVisibility(type) {
         elements.parkStaticValue.style.display = 'none';
         elements.parkLabel.textContent = 'Parque';
         elements.parkDisplay.textContent = 'PARQUE ' + elements.parkSelector.value;
-        elements.capacityUnit.textContent = (type === 'cremacion') ? 'Anforas' : (isAumento ? 'capacidades' : 'derechos');
+        elements.capacityUnit.textContent = (type === 'cremacion') ? 'Anforas' : (isAumento ? 'capacidades' : (isLiberador ? 'criptas' : 'derechos'));
         elements.mainTitle.textContent = (type === 'cremacion')
             ? 'Cremación Anticipada'
             : (isAumento ? 'Aumento de Capacidad' : (isLiberador ? 'Sepultación Parques' : 'Cotización Derecho de Sepultación Anticipada'));
         elements.refValueContainer.style.display = type === 'sepultacion' ? 'block' : 'none';
         elements.serviceImageContainer.style.display = type === 'cremacion' ? 'block' : 'none';
-        elements.refLabel.textContent = 'Valor referencia por 1 derecho';
+        elements.refLabel.textContent = type === 'sepultacion' ? 'Valor referencia por 1 derecho' : 'Valor referencia por 1 cripta';
     }
 }
 
@@ -497,7 +497,7 @@ function updateVisualGraphic(count, type) {
         for (let i = count - 1; i >= 0; i--) {
             const level = document.createElement('div');
             level.className = 'sepultura-level';
-            level.textContent = 'ESPACIO ' + (i + 1);
+            level.textContent = 'DERECHO ' + (i + 1);
             targetGraphic.appendChild(level);
         }
 
@@ -878,6 +878,44 @@ async function captureWithoutPiePercent() {
     return canvas;
 }
 
+function getShareMessageForProduct() {
+    const type = elements.productType.value;
+    const park = elements.parkSelector ? elements.parkSelector.value : '';
+
+    switch (type) {
+        case 'sepultacion':
+            return {
+                title: 'Cotización Derecho de Sepultación Anticipada',
+                text: 'Detalle de cotización por derecho de sepultación anticipada.'
+            };
+        case 'sepultura-liberador':
+            return {
+                title: 'Cotización Sepultación Parques',
+                text: `Detalle de cotización para sepultación en parque ${park}.`
+            };
+        case 'aumento-capacidad':
+            return {
+                title: 'Cotización Aumento de Capacidad',
+                text: 'Detalle de cotización para aumento de capacidad (criptas).'
+            };
+        case 'cremacion':
+            return {
+                title: 'Cotización Cremación Anticipada',
+                text: 'Detalle de cotización para cremación anticipada.'
+            };
+        case 'mantencion':
+            return {
+                title: 'Cotización Mantención',
+                text: 'Detalle de cotización para mantención.'
+            };
+        default:
+            return {
+                title: 'Cotización Sepultura',
+                text: 'Detalle de cotización.'
+            };
+    }
+}
+
 async function exportAsImage() {
     const canvas = await captureWithoutPiePercent();
     if (canvas.toBlob) {
@@ -909,10 +947,11 @@ async function shareAsImage() {
         const file = new File([blob], 'cotizacion.png', { type: 'image/png' });
         if (navigator.share) {
             try {
+                const shareMessage = getShareMessageForProduct();
                 await navigator.share({
                     files: [file],
-                    title: 'Cotización Sepultura',
-                    text: 'Detalle de cotización anticipada'
+                    title: shareMessage.title,
+                    text: shareMessage.text
                 });
             } catch (err) {
                 console.error('Error sharing:', err);
