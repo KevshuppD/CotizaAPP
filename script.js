@@ -167,10 +167,13 @@ function setProductVisibility(type) {
     elements.sepulturaLiberadorFields.style.display = 'none';
     elements.aumentoCapacidadFields.style.display = 'none';
 
-    // Asegurar que el contenedor del gráfico sea visible para Aumento y Liberador
+    // Respetar toggle de gráficos para Aumento y Liberador
     if (elements.liberadorGraphicContainer) {
         if (isAumento || isLiberador) {
-            elements.liberadorGraphicContainer.style.setProperty('display', 'block', 'important');
+            elements.liberadorGraphicContainer.style.display = elements.toggleGraphic.checked ? 'block' : 'none';
+            if (!elements.toggleGraphic.checked) {
+                elements.liberadorGraphicContainer.innerHTML = '';
+            }
         } else {
             elements.liberadorGraphicContainer.style.display = 'none';
         }
@@ -457,6 +460,14 @@ function updateVisualGraphic(count, type) {
 
     if (!targetGraphic) return;
 
+    if (type === 'sepultacion' && elements.sepultacionGraphicContainer) {
+        elements.sepultacionGraphicContainer.style.display = elements.toggleGraphic.checked ? 'block' : 'none';
+        if (!elements.toggleGraphic.checked) {
+            elements.sepultacionGraphicContainer.innerHTML = '';
+            return;
+        }
+    }
+
     if (type === 'sepultacion' && elements.visualGraphic) {
         elements.visualGraphic.style.display = 'none';
         elements.visualGraphic.classList.remove('active');
@@ -524,7 +535,12 @@ function updateVisualGraphic(count, type) {
         const container = elements.liberadorGraphicContainer;
         if (!container) return;
         
-        container.style.display = 'block';
+        container.style.display = elements.toggleGraphic.checked ? 'block' : 'none';
+        if (!elements.toggleGraphic.checked) {
+            container.innerHTML = '';
+            return;
+        }
+        
         container.style.width = '240px'; 
         container.style.margin = '30px auto 0 auto'; 
         container.style.transform = 'scale(1.2)'; 
@@ -559,7 +575,12 @@ function updateVisualGraphic(count, type) {
         const container = elements.liberadorGraphicContainer;
         if (!container) return;
         
-        container.style.display = 'block';
+        container.style.display = elements.toggleGraphic.checked ? 'block' : 'none';
+        if (!elements.toggleGraphic.checked) {
+            container.innerHTML = '';
+            return;
+        }
+        
         container.style.width = '240px'; 
         container.style.margin = '30px auto 0 auto'; 
         container.style.transform = 'scale(1.2)'; 
@@ -634,10 +655,18 @@ function updateCalculations(triggeredBy = '') {
     setProductVisibility(type);
     piePercentRow.style.display = (type === 'sepultacion' || type === 'cremacion' || type === 'aumento-capacidad' || type === 'sepultura-liberador') ? '' : 'none';
 
-    // Update graphics logic: hide for maintenance
+    // Update graphics logic: hide for maintenance or when toggle is off
     if (type === 'mantencion' || !elements.toggleGraphic.checked) {
         elements.visualGraphic.style.display = 'none';
         elements.visualGraphic.classList.remove('active');
+        if (elements.sepultacionGraphicContainer) {
+            elements.sepultacionGraphicContainer.style.display = 'none';
+            elements.sepultacionGraphicContainer.innerHTML = '';
+        }
+        if (elements.liberadorGraphicContainer) {
+            elements.liberadorGraphicContainer.style.display = 'none';
+            elements.liberadorGraphicContainer.innerHTML = '';
+        }
     } else {
         const rights = parseInt(elements.rightsInput.value) || 1;
         updateVisualGraphic(rights, type);
@@ -658,7 +687,8 @@ function updateCalculations(triggeredBy = '') {
 
     if (type === 'aumento-capacidad' && elements.liberadorGraphicContainer) {
         // Aumento usa el contenedor gráfico lateral en este layout
-        elements.liberadorGraphicContainer.style.display = 'block';
+        elements.liberadorGraphicContainer.style.display = elements.toggleGraphic.checked ? 'block' : 'none';
+        if (!elements.toggleGraphic.checked) elements.liberadorGraphicContainer.innerHTML = '';
     }
 
     // Clean up custom graphic only when not in modes that use it
@@ -786,8 +816,18 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.porcentajeDescuentoMain.addEventListener('input', () => updateCalculations('discount-manual'));
     
     elements.parkSelector.addEventListener('change', () => updateCalculations('park'));
-    elements.productType.addEventListener('change', () => { cambiarTipoPie(); updateCalculations('product'); });
+    elements.productType.addEventListener('change', () => { 
+        localStorage.setItem('lastProductType', elements.productType.value);
+        cambiarTipoPie(); 
+        updateCalculations('product'); 
+    });
     elements.toggleGraphic.addEventListener('change', toggleGraphic);
+
+    // Restaurar último tipo de producto
+    const savedType = localStorage.getItem('lastProductType');
+    if (savedType) {
+        elements.productType.value = savedType;
+    }
 
     fetchUF();
 });
