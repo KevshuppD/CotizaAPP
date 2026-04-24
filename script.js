@@ -58,6 +58,7 @@ const elements = {
     liberadorGraphicContainer: document.getElementById('liberador-graphic-container'),
     visualGraphic: document.getElementById('visual-graphic'),
     toggleGraphic: document.getElementById('toggle-graphic'),
+    tipoDescuentoMain: document.getElementById('tipo-descuento-main'),
     labelValorNi: document.getElementById('label-valor-ni'),
     labelDescuento: document.getElementById('label-descuento'),
     labelDescuentoOutput: document.getElementById('label-descuento-output'),
@@ -302,7 +303,20 @@ function calculateAumentoCapacidad(triggeredBy = '') {
 function calculateSepulturaLiberador() {
     // Usa los valores del layout principal para mantener diseño unificado
     const valorRealUF = parseFloat(elements.valorNiUf.value) || 0;
-    const porcentajeDescuento = (parseFloat(elements.porcentajeDescuentoMain.value) || 0) / 100;
+    const tipoDesc = elements.tipoDescuentoMain ? elements.tipoDescuentoMain.value : 'percent';
+    const rawDesc = parseFloat(elements.porcentajeDescuentoMain.value) || 0;
+    
+    let porcentajeDescuento = 0;
+    if (valorRealUF > 0) {
+        if (tipoDesc === 'percent') {
+            porcentajeDescuento = Math.max(0, Math.min(100, rawDesc)) / 100;
+        } else if (tipoDesc === 'uf') {
+            porcentajeDescuento = rawDesc / valorRealUF;
+        } else if (tipoDesc === 'clp') {
+            porcentajeDescuento = (rawDesc / currentUFValue) / valorRealUF;
+        }
+    }
+
     const percentagePieValue = (parseFloat(elements.piePercent.value) || 0);
     const porcentajePie = percentagePieValue / 100;
 
@@ -319,9 +333,23 @@ function calculateSepulturaLiberador() {
 
     // Actualizar etiquetas y valores en la tabla unificada
     if (elements.labelValorNi) elements.labelValorNi.textContent = 'Valor Real';
-    if (elements.labelDescuento) elements.labelDescuento.textContent = 'Descuento';
+    
+    // Ajustar etiqueta de descuento según el tipo
+    if (elements.labelDescuento) {
+        let labelText = 'Descuento';
+        if (tipoDesc === 'percent') labelText += ' (%)';
+        else if (tipoDesc === 'uf') labelText += ' (UF)';
+        else if (tipoDesc === 'clp') labelText += ' ($)';
+        elements.labelDescuento.textContent = labelText;
+    }
+
     if (elements.labelDescuentoOutput) {
-        elements.labelDescuentoOutput.textContent = `${descuentoUF.toFixed(2)} UF (${new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(descuentoCLP)})`;
+        if (tipoDesc === 'clp') {
+             // Si el descuento es en CLP, mostramos el valor en UF calculado
+             elements.labelDescuentoOutput.textContent = `${descuentoUF.toFixed(2)} UF (${new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(descuentoCLP)})`;
+        } else {
+             elements.labelDescuentoOutput.textContent = `${descuentoUF.toFixed(2)} UF (${new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(descuentoCLP)})`;
+        }
     }
     if (elements.labelValorAnt) elements.labelValorAnt.textContent = 'Precio Venta';
     if (elements.labelPie) elements.labelPie.innerHTML = `Pie (${percentagePieValue.toFixed(0)}%)`;
@@ -575,15 +603,30 @@ function updateCalculations(triggeredBy = '') {
     } else if (type === 'sepultura-liberador') {
         // Mantener fórmulas de Sepultación Parques sobre el layout principal
         const valorRealUF = parseFloat(elements.valorNiUf.value) || 0;
+        const tipoDesc = elements.tipoDescuentoMain ? elements.tipoDescuentoMain.value : 'percent';
+        const rawDesc = parseFloat(elements.porcentajeDescuentoMain.value) || 0;
+        
         if (triggeredBy === 'ant-manual') {
             const antManual = parseFloat(elements.valorAntUf.value) || 0;
             if (valorRealUF > 0) {
-                const descCalc = Math.max(0, Math.min(100, ((valorRealUF - antManual) / valorRealUF) * 100));
-                elements.porcentajeDescuentoMain.value = Math.round(descCalc).toString();
+                const descCalcRatio = Math.max(0, Math.min(1, (valorRealUF - antManual) / valorRealUF));
+                if (tipoDesc === 'percent') {
+                   elements.porcentajeDescuentoMain.value = (descCalcRatio * 100).toFixed(0);
+                } else if (tipoDesc === 'uf') {
+                   elements.porcentajeDescuentoMain.value = (valorRealUF - antManual).toFixed(2);
+                } else if (tipoDesc === 'clp') {
+                   elements.porcentajeDescuentoMain.value = Math.round((valorRealUF - antManual) * currentUFValue);
+                }
             }
         } else {
-            const descuento = Math.max(0, Math.min(100, parseFloat(elements.porcentajeDescuentoMain.value) || 0));
-            const valorAnticipado = valorRealUF * (1 - (descuento / 100));
+            let valorAnticipado = valorRealUF;
+            if (tipoDesc === 'percent') {
+                valorAnticipado = valorRealUF * (1 - (Math.max(0, Math.min(100, rawDesc)) / 100));
+            } else if (tipoDesc === 'uf') {
+                valorAnticipado = Math.max(0, valorRealUF - rawDesc);
+            } else if (tipoDesc === 'clp') {
+                valorAnticipado = Math.max(0, valorRealUF - (rawDesc / currentUFValue));
+            }
             elements.valorAntUf.value = valorAnticipado.toFixed(2);
         }
     }
@@ -736,7 +779,10 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.pieValorUF.addEventListener('input', () => updateCalculations('sepultura-liberador'));
     elements.pieValorCLP.addEventListener('input', () => updateCalculations('sepultura-liberador'));
     
-    // Aumento de Capacidad listeners (en el mismo layout base de cremación)
+    // Descuento listeners
+    if (elements.tipoDescuentoMain) {
+        elements.tipoDescuentoMain.addEventListener('change', () => updateCalculations('discount-manual'));
+    }
     elements.porcentajeDescuentoMain.addEventListener('input', () => updateCalculations('discount-manual'));
     
     elements.parkSelector.addEventListener('change', () => updateCalculations('park'));

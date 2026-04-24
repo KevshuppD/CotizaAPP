@@ -132,9 +132,16 @@
                         <td class="clp-col" id="valor-ni-clp">$ 0</td>
                     </tr>
                     <tr id="discount-row-main" style="display: none;">
-                        <td>Descuento (%)</td>
+                        <td id="label-descuento">Descuento (%)</td>
                         <td class="uf-col gray-bg">
-                            <input type="number" id="porcentaje-descuento-main" class="input-inline editable-field" value="0" min="0" max="100" step="1">
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <input type="number" id="porcentaje-descuento-main" class="input-inline editable-field" value="0" min="0" max="100" step="1" style="flex: 1;">
+                                <select id="tipo-descuento-main" style="font-size: 10px; border: 1px solid #ccc; background: white; padding: 2px;">
+                                    <option value="percent">%</option>
+                                    <option value="uf">UF</option>
+                                    <option value="clp">$</option>
+                                </select>
+                            </div>
                         </td>
                         <td class="clp-col" id="label-descuento-output">&nbsp;</td>
                     </tr>
