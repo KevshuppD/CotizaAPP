@@ -156,13 +156,14 @@ function updateCalculations(triggeredBy = '') {
         const refUfVal = parseFloat(elements.refUfInput ? elements.refUfInput.value : '') || 0;
         if (elements.refClpInput) setCLPValue(elements.refClpInput, refUfVal > 0 ? Math.round(refUfVal * uf) : '');
     } else if (triggeredBy === 'rights' || triggeredBy === 'product' || triggeredBy === 'init') {
-        const unitRefUf = 15.47;
+        const unitRefUf = (type === 'cremacion') ? 30.00 : 15.47;
         const baseRefUf = unitRefUf * rights;
         if (elements.refUfInput) elements.refUfInput.value = baseRefUf.toFixed(2);
         if (elements.refClpInput) setCLPValue(elements.refClpInput, Math.round(baseRefUf * uf));
     }
 
-    const totalRefUf = parseFloat(elements.refUfInput ? elements.refUfInput.value : '') || (15.47 * rights);
+    const defaultUnitRef = (type === 'cremacion') ? 30.00 : 15.47;
+    const totalRefUf = parseFloat(elements.refUfInput ? elements.refUfInput.value : '') || (defaultUnitRef * rights);
     const totalRefClp = totalRefUf * uf;
 
     if (elements.refClpInput && triggeredBy !== 'ref-clp') {
