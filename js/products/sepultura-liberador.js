@@ -1,100 +1,146 @@
 // js/products/sepultura-liberador.js - Lógica Financiera de Sepultura con Beneficios (Liberador)
 
 function calculateSepulturaLiberador() {
-    if (elements.valorNiUf && elements.valorNiUf.value.trim() === '') {
-        elements.valorNiUf.value = '46.41';
-    }
-    const valorRealUF = parseFloat(elements.valorNiUf ? elements.valorNiUf.value : '') || 0;
-    const tipoDesc = elements.tipoDescuentoMain ? elements.tipoDescuentoMain.value : 'percent';
-    const rawDesc = elements.porcentajeDescuentoMain ? (parseFloat(elements.porcentajeDescuentoMain.value) || 0) : 0;
+    const parque = elements.parkSelector ? elements.parkSelector.value : '';
+    const isPrado = parque.toUpperCase().includes('PRADO');
     
-    let porcentajeDescuento = 0;
-    if (valorRealUF > 0) {
-        if (tipoDesc === 'percent') {
-            porcentajeDescuento = Math.max(0, Math.min(100, rawDesc)) / 100;
-        } else if (tipoDesc === 'uf') {
-            porcentajeDescuento = rawDesc / valorRealUF;
-        } else if (tipoDesc === 'clp') {
-            porcentajeDescuento = (rawDesc / currentUFValue) / valorRealUF;
-        }
-    }
-
-    const percentagePieValue = elements.piePercent ? (parseFloat(elements.piePercent.value) || 0) : 0;
-    const porcentajePie = percentagePieValue / 100;
-
+    // 1. Leer Valor Real (editable en ref-uf-input)
+    const valorRealUF = parseFloat(elements.refUfInput ? elements.refUfInput.value : '') || 0;
     const valorRealCLP = valorRealUF * currentUFValue;
-    const descuentoUF = valorRealUF * porcentajeDescuento;
-    const descuentoCLP = descuentoUF * currentUFValue;
-    const precioVentaUF = valorRealUF - descuentoUF;
-    const precioVentaCLP = precioVentaUF * currentUFValue;
-
-    const pieCalculadoUF = valorRealUF * porcentajePie;
-    const pieCLP = pieCalculadoUF * currentUFValue;
-    const saldoFinanciarUF = precioVentaUF - pieCalculadoUF;
-    const saldoFinanciarCLP = saldoFinanciarUF * currentUFValue;
-
-    if (elements.labelValorNi) elements.labelValorNi.textContent = 'Valor Real';
     
-    if (elements.labelDescuento) {
-        let labelText = 'Descuento';
-        if (tipoDesc === 'percent') labelText += ' (%)';
-        else if (tipoDesc === 'uf') labelText += ' (UF)';
-        else if (tipoDesc === 'clp') labelText += ' ($)';
-        elements.labelDescuento.textContent = labelText;
+    if (elements.refClpInput && document.activeElement !== elements.refClpInput) {
+        setCLPValue(elements.refClpInput, Math.round(valorRealCLP));
     }
 
-    if (elements.labelDescuentoOutput) {
-        elements.labelDescuentoOutput.textContent = `${descuentoUF.toFixed(2)} UF (${formatCurrency(descuentoCLP)})`;
+    // 2. Descuento (%) - editable, default 20%
+    const descPercentEl = document.getElementById('porcentaje-descuento-main');
+    const descPercent = descPercentEl ? (parseFloat(descPercentEl.value) || 0) : 20;
+    const descuentoUF = valorRealUF * (descPercent / 100);
+    const descuentoCLP = valorRealCLP * (descPercent / 100);
+
+    const descOutput = document.getElementById('label-descuento-output');
+    if (descOutput) {
+        descOutput.textContent = `${descuentoUF.toFixed(2).replace('.', ',')} UF (${formatCurrency(Math.round(descuentoCLP))})`;
     }
-    if (elements.labelValorAnt) elements.labelValorAnt.textContent = 'Precio Venta';
-    if (elements.labelPie) elements.labelPie.innerHTML = `Pie (${percentagePieValue.toFixed(0)}%)`;
+
+    // 3. Valor Promocional
+    const valorPromoUF = valorRealUF - descuentoUF;
+    const valorPromoCLP = valorRealCLP - descuentoCLP;
+
+    const valorNiUfDisplay = document.getElementById('valor-ni-uf');
+    if (valorNiUfDisplay) {
+        valorNiUfDisplay.textContent = `${valorPromoUF.toFixed(2).replace('.', ',')} UF`;
+    }
+    if (elements.valorNiClpInput && document.activeElement !== elements.valorNiClpInput) {
+        setCLPValue(elements.valorNiClpInput, Math.round(valorPromoCLP));
+    }
+
+    // 4. Pie (%) - default 5% for Prado, 10% for others (editable)
+    const piePercentEl = document.getElementById('pie-percent');
+    const piePercent = piePercentEl ? (parseFloat(piePercentEl.value) || 0) : (isPrado ? 5 : 10);
     
-    if (elements.saldoFinanciarRow) elements.saldoFinanciarRow.style.display = 'table-row';
-    if (elements.saldoFinanciarUf) elements.saldoFinanciarUf.textContent = `${saldoFinanciarUF.toFixed(2)} UF`;
-    if (elements.saldoFinanciarClp) {
-        elements.saldoFinanciarClp.textContent = formatCurrency(saldoFinanciarCLP);
+    const pieUF = valorRealUF * (piePercent / 100);
+    const pieCLP = valorRealCLP * (piePercent / 100);
+
+    if (elements.pieUf) {
+        elements.pieUf.value = pieUF.toFixed(2);
+    }
+    if (elements.pieClpInput && document.activeElement !== elements.pieClpInput) {
+        setCLPValue(elements.pieClpInput, Math.round(pieCLP));
     }
 
-    if (elements.sepulturaLiberadorResumen) elements.sepulturaLiberadorResumen.innerHTML = '';
+    // 5. Saldo a Financiar (Valor Real - Descuento - Pie)
+    const saldoUF = valorRealUF - descuentoUF - pieUF;
+    const saldoCLP = valorRealCLP - descuentoCLP - pieCLP;
 
-    const plazosYTasas = [
-        { plazo: 12, tasa: 0 },
-        { plazo: 24, tasa: 0 },
-        { plazo: 36, tasa: 0 },
-        { plazo: 48, tasa: 0 },
-        { plazo: 60, tasa: 0.0197 },
-        { plazo: 72, tasa: 0.01693 },
-        { plazo: 84, tasa: 0.01495 },
-        { plazo: 96, tasa: 0.01348 },
-        { plazo: 108, tasa: 0.01235 }
-    ];
+    if (elements.saldoFinanciarUfInput && document.activeElement !== elements.saldoFinanciarUfInput) {
+        elements.saldoFinanciarUfInput.value = saldoUF.toFixed(2);
+    }
+    if (elements.saldoFinanciarClpInput && document.activeElement !== elements.saldoFinanciarClpInput) {
+        setCLPValue(elements.saldoFinanciarClpInput, Math.round(saldoCLP));
+    }
+
+    // 6. Generar Cuotas
+    let plazos;
+    if (isPrado) {
+        plazos = [24, 48, 72, 108];
+    } else {
+        plazos = [12, 24, 36, 48, 60, 72, 84, 96, 108];
+    }
 
     let tablaCuotasHTML = '';
-    plazosYTasas.forEach(({ plazo, tasa }) => {
-        let valorCuotaUF;
-        if (plazo <= 48) {
-            valorCuotaUF = saldoFinanciarUF / plazo;
+    plazos.forEach(plazo => {
+        let valorCuotaUF = 0;
+        let seguroUF = 0;
+        let gastoAdminUF = 0;
+        let totalCuotaUF = 0;
+        let totalCuotaCLP = 0;
+
+        if (isPrado) {
+            // Fórmulas para El Prado según la hoja oficial
+            if (plazo === 24) {
+                const baseCLP = saldoCLP / 24;
+                const seguroCLP = 1750;
+                const gaCLP = 3500;
+                totalCuotaCLP = Math.round(baseCLP + seguroCLP + gaCLP);
+                totalCuotaUF = totalCuotaCLP / currentUFValue;
+                
+                valorCuotaUF = baseCLP / currentUFValue;
+                seguroUF = seguroCLP / currentUFValue;
+                gastoAdminUF = gaCLP / currentUFValue;
+            } else if (plazo === 48) {
+                valorCuotaUF = saldoUF / 48;
+                seguroUF = 0.05;
+                gastoAdminUF = 0.10;
+                totalCuotaUF = valorCuotaUF + seguroUF + gastoAdminUF;
+                totalCuotaCLP = Math.round(totalCuotaUF * currentUFValue);
+            } else if (plazo === 72) {
+                valorCuotaUF = saldoUF * 0.01693;
+                seguroUF = 0.05;
+                gastoAdminUF = 0.10;
+                totalCuotaUF = valorCuotaUF + seguroUF + gastoAdminUF;
+                totalCuotaCLP = Math.round(totalCuotaUF * currentUFValue);
+            } else if (plazo === 108) {
+                valorCuotaUF = saldoUF * 0.01238;
+                seguroUF = 0.05;
+                gastoAdminUF = 0.10;
+                totalCuotaUF = valorCuotaUF + seguroUF + gastoAdminUF;
+                totalCuotaCLP = Math.round(totalCuotaUF * currentUFValue);
+            }
         } else {
-            valorCuotaUF = saldoFinanciarUF * tasa;
-        }
+            // Fórmulas estándar para otros parques
+            const tasasStandard = {
+                60: 0.0197,
+                72: 0.01693,
+                84: 0.01495,
+                96: 0.01348,
+                108: 0.01235
+            };
 
-        if (plazo === 108) {
-            valorCuotaUF += 0.003;
-        }
+            if (plazo <= 48) {
+                valorCuotaUF = saldoUF / plazo;
+            } else {
+                const tasa = tasasStandard[plazo] || 0;
+                valorCuotaUF = saldoUF * tasa;
+                if (plazo === 108) {
+                    valorCuotaUF += 0.003;
+                }
+            }
 
-        const seguroUF = (saldoFinanciarUF > 0 && plazo > 0) ? (0.0016 * saldoFinanciarUF) : 0;
-        const gastoAdminUF = 0.02;
-        const totalCuotaUF = valorCuotaUF + seguroUF + gastoAdminUF;
-        const totalCuotaCLP = totalCuotaUF * currentUFValue;
+            seguroUF = (saldoUF > 0 && plazo > 0) ? (0.0016 * saldoUF) : 0;
+            gastoAdminUF = 0.02;
+            totalCuotaUF = valorCuotaUF + seguroUF + gastoAdminUF;
+            totalCuotaCLP = Math.round(totalCuotaUF * currentUFValue);
+        }
 
         tablaCuotasHTML += `
             <tr>
-                <td>${plazo} cuotas</td>
-                <td>${valorCuotaUF.toFixed(4)}</td>
-                <td>${seguroUF.toFixed(4)}</td>
-                <td>${gastoAdminUF.toFixed(4)}</td>
-                <td>${totalCuotaUF.toFixed(4)}</td>
-                <td>${formatCurrency(totalCuotaCLP)}</td>
+                <td style="font-weight: bold;">${plazo} cuotas</td>
+                <td>${valorCuotaUF.toFixed(4).replace('.', ',')}</td>
+                <td>${seguroUF.toFixed(4).replace('.', ',')}</td>
+                <td>${gastoAdminUF.toFixed(4).replace('.', ',')}</td>
+                <td style="font-weight: bold;">${totalCuotaUF.toFixed(4).replace('.', ',')}</td>
+                <td style="font-weight: bold; font-size: 15px; color: var(--primary-green);">${formatCurrency(totalCuotaCLP)}</td>
             </tr>
         `;
     });

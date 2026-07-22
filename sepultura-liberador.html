@@ -56,9 +56,9 @@
                             <td class="bold clp-col">$</td>
                         </tr>
                         <tr>
-                            <td id="label-valor-real" class="bold">Valor Real / Lista</td>
-                            <td class="uf-col gray-bg">
-                                <input type="number" id="ref-uf-input" class="input-inline editable-field" value="15.47" step="0.01">
+                            <td id="label-valor-real" class="bold">Valor Real</td>
+                            <td class="uf-col">
+                                <input type="number" id="ref-uf-input" class="input-inline editable-field" value="190" step="0.01">
                             </td>
                             <td class="clp-col">
                                 <div class="currency-input-wrapper">
@@ -66,10 +66,19 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td id="label-valor-ni">Valor Promocional (Uso Inmediato)</td>
+                        <tr id="discount-row-main">
+                            <td class="bold">Descuento (%)</td>
                             <td class="uf-col">
-                                <input type="number" id="valor-ni-uf" class="input-inline editable-field" value="46.41" placeholder="0.00" step="0.01">
+                                <input type="number" id="porcentaje-descuento-main" class="input-inline editable-field" value="20" step="1" style="text-align: center;">
+                            </td>
+                            <td class="clp-col" id="label-descuento-output" style="font-weight: bold; text-align: right; padding: 6px;">
+                                $0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="label-valor-ni" class="bold">Valor Promocional</td>
+                            <td class="uf-col gray-bg" id="valor-ni-uf" style="font-weight: bold; text-align: right; padding: 6px;">
+                                0,00 UF
                             </td>
                             <td class="clp-col yellow-bg">
                                 <div class="currency-input-wrapper">
@@ -77,26 +86,10 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr id="discount-row-main">
-                            <td id="label-descuento">Descuento</td>
-                            <td class="uf-col gray-bg" id="label-descuento-uf" style="font-weight: bold; text-align: right;">0,00 UF</td>
-                            <td class="clp-col" id="label-descuento-output" style="font-weight: bold; text-align: right;">$0</td>
-                        </tr>
                         <tr>
-                            <td id="label-valor-ant">Valor anticipado (IVA Incluido)</td>
-                            <td class="uf-col gray-bg" style="position: relative;">
-                                <input type="number" id="valor-ant-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
-                            </td>
-                            <td class="clp-col">
-                                <div class="currency-input-wrapper">
-                                    <input type="text" id="valor-ant-clp-input" class="input-inline editable-field" value="" placeholder="$0">
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td id="label-pie" class="bold">Pie <span id="label-pie-percent">(10%)</span></td>
-                            <td class="uf-col gray-bg">
-                                <input type="number" id="pie-uf" class="input-inline editable-field" value="4.64" step="0.01">
+                            <td id="label-pie" class="bold">Pie (%)</td>
+                            <td class="uf-col" style="text-align: center; vertical-align: middle;">
+                                <input type="number" id="pie-percent" class="input-inline editable-field" value="5" step="1" style="text-align: center;">
                             </td>
                             <td class="clp-col yellow-bg">
                                 <div class="currency-input-wrapper">
@@ -104,13 +97,17 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr id="pie-percent-row">
-                            <td colspan="3" style="font-size: 11px; border-top: none; text-align: center;">
-                                % Pie: <input type="number" id="pie-percent" value="10" step="1" style="width: 40px; border: 1px solid #ccc; text-align: center;">%
+                        <!-- Fila oculta para compatibilidad con JS -->
+                        <tr style="display:none;">
+                            <td>
+                                <input type="number" id="pie-uf" value="0">
+                                <input type="number" id="valor-ant-uf" value="0">
+                                <input type="text" id="valor-ant-clp-input" value="0">
+                                <input type="text" id="tipo-descuento-main" value="percent">
                             </td>
                         </tr>
                         <tr id="saldo-financiar-row">
-                            <td class="bold">Monto a Financiar</td>
+                            <td class="bold">Saldo a Financiar</td>
                             <td class="uf-col gray-bg">
                                 <input type="number" id="saldo-financiar-uf-input" class="input-inline editable-field" value="0" step="0.01">
                             </td>
@@ -130,9 +127,8 @@
                                     <tr>
                                         <th>Plazo</th>
                                         <th>Valor Cuota UF</th>
-                                        <th>Valor Cuota CLP</th>
-                                        <th>Seguro</th>
-                                        <th>Gasto Adm.</th>
+                                        <th>Seguro UF</th>
+                                        <th>Gasto Adm. UF</th>
                                         <th>Total Cuota UF</th>
                                         <th>Total Cuota CLP</th>
                                     </tr>

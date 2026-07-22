@@ -117,13 +117,28 @@ function updateCapacidadReduccionesOptions() {
     const parque = elements.parkSelector ? elements.parkSelector.value : '';
     const esPrado = parque.toUpperCase().includes('PRADO');
 
+    // Guardar selección actual antes de reconstruir (si coincide con las opciones del parque)
+    const prevVal = select.value;
+
     select.innerHTML = '';
 
     if (esPrado) {
-        const opt = document.createElement('option');
-        opt.value = '4-8';
-        opt.textContent = 'Capacidad 4 - 8 Reducciones';
-        select.appendChild(opt);
+        const opciones = [
+            { value: '2-4', text: '2 Capa + 1 Sepultación (Capacidad 2 - 4 Reducciones)' },
+            { value: '3-8', text: '3 Capa + 1 Sepultación (Capacidad 3 - 8 Reducciones)' },
+            { value: '4-12', text: '4 Capa + 1 Sepultación (Capacidad 4 - 12 Reducciones)' }
+        ];
+        opciones.forEach(o => {
+            const opt = document.createElement('option');
+            opt.value = o.value;
+            opt.textContent = o.text;
+            select.appendChild(opt);
+        });
+        if (prevVal && ['2-4', '3-8', '4-12'].includes(prevVal)) {
+            select.value = prevVal;
+        } else {
+            select.value = '2-4'; // Por defecto Capacidad 2 para Prado
+        }
     } else {
         const opciones = [
             { value: '2-4', text: 'Capacidad 2 - 4 Reducciones' },
@@ -137,12 +152,30 @@ function updateCapacidadReduccionesOptions() {
             opt.textContent = o.text;
             select.appendChild(opt);
         });
+        if (prevVal && ['2-4', '3-8', '4-12', '8-20'].includes(prevVal)) {
+            select.value = prevVal;
+        } else {
+            select.value = '2-4';
+        }
     }
 
     // Sincronizar inputs ocultos con la nueva selección
     const [cap, red] = select.value.split('-').map(Number);
     if (elements.rightsInput) elements.rightsInput.value = cap;
     if (elements.reduccionesInput) elements.reduccionesInput.value = red;
+
+    // Actualizar Valor Real según el mapa de precios
+    const priceMap = {
+        'EL PRADO': { '2-4': 190, '3-8': 220, '4-12': 250 },
+        'EL MANANTIAL': { '2-4': 167, '3-8': 189, '4-12': 198, '8-20': 299 },
+        'SANTIAGO': { '2-4': 179, '3-8': 224, '4-12': 249, '8-20': 339 },
+        'CANAÁN': { '2-4': 179, '3-8': 224, '4-12': 249, '8-20': 339 }
+    };
+    const parkMap = priceMap[parque.toUpperCase()] || priceMap['EL MANANTIAL'];
+    const baseRefUf = parkMap[select.value] || 190;
+    if (elements.refUfInput) {
+        elements.refUfInput.value = baseRefUf;
+    }
 }
 
 function updateCalculations(triggeredBy = '') {
