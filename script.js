@@ -444,7 +444,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (elements.toggleGraphic) elements.toggleGraphic.addEventListener('change', toggleGraphic);
 
-    if (elements.rightsInput) {
+    // Listener para selector predefinido de capacidad/reducciones (sepultura-liberador)
+    if (elements.capacidadReduccionesSelect) {
+        elements.capacidadReduccionesSelect.addEventListener('change', () => {
+            const val = elements.capacidadReduccionesSelect.value;
+            const [cap, red] = val.split('-').map(Number);
+            if (elements.rightsInput) elements.rightsInput.value = cap;
+            if (elements.reduccionesInput) elements.reduccionesInput.value = red;
+            updateCalculations('rights');
+        });
+        // Disparar la selección inicial
+        const initVal = elements.capacidadReduccionesSelect.value;
+        const [initCap, initRed] = initVal.split('-').map(Number);
+        if (elements.rightsInput) elements.rightsInput.value = initCap;
+        if (elements.reduccionesInput) elements.reduccionesInput.value = initRed;
+    } else if (elements.rightsInput) {
         elements.rightsInput.value = 1;
     }
 

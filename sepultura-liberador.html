@@ -163,22 +163,20 @@
 
                 <div id="sepultacion-output">
                     <div style="border: 1px solid black; margin-bottom: 10px;">
-                        <div class="quantity-box" style="display: flex; justify-content: space-between; align-items: center; border: none; border-bottom: 1px solid black;">
-                            <span>Capacidad</span>
-                            <span class="capacity-value-group">
-                                <input type="number" id="cantidad-rights" class="input-number-center" value="1" min="1" max="4" style="background: transparent; border: none; font-weight: bold; width: 40px;">
-                                <span id="capacity-unit">criptas</span>
-                            </span>
-                        </div>
-
-                        <div class="quantity-box" id="reducciones-container" style="display: flex; justify-content: space-between; align-items: center; border: none; border-top: 1px solid black;">
-                            <span>Reducciones</span>
-                            <span class="capacity-value-group">
-                                <input type="number" id="cantidad-reducciones" class="input-number-center" value="0" min="0" max="50" style="background: transparent; border: none; font-weight: bold; width: 40px;">
-                                <span>reducciones</span>
-                            </span>
+                        <div class="quantity-box" style="display: flex; justify-content: space-between; align-items: center; border: none; padding: 8px;">
+                            <span style="font-weight: bold;">Capacidad / Reducciones</span>
+                            <select id="capacidad-reducciones-select" style="font-weight: bold; font-size: 14px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; background: #fff;">
+                                <option value="2-4">Capacidad 2 - 4 Reducciones</option>
+                                <option value="3-8">Capacidad 3 - 8 Reducciones</option>
+                                <option value="4-12">Capacidad 4 - 12 Reducciones</option>
+                                <option value="8-20">Capacidad 8 - 20 Reducciones</option>
+                            </select>
                         </div>
                     </div>
+                    <!-- Inputs ocultos para mantener compatibilidad con JS -->
+                    <input type="hidden" id="cantidad-rights" value="2">
+                    <input type="hidden" id="cantidad-reducciones" value="4">
+                    <span id="capacity-unit" style="display:none;">criptas</span>
 
                     <div id="sepultacion-graphic-container" style="margin-top: 15px; display: flex; justify-content: center; min-height: 150px;"></div>
                 </div>

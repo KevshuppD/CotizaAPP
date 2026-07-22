@@ -82,6 +82,7 @@ function initDOMElements() {
         36: document.getElementById('adj-36'),
         48: document.getElementById('adj-48')
     };
+    elements.capacidadReduccionesSelect = document.getElementById('capacidad-reducciones-select');
 }
 
 if (document.readyState === 'loading') {
