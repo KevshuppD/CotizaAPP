@@ -60,13 +60,8 @@ function calculateSepulturaLiberador() {
         setCLPValue(elements.saldoFinanciarClpInput, Math.round(saldoCLP));
     }
 
-    // 6. Generar Cuotas
-    let plazos;
-    if (isPrado) {
-        plazos = [24, 48, 72, 108];
-    } else {
-        plazos = [12, 24, 36, 48, 60, 72, 84, 96, 108];
-    }
+    // 6. Generar Cuotas (12 a 108 cuotas para todos los parques)
+    const plazos = [12, 24, 36, 48, 60, 72, 84, 96, 108];
 
     let tablaCuotasHTML = '';
     plazos.forEach(plazo => {
@@ -76,10 +71,29 @@ function calculateSepulturaLiberador() {
         let totalCuotaUF = 0;
         let totalCuotaCLP = 0;
 
+        const tasasStandard = {
+            60: 0.0197,
+            72: 0.01693,
+            84: 0.01495,
+            96: 0.01348,
+            108: isPrado ? 0.01238 : 0.01235
+        };
+
+        // Base cuota
+        if (plazo <= 48) {
+            valorCuotaUF = saldoUF / plazo;
+        } else {
+            const tasa = tasasStandard[plazo] || 0;
+            valorCuotaUF = saldoUF * tasa;
+            if (plazo === 108 && !isPrado) {
+                valorCuotaUF += 0.003;
+            }
+        }
+
         if (isPrado) {
-            // Fórmulas para El Prado según la hoja oficial
-            if (plazo === 24) {
-                const baseCLP = saldoCLP / 24;
+            if (plazo <= 36) {
+                // Sumar $5.250 en pesos ( GA $3500 + Seguro $1750 )
+                const baseCLP = saldoCLP / plazo;
                 const seguroCLP = 1750;
                 const gaCLP = 3500;
                 totalCuotaCLP = Math.round(baseCLP + seguroCLP + gaCLP);
@@ -88,45 +102,15 @@ function calculateSepulturaLiberador() {
                 valorCuotaUF = baseCLP / currentUFValue;
                 seguroUF = seguroCLP / currentUFValue;
                 gastoAdminUF = gaCLP / currentUFValue;
-            } else if (plazo === 48) {
-                valorCuotaUF = saldoUF / 48;
-                seguroUF = 0.05;
-                gastoAdminUF = 0.10;
-                totalCuotaUF = valorCuotaUF + seguroUF + gastoAdminUF;
-                totalCuotaCLP = Math.round(totalCuotaUF * currentUFValue);
-            } else if (plazo === 72) {
-                valorCuotaUF = saldoUF * 0.01693;
-                seguroUF = 0.05;
-                gastoAdminUF = 0.10;
-                totalCuotaUF = valorCuotaUF + seguroUF + gastoAdminUF;
-                totalCuotaCLP = Math.round(totalCuotaUF * currentUFValue);
-            } else if (plazo === 108) {
-                valorCuotaUF = saldoUF * 0.01238;
+            } else {
+                // Sumar 0.15 UF en UF ( GA 0.10 + Seguro 0.05 )
                 seguroUF = 0.05;
                 gastoAdminUF = 0.10;
                 totalCuotaUF = valorCuotaUF + seguroUF + gastoAdminUF;
                 totalCuotaCLP = Math.round(totalCuotaUF * currentUFValue);
             }
         } else {
-            // Fórmulas estándar para otros parques
-            const tasasStandard = {
-                60: 0.0197,
-                72: 0.01693,
-                84: 0.01495,
-                96: 0.01348,
-                108: 0.01235
-            };
-
-            if (plazo <= 48) {
-                valorCuotaUF = saldoUF / plazo;
-            } else {
-                const tasa = tasasStandard[plazo] || 0;
-                valorCuotaUF = saldoUF * tasa;
-                if (plazo === 108) {
-                    valorCuotaUF += 0.003;
-                }
-            }
-
+            // Estándar para otros parques
             seguroUF = (saldoUF > 0 && plazo > 0) ? (0.0016 * saldoUF) : 0;
             gastoAdminUF = 0.02;
             totalCuotaUF = valorCuotaUF + seguroUF + gastoAdminUF;
