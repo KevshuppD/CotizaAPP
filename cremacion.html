@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cotización Derecho de Sepultación Anticipada</title>
+    <title>Cotización Cremación Anticipada</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="style.css">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -17,7 +17,7 @@
     <div class="container" id="capture-area">
         <div class="header-title-container">
             <div class="title-logo-wrapper">
-                <h1 id="main-title">Cotización Derecho de Sepultación Anticipada</h1>
+                <h1 id="main-title">Cotización Cremación Anticipada</h1>
                 <img src="logo-parque.png" alt="Logo" class="park-logo" onerror="this.style.display='none'">
             </div>
             <div id="park-name-display" class="park-display">PARQUE PRADO</div>
@@ -26,9 +26,9 @@
         <div class="product-selector-container no-export">
             <label for="product-type" style="font-weight: bold; margin-right: 10px;">Tipo de Producto:</label>
             <select id="product-type" class="park-select" style="width: auto; padding: 5px 10px;">
-                <option value="sepultacion" selected>Derecho de Sepultación Anticipada</option>
+                <option value="sepultacion">Derecho de Sepultación Anticipada</option>
                 <option value="sepultura-liberador">Sepultura con Beneficios</option>
-                <option value="cremacion">Cremación Anticipada</option>
+                <option value="cremacion" selected>Cremación Anticipada</option>
                 <option value="aumento-capacidad">Aumento de Capacidad</option>
                 <option value="mantencion">Mantención</option>
             </select>
@@ -181,16 +181,14 @@
                         <div class="quantity-box" style="display: flex; justify-content: space-between; align-items: center; border: none;">
                             <span>Capacidad</span>
                             <span class="capacity-value-group">
-                                <input type="number" id="cantidad-rights" class="input-number-center" value="1" min="1" max="10" style="background: transparent; border: none; font-weight: bold; width: 40px;">
-                                <span id="capacity-unit">derechos</span>
+                                <input type="number" id="cantidad-rights" class="input-number-center" value="1" min="1" max="4" style="background: transparent; border: none; font-weight: bold; width: 40px;">
+                                <span id="capacity-unit">Anforas</span>
                             </span>
                         </div>
+                    </div>
 
-                        <div id="ref-value-container" style="display: block; background-color: var(--highlight-yellow); padding: 10px; text-align: center;">
-                            <div id="ref-label" style="font-weight: bold; font-size: 16px; margin-bottom: 5px;">Valor referencia por 1 derecho</div>
-                            <div id="ref-clp-display" style="font-size: 22px; font-weight: bold; margin-bottom: 5px;">$0</div>
-                            <div id="ref-uf-display" style="font-size: 14px; font-weight: normal;">15,47 UF (IVA INCLUIDO)</div>
-                        </div>
+                    <div id="service-image-container" style="margin-top: 15px; border: 1px solid #00763a; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 8px rgba(0,0,0,0.12);">
+                        <img src="cremacion.png" alt="Servicio de Cremación" style="width: 100%; height: auto; display: block; object-fit: cover;">
                     </div>
                 </div>
             </div>

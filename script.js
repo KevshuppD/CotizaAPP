@@ -408,21 +408,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elements.porcentajeDescuentoMain) elements.porcentajeDescuentoMain.addEventListener('input', () => updateCalculations('discount-manual'));
     
     if (elements.parkSelector) elements.parkSelector.addEventListener('change', () => updateCalculations('park'));
+    const productPageMap = {
+        'sepultacion': 'index.html',
+        'sepultura-liberador': 'sepultura-liberador.html',
+        'cremacion': 'cremacion.html',
+        'aumento-capacidad': 'aumento-capacidad.html',
+        'mantencion': 'mantencion.html'
+    };
+
     if (elements.productType) {
         elements.productType.addEventListener('change', () => { 
-            localStorage.setItem('lastProductType', elements.productType.value);
-            setProductVisibility(elements.productType.value);
-            updateCalculations('product'); 
+            const selectedVal = elements.productType.value;
+            localStorage.setItem('lastProductType', selectedVal);
+            const targetPage = productPageMap[selectedVal];
+            const currentPath = window.location.pathname;
+            const isAlreadyOnPage = currentPath.endsWith('/' + targetPage) || (targetPage === 'index.html' && (currentPath.endsWith('/') || currentPath.endsWith('/index.html')));
+            if (targetPage && !isAlreadyOnPage) {
+                window.location.href = targetPage;
+            } else {
+                setProductVisibility(selectedVal);
+                updateCalculations('product'); 
+            }
         });
     }
 
     if (elements.toggleGraphic) elements.toggleGraphic.addEventListener('change', toggleGraphic);
-
-    // Restaurar último producto
-    const savedType = localStorage.getItem('lastProductType');
-    if (savedType && elements.productType) {
-        elements.productType.value = savedType;
-    }
 
     if (elements.rightsInput) {
         elements.rightsInput.value = 1;
