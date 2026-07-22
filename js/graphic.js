@@ -1,7 +1,7 @@
 // js/graphic.js - Renderizado Gráfico Ilustrativo (Derechos, Ánforas, Criptas)
 
 function renderVisualGraphic(type, count) {
-    if (!elements.toggleGraphic || !elements.toggleGraphic.checked) {
+    if (elements.toggleGraphic && !elements.toggleGraphic.checked) {
         if (elements.sepultacionGraphicContainer) {
             elements.sepultacionGraphicContainer.style.display = 'none';
             elements.sepultacionGraphicContainer.innerHTML = '';
