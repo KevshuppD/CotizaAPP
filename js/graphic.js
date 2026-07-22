@@ -37,49 +37,84 @@ function renderVisualGraphic(type, count) {
     }
 
     if (type === 'sepultura-liberador' || type === 'aumento-capacidad') {
-        const top = document.createElement('div');
-        top.className = 'sepultura-header';
-        top.style.backgroundColor = '#333333';
-        top.style.height = '30px';
-        top.style.borderRadius = '5px 5px 0 0';
-        container.appendChild(top);
+        const reducciones = elements.reduccionesInput ? (parseInt(elements.reduccionesInput.value) || 0) : 0;
+        const capacidad = count;
 
-        for (let i = count; i >= 1; i--) {
-            const addedLevel = document.createElement('div');
-            addedLevel.className = 'sepultura-level';
-            addedLevel.style.backgroundColor = 'var(--primary-green)';
-            addedLevel.style.border = '1px solid #3d8b40';
-            addedLevel.style.color = '#ffffff';
-            addedLevel.style.fontWeight = 'bold';
-            addedLevel.style.fontSize = '12px';
-            addedLevel.style.height = '40px';
-            addedLevel.style.display = 'flex';
-            addedLevel.style.alignItems = 'center';
-            addedLevel.style.justifyContent = 'center';
-            addedLevel.textContent = '+' + i + ' SEPULTACIÓN';
-            container.appendChild(addedLevel);
+        // Título del gráfico
+        const titulo = document.createElement('div');
+        titulo.style.textAlign = 'center';
+        titulo.style.fontWeight = 'bold';
+        titulo.style.fontSize = '13px';
+        titulo.style.marginBottom = '10px';
+        titulo.style.color = '#333';
+        titulo.textContent = `Capacidad ${capacidad} - ${reducciones} Reducciones`;
+        container.appendChild(titulo);
+
+        // Contenedor de cuadrados apilados verticalmente
+        const stackContainer = document.createElement('div');
+        stackContainer.style.display = 'flex';
+        stackContainer.style.flexDirection = 'column';
+        stackContainer.style.alignItems = 'center';
+        stackContainer.style.gap = '4px';
+
+        // Cuadrado 1: capacidad base (siempre limpio, sin subdivisiones)
+        const baseBox = document.createElement('div');
+        baseBox.style.width = '120px';
+        baseBox.style.height = '120px';
+        baseBox.style.border = '3px solid var(--primary-green)';
+        baseBox.style.borderRadius = '8px';
+        baseBox.style.display = 'flex';
+        baseBox.style.alignItems = 'center';
+        baseBox.style.justifyContent = 'center';
+        baseBox.style.backgroundColor = '#e8f5e9';
+        baseBox.style.fontWeight = 'bold';
+        baseBox.style.fontSize = '11px';
+        baseBox.style.color = '#333';
+        baseBox.style.textAlign = 'center';
+        baseBox.textContent = 'CAPACIDAD 1';
+        stackContainer.appendChild(baseBox);
+
+        // Cuadrados adicionales: cada uno dividido en 4 reducciones
+        const reduccionesPorCapacidad = 4;
+        for (let i = 2; i <= capacidad; i++) {
+            const capBox = document.createElement('div');
+            capBox.style.width = '120px';
+            capBox.style.height = '120px';
+            capBox.style.border = '3px solid var(--primary-green)';
+            capBox.style.borderRadius = '8px';
+            capBox.style.display = 'grid';
+            capBox.style.gridTemplateColumns = '1fr 1fr';
+            capBox.style.gridTemplateRows = '1fr 1fr';
+            capBox.style.overflow = 'hidden';
+            capBox.style.backgroundColor = '#fff';
+
+            const startReduc = (i - 2) * reduccionesPorCapacidad + 1;
+            for (let r = 0; r < reduccionesPorCapacidad; r++) {
+                const reducNum = startReduc + r;
+                const cell = document.createElement('div');
+                cell.style.display = 'flex';
+                cell.style.alignItems = 'center';
+                cell.style.justifyContent = 'center';
+                cell.style.fontSize = '10px';
+                cell.style.fontWeight = 'bold';
+                cell.style.color = '#fff';
+                cell.style.backgroundColor = 'var(--primary-green)';
+                cell.style.border = '1px solid #3d8b40';
+
+                if (reducNum <= reducciones) {
+                    cell.textContent = 'R' + reducNum;
+                } else {
+                    cell.style.backgroundColor = '#d0d0d0';
+                    cell.style.color = '#999';
+                    cell.textContent = 'R' + reducNum;
+                }
+                capBox.appendChild(cell);
+            }
+
+            stackContainer.appendChild(capBox);
         }
 
-        const baseSpace = document.createElement('div');
-        baseSpace.className = 'sepultura-level';
-        baseSpace.style.backgroundColor = '#d0d0d0';
-        baseSpace.style.border = '1px solid #999999';
-        baseSpace.style.color = '#333333';
-        baseSpace.style.fontWeight = 'bold';
-        baseSpace.style.fontSize = '12px';
-        baseSpace.style.height = '40px';
-        baseSpace.style.display = 'flex';
-        baseSpace.style.alignItems = 'center';
-        baseSpace.style.justifyContent = 'center';
-        baseSpace.textContent = 'ESPACIO 1';
-        container.appendChild(baseSpace);
-
-        const base = document.createElement('div');
-        base.className = 'sepultura-base';
-        base.style.backgroundColor = 'var(--primary-green)';
-        base.style.height = '20px';
-        base.style.borderRadius = '0 0 8px 8px';
-        container.appendChild(base);
+        container.appendChild(stackContainer);
     } else if (type === 'sepultacion') {
         const top = document.createElement('div');
         top.className = 'sepultura-header';

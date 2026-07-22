@@ -132,8 +132,9 @@ function updateCalculations(triggeredBy = '') {
     }
 
     if (type === 'aumento-capacidad' && elements.liberadorGraphicContainer) {
-        elements.liberadorGraphicContainer.style.display = elements.toggleGraphic.checked ? 'block' : 'none';
-        if (!elements.toggleGraphic.checked) elements.liberadorGraphicContainer.innerHTML = '';
+        const toggleChecked = elements.toggleGraphic ? elements.toggleGraphic.checked : true;
+        elements.liberadorGraphicContainer.style.display = toggleChecked ? 'block' : 'none';
+        if (!toggleChecked) elements.liberadorGraphicContainer.innerHTML = '';
     }
 
     if (elements.liberadorGraphicContainer && type !== 'sepultura-liberador' && type !== 'aumento-capacidad') {
