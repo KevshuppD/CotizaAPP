@@ -2,7 +2,6 @@
 
 function calculateSepulturaLiberador() {
     const parque = elements.parkSelector ? elements.parkSelector.value : '';
-    const isPrado = parque.toUpperCase().includes('PRADO');
     
     // 1. Leer Valor Real (editable en ref-uf-input)
     const valorRealUF = parseFloat(elements.refUfInput ? elements.refUfInput.value : '') || 0;
@@ -37,7 +36,7 @@ function calculateSepulturaLiberador() {
 
     // 4. Pie (%) - default 5% for Prado, 10% for others (editable)
     const piePercentEl = document.getElementById('pie-percent');
-    const piePercent = piePercentEl ? (parseFloat(piePercentEl.value) || 0) : (isPrado ? 5 : 10);
+    const piePercent = piePercentEl ? (parseFloat(piePercentEl.value) || 0) : 10;
     
     const pieUF = valorRealUF * (piePercent / 100);
     const pieCLP = valorRealCLP * (piePercent / 100);
@@ -60,7 +59,7 @@ function calculateSepulturaLiberador() {
         setCLPValue(elements.saldoFinanciarClpInput, Math.round(saldoCLP));
     }
 
-    // 6. Generar Cuotas (12 a 108 cuotas para todos los parques)
+    // 6. Generar Cuotas (12 a 108 cuotas para todos los productos)
     const plazos = [12, 24, 36, 48, 60, 72, 84, 96, 108];
 
     let tablaCuotasHTML = '';
@@ -76,7 +75,7 @@ function calculateSepulturaLiberador() {
             72: 0.01693,
             84: 0.01495,
             96: 0.01348,
-            108: isPrado ? 0.01238 : 0.01235
+            108: 0.01238 // Tasa unificada oficial
         };
 
         // Base cuota
@@ -85,34 +84,24 @@ function calculateSepulturaLiberador() {
         } else {
             const tasa = tasasStandard[plazo] || 0;
             valorCuotaUF = saldoUF * tasa;
-            if (plazo === 108 && !isPrado) {
-                valorCuotaUF += 0.003;
-            }
         }
 
-        if (isPrado) {
-            if (plazo < 36) {
-                // Sumar $5.250 en pesos ( GA $3500 + Seguro $1750 )
-                const baseCLP = saldoCLP / plazo;
-                const seguroCLP = 1750;
-                const gaCLP = 3500;
-                totalCuotaCLP = Math.round(baseCLP + seguroCLP + gaCLP);
-                totalCuotaUF = totalCuotaCLP / currentUFValue;
-                
-                valorCuotaUF = baseCLP / currentUFValue;
-                seguroUF = seguroCLP / currentUFValue;
-                gastoAdminUF = gaCLP / currentUFValue;
-            } else {
-                // Sumar 0.15 UF en UF ( GA 0.10 + Seguro 0.05 )
-                seguroUF = 0.05;
-                gastoAdminUF = 0.10;
-                totalCuotaUF = valorCuotaUF + seguroUF + gastoAdminUF;
-                totalCuotaCLP = Math.round(totalCuotaUF * currentUFValue);
-            }
+        // Regla de recargo fija de Seguro + Gasto Adm. para todos los productos de esta página
+        if (plazo < 36) {
+            // Sumar $5.250 en pesos ( GA $3.500 + Seguro $1.750 )
+            const baseCLP = saldoCLP / plazo;
+            const seguroCLP = 1750;
+            const gaCLP = 3500;
+            totalCuotaCLP = Math.round(baseCLP + seguroCLP + gaCLP);
+            totalCuotaUF = totalCuotaCLP / currentUFValue;
+            
+            valorCuotaUF = baseCLP / currentUFValue;
+            seguroUF = seguroCLP / currentUFValue;
+            gastoAdminUF = gaCLP / currentUFValue;
         } else {
-            // Estándar para otros parques
-            seguroUF = (saldoUF > 0 && plazo > 0) ? (0.0016 * saldoUF) : 0;
-            gastoAdminUF = 0.02;
+            // Sumar 0.15 UF en UF ( GA 0.10 + Seguro 0.05 )
+            seguroUF = 0.05;
+            gastoAdminUF = 0.10;
             totalCuotaUF = valorCuotaUF + seguroUF + gastoAdminUF;
             totalCuotaCLP = Math.round(totalCuotaUF * currentUFValue);
         }

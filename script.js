@@ -565,6 +565,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const [cap, red] = val.split('-').map(Number);
             if (elements.rightsInput) elements.rightsInput.value = cap;
             if (elements.reduccionesInput) elements.reduccionesInput.value = red;
+
+            // Actualizar el valor real UF según el mapa de precios al cambiar de opción
+            const selectedProduct = elements.parkSelector ? elements.parkSelector.value : 'PRADO';
+            const priceMap = {
+                'PRADO': { '2-4': 190, '3-8': 220, '4-12': 250 },
+                'INTEGRA_MANANTIAL_A3': { '2-4': 102, '3-8': 107, '4-12': 110 },
+                'INTEGRA_PREMIUM_A3': { '2-4': 110, '3-8': 120, '4-12': 125 },
+                'INTEGRA_PEUMOS': { '2-4': 87, '3-8': 92, '4-12': 95 },
+                'INTEGRA_CANAAN': { '2-4': 92, '3-8': 97, '4-12': 100 },
+                'SB_CANAAN': { '2-4': 77, '3-8': 87, '4-12': 95 }
+            };
+            const productPrices = priceMap[selectedProduct] || priceMap['PRADO'];
+            const baseRefUf = productPrices[val] || 190;
+            if (elements.refUfInput) {
+                elements.refUfInput.value = baseRefUf;
+            }
+
             updateCalculations('rights');
         });
         // Inicializar opciones según parque actual
