@@ -135,3 +135,82 @@ function fetchUFValue() {
         if (typeof updateCalculations === 'function') updateCalculations('uf-manual');
     });
 }
+
+function getCaptureOptions() {
+    return {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        ignoreElements: function(element) {
+            return element.classList && element.classList.contains('no-export');
+        }
+    };
+}
+
+function exportAsImage() {
+    const captureArea = document.getElementById('capture-area');
+    if (!captureArea) return;
+
+    if (typeof html2canvas === 'undefined') {
+        alert('Error: html2canvas no está disponible.');
+        return;
+    }
+
+    html2canvas(captureArea, getCaptureOptions()).then(canvas => {
+        const link = document.createElement('a');
+        const parkName = (elements.parkSelector ? elements.parkSelector.value : 'parque').toLowerCase().replace(/\s+/g, '-');
+        const now = new Date().toISOString().slice(0, 10);
+        link.download = `cotizacion-${parkName}-${now}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    }).catch(err => {
+        console.error('Error al exportar imagen:', err);
+        alert('Ocurrió un error al generar la imagen.');
+    });
+}
+
+function shareAsImage() {
+    const captureArea = document.getElementById('capture-area');
+    if (!captureArea) return;
+
+    if (typeof html2canvas === 'undefined') {
+        alert('Error: html2canvas no está disponible.');
+        return;
+    }
+
+    html2canvas(captureArea, getCaptureOptions()).then(canvas => {
+        canvas.toBlob(blob => {
+            if (!blob) {
+                alert('No se pudo generar la imagen para compartir.');
+                return;
+            }
+
+            const parkName = (elements.parkSelector ? elements.parkSelector.value : 'parque').toLowerCase().replace(/\s+/g, '-');
+            const now = new Date().toISOString().slice(0, 10);
+            const fileName = `cotizacion-${parkName}-${now}.png`;
+            const file = new File([blob], fileName, { type: 'image/png' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                navigator.share({
+                    title: 'Cotización Parque',
+                    text: 'Te comparto la cotización en formato imagen.',
+                    files: [file]
+                }).catch(err => {
+                    if (err.name !== 'AbortError') {
+                        console.error('Error al compartir:', err);
+                    }
+                });
+            } else {
+                const link = document.createElement('a');
+                link.download = fileName;
+                link.href = URL.createObjectURL(blob);
+                link.click();
+                alert('Tu dispositivo/navegador no soporta compartir imágenes directamente. La imagen ha sido descargada.');
+            }
+        }, 'image/png');
+    }).catch(err => {
+        console.error('Error al capturar para compartir:', err);
+        alert('Ocurrió un error al preparar la imagen para compartir.');
+    });
+}
