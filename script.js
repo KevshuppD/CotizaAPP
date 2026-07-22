@@ -107,6 +107,41 @@ function getReduccionesFromCapacidad(capacidad) {
     return capacidad * 2;
 }
 
+function updateCapacidadReduccionesOptions() {
+    const select = elements.capacidadReduccionesSelect;
+    if (!select) return;
+
+    const parque = elements.parkSelector ? elements.parkSelector.value : '';
+    const esPrado = parque.toUpperCase().includes('PRADO');
+
+    select.innerHTML = '';
+
+    if (esPrado) {
+        const opt = document.createElement('option');
+        opt.value = '4-8';
+        opt.textContent = 'Capacidad 4 - 8 Reducciones';
+        select.appendChild(opt);
+    } else {
+        const opciones = [
+            { value: '2-4', text: 'Capacidad 2 - 4 Reducciones' },
+            { value: '3-8', text: 'Capacidad 3 - 8 Reducciones' },
+            { value: '4-12', text: 'Capacidad 4 - 12 Reducciones' },
+            { value: '8-20', text: 'Capacidad 8 - 20 Reducciones' }
+        ];
+        opciones.forEach(o => {
+            const opt = document.createElement('option');
+            opt.value = o.value;
+            opt.textContent = o.text;
+            select.appendChild(opt);
+        });
+    }
+
+    // Sincronizar inputs ocultos con la nueva selección
+    const [cap, red] = select.value.split('-').map(Number);
+    if (elements.rightsInput) elements.rightsInput.value = cap;
+    if (elements.reduccionesInput) elements.reduccionesInput.value = red;
+}
+
 function updateCalculations(triggeredBy = '') {
     if (elements.ufInput && elements.ufInput.value.trim() !== '') {
         const manualVal = parseFloat(elements.ufInput.value);
@@ -418,7 +453,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elements.tipoDescuentoMain) elements.tipoDescuentoMain.addEventListener('change', () => updateCalculations('discount-manual'));
     if (elements.porcentajeDescuentoMain) elements.porcentajeDescuentoMain.addEventListener('input', () => updateCalculations('discount-manual'));
     
-    if (elements.parkSelector) elements.parkSelector.addEventListener('change', () => updateCalculations('park'));
+    if (elements.parkSelector) elements.parkSelector.addEventListener('change', () => {
+        updateCapacidadReduccionesOptions();
+        updateCalculations('park');
+    });
+
     const productPageMap = {
         'sepultacion': 'index.html',
         'sepultura-liberador': 'sepultura-liberador.html',
@@ -454,11 +493,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (elements.reduccionesInput) elements.reduccionesInput.value = red;
             updateCalculations('rights');
         });
-        // Disparar la selección inicial
-        const initVal = elements.capacidadReduccionesSelect.value;
-        const [initCap, initRed] = initVal.split('-').map(Number);
-        if (elements.rightsInput) elements.rightsInput.value = initCap;
-        if (elements.reduccionesInput) elements.reduccionesInput.value = initRed;
+        // Inicializar opciones según parque actual
+        updateCapacidadReduccionesOptions();
     } else if (elements.rightsInput) {
         elements.rightsInput.value = 1;
     }
