@@ -42,10 +42,10 @@ function calculateCremacionCuotas(balanceUf, uf, hasPromoVal) {
         factor12, factor24, factor36, factor48,
         cuota12, cuota24, cuota36, cuota48,
         notes: {
-            12: `Incluye GA (3.500 $) + Seguro (1.750 $)`,
-            24: `Incluye GA (3.500 $) + Seguro (1.750 $)`,
-            36: `Incluye GA (0,10 UF) + Seguro (0,05 UF)`,
-            48: `Incluye GA (0,10 UF) + Seguro (0,05 UF)`
+            12: '',
+            24: '',
+            36: '',
+            48: ''
         }
     };
 }
