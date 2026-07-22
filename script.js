@@ -7,27 +7,30 @@ function setProductVisibility(type) {
     const isAumento = type === 'aumento-capacidad';
 
     // Ajustar límites de capacidad según el producto
-    if (isAumento) {
-        elements.rightsInput.max = 2;
-        if (parseInt(elements.rightsInput.value) > 2) {
-            elements.rightsInput.value = 2;
+    if (elements.rightsInput && elements.rightsInput.type !== 'hidden') {
+        if (isAumento) {
+            elements.rightsInput.max = 2;
+            if (parseInt(elements.rightsInput.value) > 2) {
+                elements.rightsInput.value = 2;
+            }
+        } else if (isLiberador || type === 'cremacion') {
+            elements.rightsInput.max = 4;
+            if (parseInt(elements.rightsInput.value) > 4) {
+                elements.rightsInput.value = 4;
+            }
+        } else {
+            elements.rightsInput.max = 10;
         }
-    } else if (isLiberador || type === 'cremacion') {
-        elements.rightsInput.max = 4;
-        if (parseInt(elements.rightsInput.value) > 4) {
-            elements.rightsInput.value = 4;
-        }
-    } else {
-        elements.rightsInput.max = 10;
     }
 
-    elements.sepultacionFields.style.display = (isSepultacionFamily || isAumento || isLiberador) ? 'block' : 'none';
-    elements.mantencionFields.style.display = isMantencion ? 'block' : 'none';
+    if (elements.sepultacionFields) elements.sepultacionFields.style.display = (isSepultacionFamily || isAumento || isLiberador) ? 'block' : 'none';
+    if (elements.mantencionFields) elements.mantencionFields.style.display = isMantencion ? 'block' : 'none';
 
     if (elements.liberadorGraphicContainer) {
+        const toggleChecked = elements.toggleGraphic ? elements.toggleGraphic.checked : true;
         if (isAumento || isLiberador) {
-            elements.liberadorGraphicContainer.style.display = elements.toggleGraphic.checked ? 'block' : 'none';
-            if (!elements.toggleGraphic.checked) {
+            elements.liberadorGraphicContainer.style.display = toggleChecked ? 'block' : 'none';
+            if (!toggleChecked) {
                 elements.liberadorGraphicContainer.innerHTML = '';
             }
         } else {
@@ -39,9 +42,9 @@ function setProductVisibility(type) {
         elements.descuentoRowMain.style.display = (isSepultacionFamily || isAumento || isLiberador) ? '' : 'none';
     }
 
-    elements.sepultacionOutput.style.display = (isSepultacionFamily || isAumento || isLiberador) ? 'block' : 'none';
-    elements.mantencionOutput.style.display = isMantencion ? 'block' : 'none';
-    elements.sepulturaLiberadorOutput.style.display = isLiberador ? 'block' : 'none';
+    if (elements.sepultacionOutput) elements.sepultacionOutput.style.display = (isSepultacionFamily || isAumento || isLiberador) ? 'block' : 'none';
+    if (elements.mantencionOutput) elements.mantencionOutput.style.display = isMantencion ? 'block' : 'none';
+    if (elements.sepulturaLiberadorOutput) elements.sepulturaLiberadorOutput.style.display = isLiberador ? 'block' : 'none';
     
     if (elements.reduccionesContainer) {
         elements.reduccionesContainer.style.display = (isLiberador || isAumento) ? 'flex' : 'none';
@@ -65,29 +68,29 @@ function setProductVisibility(type) {
     }
 
     if (isMantencion) {
-        elements.parkSelector.disabled = true;
-        elements.parkSelector.style.display = 'none';
-        elements.parkStaticValue.style.display = 'inline';
-        elements.parkStaticValue.textContent = 'Nuestros Parques';
-        elements.parkLabel.textContent = 'Nuestros Parques';
-        elements.parkDisplay.textContent = 'NUESTROS PARQUES';
-        elements.capacityUnit.textContent = 'derechos';
-        elements.mainTitle.textContent = 'Mantención';
-        elements.serviceImageContainer.style.display = 'none';
-        elements.refValueContainer.style.display = 'none';
+        if (elements.parkSelector) elements.parkSelector.disabled = true;
+        if (elements.parkSelector) elements.parkSelector.style.display = 'none';
+        if (elements.parkStaticValue) elements.parkStaticValue.style.display = 'inline';
+        if (elements.parkStaticValue) elements.parkStaticValue.textContent = 'Nuestros Parques';
+        if (elements.parkLabel) elements.parkLabel.textContent = 'Nuestros Parques';
+        if (elements.parkDisplay) elements.parkDisplay.textContent = 'NUESTROS PARQUES';
+        if (elements.capacityUnit) elements.capacityUnit.textContent = 'derechos';
+        if (elements.mainTitle) elements.mainTitle.textContent = 'Mantención';
+        if (elements.serviceImageContainer) elements.serviceImageContainer.style.display = 'none';
+        if (elements.refValueContainer) elements.refValueContainer.style.display = 'none';
     } else if (isSepultacionFamily || isAumento || isLiberador) {
-        elements.parkSelector.disabled = false;
-        elements.parkSelector.style.display = '';
-        elements.parkStaticValue.style.display = 'none';
-        elements.parkLabel.textContent = 'Parque';
-        elements.parkDisplay.textContent = 'PARQUE ' + elements.parkSelector.value;
-        elements.capacityUnit.textContent = (type === 'cremacion') ? 'Anforas' : (isAumento ? 'capacidades' : (isLiberador ? 'criptas' : 'derechos'));
-        elements.mainTitle.textContent = (type === 'cremacion')
+        if (elements.parkSelector) elements.parkSelector.disabled = false;
+        if (elements.parkSelector) elements.parkSelector.style.display = '';
+        if (elements.parkStaticValue) elements.parkStaticValue.style.display = 'none';
+        if (elements.parkLabel) elements.parkLabel.textContent = 'Parque';
+        if (elements.parkDisplay && elements.parkSelector) elements.parkDisplay.textContent = 'PARQUE ' + elements.parkSelector.value;
+        if (elements.capacityUnit) elements.capacityUnit.textContent = (type === 'cremacion') ? 'Anforas' : (isAumento ? 'capacidades' : (isLiberador ? 'criptas' : 'derechos'));
+        if (elements.mainTitle) elements.mainTitle.textContent = (type === 'cremacion')
             ? 'Cremación Anticipada'
             : (isAumento ? 'Aumento de Capacidad' : (isLiberador ? 'Sepultura con Beneficios' : 'Cotización Derecho de Sepultación Anticipada'));
-        elements.refValueContainer.style.display = type === 'sepultacion' ? 'block' : 'none';
-        elements.serviceImageContainer.style.display = type === 'cremacion' ? 'block' : 'none';
-        elements.refLabel.textContent = type === 'sepultacion' ? 'Valor referencia por 1 derecho' : 'Valor referencia por 1 cripta';
+        if (elements.refValueContainer) elements.refValueContainer.style.display = type === 'sepultacion' ? 'block' : 'none';
+        if (elements.serviceImageContainer) elements.serviceImageContainer.style.display = type === 'cremacion' ? 'block' : 'none';
+        if (elements.refLabel) elements.refLabel.textContent = type === 'sepultacion' ? 'Valor referencia por 1 derecho' : 'Valor referencia por 1 cripta';
     }
 }
 
