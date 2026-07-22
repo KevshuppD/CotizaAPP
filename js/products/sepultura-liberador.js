@@ -4,9 +4,9 @@ function calculateSepulturaLiberador() {
     if (elements.valorNiUf && elements.valorNiUf.value.trim() === '') {
         elements.valorNiUf.value = '46.41';
     }
-    const valorRealUF = parseFloat(elements.valorNiUf.value) || 0;
+    const valorRealUF = parseFloat(elements.valorNiUf ? elements.valorNiUf.value : '') || 0;
     const tipoDesc = elements.tipoDescuentoMain ? elements.tipoDescuentoMain.value : 'percent';
-    const rawDesc = parseFloat(elements.porcentajeDescuentoMain.value) || 0;
+    const rawDesc = elements.porcentajeDescuentoMain ? (parseFloat(elements.porcentajeDescuentoMain.value) || 0) : 0;
     
     let porcentajeDescuento = 0;
     if (valorRealUF > 0) {
@@ -19,7 +19,7 @@ function calculateSepulturaLiberador() {
         }
     }
 
-    const percentagePieValue = (parseFloat(elements.piePercent.value) || 0);
+    const percentagePieValue = elements.piePercent ? (parseFloat(elements.piePercent.value) || 0) : 0;
     const porcentajePie = percentagePieValue / 100;
 
     const valorRealCLP = valorRealUF * currentUFValue;
