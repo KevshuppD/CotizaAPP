@@ -82,8 +82,22 @@ function setProductVisibility(type) {
         if (elements.parkSelector) elements.parkSelector.disabled = false;
         if (elements.parkSelector) elements.parkSelector.style.display = '';
         if (elements.parkStaticValue) elements.parkStaticValue.style.display = 'none';
-        if (elements.parkLabel) elements.parkLabel.textContent = 'Parque';
-        if (elements.parkDisplay && elements.parkSelector) elements.parkDisplay.textContent = 'PARQUE ' + elements.parkSelector.value;
+        if (elements.parkLabel) elements.parkLabel.textContent = isLiberador ? 'Producto' : 'Parque';
+        if (elements.parkDisplay && elements.parkSelector) {
+            if (isLiberador) {
+                const displayMap = {
+                    'PRADO': 'PRODUCTO PRADO',
+                    'INTEGRA_MANANTIAL_A3': 'PRODUCTO INTEGRA MANANTIAL - SANTIAGO SECTOR A3',
+                    'INTEGRA_PREMIUM_A3': 'PRODUCTO INTEGRA PREMIUM MANANTIAL - SANTIAGO SECTOR A3',
+                    'INTEGRA_PEUMOS': 'PRODUCTO INTEGRA - PEUMOS SANTIAGO',
+                    'INTEGRA_CANAAN': 'PRODUCTO INTEGRA - CANAAN',
+                    'SB_CANAAN': 'PRODUCTO SB - CANAAN'
+                };
+                elements.parkDisplay.textContent = displayMap[elements.parkSelector.value] || ('PRODUCTO ' + elements.parkSelector.value);
+            } else {
+                elements.parkDisplay.textContent = 'PARQUE ' + elements.parkSelector.value;
+            }
+        }
         if (elements.capacityUnit) elements.capacityUnit.textContent = (type === 'cremacion') ? 'Anforas' : (isAumento ? 'capacidades' : (isLiberador ? 'criptas' : 'derechos'));
         if (elements.mainTitle) elements.mainTitle.textContent = (type === 'cremacion')
             ? 'Cremación Anticipada'
@@ -114,49 +128,58 @@ function updateCapacidadReduccionesOptions() {
     const select = elements.capacidadReduccionesSelect;
     if (!select) return;
 
-    const parque = elements.parkSelector ? elements.parkSelector.value : '';
-    const esPrado = parque.toUpperCase().includes('PRADO');
-
-    // Guardar selección actual antes de reconstruir (si coincide con las opciones del parque)
+    const selectedProduct = elements.parkSelector ? elements.parkSelector.value : 'PRADO';
     const prevVal = select.value;
 
     select.innerHTML = '';
 
-    if (esPrado) {
-        const opciones = [
+    // Mapa de opciones por producto
+    const opcionesMap = {
+        'PRADO': [
             { value: '2-4', text: '2 Capa + 1 Sepultación (Capacidad 2 - 4 Reducciones)' },
             { value: '3-8', text: '3 Capa + 1 Sepultación (Capacidad 3 - 8 Reducciones)' },
             { value: '4-12', text: '4 Capa + 1 Sepultación (Capacidad 4 - 12 Reducciones)' }
-        ];
-        opciones.forEach(o => {
-            const opt = document.createElement('option');
-            opt.value = o.value;
-            opt.textContent = o.text;
-            select.appendChild(opt);
-        });
-        if (prevVal && ['2-4', '3-8', '4-12'].includes(prevVal)) {
-            select.value = prevVal;
-        } else {
-            select.value = '2-4'; // Por defecto Capacidad 2 para Prado
-        }
+        ],
+        'INTEGRA_MANANTIAL_A3': [
+            { value: '2-4', text: '2 Capa + 1 Sepultación (Capacidad 2 - 4 Reducciones)' },
+            { value: '3-8', text: '3 Capa + 1 Sepultación (Capacidad 3 - 8 Reducciones)' },
+            { value: '4-12', text: '4 Capa + 1 Sepultación (Capacidad 4 - 12 Reducciones)' }
+        ],
+        'INTEGRA_PREMIUM_A3': [
+            { value: '2-4', text: '2 Capa + 2 Sepultación (Capacidad 2 - 4 Reducciones)' },
+            { value: '3-8', text: '3 Capa + 3 Sepultación (Capacidad 3 - 8 Reducciones)' },
+            { value: '4-12', text: '4 Capa + 4 Sepultación (Capacidad 4 - 12 Reducciones)' }
+        ],
+        'INTEGRA_PEUMOS': [
+            { value: '2-4', text: '2 Capa + 1 Sepultación (Capacidad 2 - 4 Reducciones)' },
+            { value: '3-8', text: '3 Capa + 1 Sepultación (Capacidad 3 - 8 Reducciones)' },
+            { value: '4-12', text: '4 Capa + 1 Sepultación (Capacidad 4 - 12 Reducciones)' }
+        ],
+        'INTEGRA_CANAAN': [
+            { value: '2-4', text: '2 Capa + 1 Sepultación (Capacidad 2 - 4 Reducciones)' },
+            { value: '3-8', text: '3 Capa + 1 Sepultación (Capacidad 3 - 8 Reducciones)' },
+            { value: '4-12', text: '4 Capa + 1 Sepultación (Capacidad 4 - 12 Reducciones)' }
+        ],
+        'SB_CANAAN': [
+            { value: '2-4', text: '2 Capacidades (Capacidad 2 - 4 Reducciones)' },
+            { value: '3-8', text: '3 Capacidades (Capacidad 3 - 8 Reducciones)' },
+            { value: '4-12', text: '4 Capacidades (Capacidad 4 - 12 Reducciones)' }
+        ]
+    };
+
+    const opciones = opcionesMap[selectedProduct] || opcionesMap['PRADO'];
+    opciones.forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.value;
+        opt.textContent = o.text;
+        select.appendChild(opt);
+    });
+
+    // Mantener la selección previa si sigue siendo válida
+    if (prevVal && opciones.some(o => o.value === prevVal)) {
+        select.value = prevVal;
     } else {
-        const opciones = [
-            { value: '2-4', text: 'Capacidad 2 - 4 Reducciones' },
-            { value: '3-8', text: 'Capacidad 3 - 8 Reducciones' },
-            { value: '4-12', text: 'Capacidad 4 - 12 Reducciones' },
-            { value: '8-20', text: 'Capacidad 8 - 20 Reducciones' }
-        ];
-        opciones.forEach(o => {
-            const opt = document.createElement('option');
-            opt.value = o.value;
-            opt.textContent = o.text;
-            select.appendChild(opt);
-        });
-        if (prevVal && ['2-4', '3-8', '4-12', '8-20'].includes(prevVal)) {
-            select.value = prevVal;
-        } else {
-            select.value = '2-4';
-        }
+        select.value = '2-4';
     }
 
     // Sincronizar inputs ocultos con la nueva selección
@@ -164,17 +187,32 @@ function updateCapacidadReduccionesOptions() {
     if (elements.rightsInput) elements.rightsInput.value = cap;
     if (elements.reduccionesInput) elements.reduccionesInput.value = red;
 
-    // Actualizar Valor Real según el mapa de precios
+    // Mapa de precios en UF por Producto y Opción
     const priceMap = {
-        'EL PRADO': { '2-4': 190, '3-8': 220, '4-12': 250 },
-        'EL MANANTIAL': { '2-4': 167, '3-8': 189, '4-12': 198, '8-20': 299 },
-        'SANTIAGO': { '2-4': 179, '3-8': 224, '4-12': 249, '8-20': 339 },
-        'CANAÁN': { '2-4': 179, '3-8': 224, '4-12': 249, '8-20': 339 }
+        'PRADO': { '2-4': 190, '3-8': 220, '4-12': 250 },
+        'INTEGRA_MANANTIAL_A3': { '2-4': 102, '3-8': 107, '4-12': 110 },
+        'INTEGRA_PREMIUM_A3': { '2-4': 110, '3-8': 120, '4-12': 125 },
+        'INTEGRA_PEUMOS': { '2-4': 87, '3-8': 92, '4-12': 95 },
+        'INTEGRA_CANAAN': { '2-4': 92, '3-8': 97, '4-12': 100 },
+        'SB_CANAAN': { '2-4': 77, '3-8': 87, '4-12': 95 }
     };
-    const parkMap = priceMap[parque.toUpperCase()] || priceMap['EL MANANTIAL'];
-    const baseRefUf = parkMap[select.value] || 190;
+
+    const productPrices = priceMap[selectedProduct] || priceMap['PRADO'];
+    const baseRefUf = productPrices[select.value] || 190;
     if (elements.refUfInput) {
         elements.refUfInput.value = baseRefUf;
+    }
+
+    // Configurar Descuento por defecto (Prado: 20%, otros: 0%)
+    const descPercentEl = document.getElementById('porcentaje-descuento-main');
+    if (descPercentEl) {
+        descPercentEl.value = (selectedProduct === 'PRADO') ? 20 : 0;
+    }
+
+    // Configurar Pie por defecto (Prado: 5%, otros: 10%)
+    const piePercentEl = document.getElementById('pie-percent');
+    if (piePercentEl) {
+        piePercentEl.value = (selectedProduct === 'PRADO') ? 5 : 10;
     }
 }
 
