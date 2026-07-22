@@ -129,6 +129,7 @@ function updateCalculations(triggeredBy = '') {
 
     if (type === 'sepultura-liberador') {
         calculateSepulturaLiberador();
+        return;
     }
 
     if (type === 'aumento-capacidad' && elements.liberadorGraphicContainer) {
