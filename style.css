@@ -27,12 +27,64 @@ body {
         padding: 40px 20px;
     }
     .container {
-        width: 1050px; 
-        min-width: 1050px; /* Asegura que no se achique más allá de este punto en escritorio */
-        padding: 40px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        width: 1260px; 
+        min-width: 1200px;
+        max-width: 95vw;
+        padding: 45px 50px;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+    }
+    table {
+        font-size: 15px;
+    }
+    th, td {
+        padding: 8px 12px;
+    }
+    .park-logo {
+        height: 90px;
+    }
+    .header-title-container h1 {
+        font-size: 26px !important;
+    }
+    .park-display {
+        font-size: 28px !important;
+    }
+    .btn {
+        padding: 10px 22px;
+        font-size: 15px;
+    }
+    .product-selector-container {
+        padding: 14px 18px;
+        font-size: 16px;
+    }
+    .product-selector-container select {
+        font-size: 16px !important;
+        padding: 6px 12px !important;
     }
 }
+
+/* Large screens (Full HD / 2K) */
+@media (min-width: 1400px) {
+    .container {
+        width: 1380px;
+        padding: 50px 60px;
+    }
+    table {
+        font-size: 16px;
+    }
+    th, td {
+        padding: 10px 14px;
+    }
+    .park-logo {
+        height: 105px;
+    }
+    .header-title-container h1 {
+        font-size: 28px !important;
+    }
+    .park-display {
+        font-size: 32px !important;
+    }
+}
+
 
 .header-title-container {
     display: flex;
@@ -202,34 +254,75 @@ th, td {
 .gray-bg { background-color: #d9d9d9; }
 .green-bg { background-color: var(--primary-green); }
 
+/* Ocultar flechas nativas en inputs de tipo número para evitar desorden visual */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
 .input-inline {
-    border: 1px solid transparent;
+    border: none;
     background: transparent;
     font-family: inherit;
     font-size: inherit;
     width: 100%;
     text-align: right;
     outline: none;
-    transition: background 0.2s;
-    padding: 2px;
+    padding: 4px 6px;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
 }
 
 .input-inline:focus, .input-inline:hover {
-    background-color: rgba(0,0,0,0.05);
-    border-bottom: 1px dashed black;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-bottom: 2px solid var(--primary-green);
 }
 
 .editable-field {
-    border: 2px solid #000 !important;
-    background-color: #fff !important;
+    border: 1px transparent !important;
+    background-color: transparent !important;
     font-weight: bold;
-    padding: 2px 5px !important;
+    color: #111;
+    padding: 3px 6px !important;
     cursor: pointer;
     box-sizing: border-box;
+    border-radius: 3px;
+    transition: all 0.2s ease;
 }
 
-.editable-field:hover {
-    background-color: #f9f9f9 !important;
+.editable-field:hover, .editable-field:focus {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    border-bottom: 2px solid var(--primary-green) !important;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.currency-input-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.currency-input-wrapper span {
+    font-weight: bold;
+    margin-left: 0;
+    margin-right: 3px;
+    color: #111;
+    font-size: 15px;
+    user-select: none;
+}
+
+.currency-input-wrapper input {
+    font-size: 15px !important;
+    font-weight: bold !important;
+    color: #111 !important;
+    text-align: right;
 }
 
 .controls {
@@ -373,3 +466,10 @@ th, td {
     font-weight: bold;
     font-size: 16px;
 }
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
