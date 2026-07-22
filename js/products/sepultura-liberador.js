@@ -91,7 +91,7 @@ function calculateSepulturaLiberador() {
         }
 
         if (isPrado) {
-            if (plazo <= 36) {
+            if (plazo < 36) {
                 // Sumar $5.250 en pesos ( GA $3500 + Seguro $1750 )
                 const baseCLP = saldoCLP / plazo;
                 const seguroCLP = 1750;
