@@ -187,9 +187,12 @@ function updateCalculations(triggeredBy = '') {
             if (elements.valorNiClpInput) setCLPValue(elements.valorNiClpInput, promoClp);
             if (elements.valorNiUf && uf > 0) elements.valorNiUf.value = promoUf.toFixed(2);
         } else if (type === 'cremacion') {
-            const { promoUf, promoClp } = calculateCremacionPreset(rights, uf);
-            if (elements.valorNiUf) elements.valorNiUf.value = promoUf;
+            const { promoUf, promoClp, montoFinanciarClp, montoFinanciarUf, pieTotalClp } = calculateCremacionPreset(rights, uf);
+            if (elements.valorNiUf) elements.valorNiUf.value = promoUf.toFixed(2);
             if (elements.valorNiClpInput) setCLPValue(elements.valorNiClpInput, promoClp);
+            if (elements.pieClpInput) setCLPValue(elements.pieClpInput, pieTotalClp);
+            if (elements.saldoFinanciarClpInput) setCLPValue(elements.saldoFinanciarClpInput, montoFinanciarClp);
+            if (elements.saldoFinanciarUfInput) elements.saldoFinanciarUfInput.value = montoFinanciarUf.toFixed(2);
         } else if (type === 'aumento-capacidad') {
             calculateAumentoCapacidad(triggeredBy);
         }
@@ -241,7 +244,7 @@ function updateCalculations(triggeredBy = '') {
     // 4. Lógica de valores automáticos para Cremación o Sincronización con Valor Anticipado
     if (type === 'cremacion' && triggeredBy !== 'ant-manual' && triggeredBy !== 'ant-clp' && triggeredBy !== 'ant-uf') {
         const { promoUf } = calculateCremacionPreset(rights, uf);
-        elements.valorAntUf.value = promoUf;
+        elements.valorAntUf.value = promoUf.toFixed(2);
     } else if (triggeredBy !== 'ant-uf' && triggeredBy !== 'ant-clp') {
         if (hasPromoVal) {
             elements.valorAntUf.value = niUf.toFixed(2);
@@ -265,69 +268,74 @@ function updateCalculations(triggeredBy = '') {
     // 5. Pie Mínimo y Monto a Financiar (Sincronización Bidireccional)
     const pieBaseUf = niUf;
 
-    if (triggeredBy === 'saldo-clp' && elements.saldoFinanciarClpInput) {
-        const clpVal = parseCLP(elements.saldoFinanciarClpInput.value);
-        const calcSaldoUf = uf > 0 ? (clpVal / uf) : 0;
-        if (elements.saldoFinanciarUfInput) elements.saldoFinanciarUfInput.value = calcSaldoUf > 0 ? calcSaldoUf.toFixed(2) : '';
-        
-        const calcPieUf = Math.max(0, pieBaseUf - calcSaldoUf);
-        if (elements.pieUf) elements.pieUf.value = hasPromoVal ? calcPieUf.toFixed(2) : '';
-        if (elements.pieClpInput) setCLPValue(elements.pieClpInput, hasPromoVal ? Math.round(calcPieUf * uf) : '');
-        if (pieBaseUf > 0 && elements.piePercent) {
-            elements.piePercent.value = ((calcPieUf / pieBaseUf) * 100).toFixed(0);
+    if (type !== 'cremacion') {
+        if (triggeredBy === 'saldo-clp' && elements.saldoFinanciarClpInput) {
+            const clpVal = parseCLP(elements.saldoFinanciarClpInput.value);
+            const calcSaldoUf = uf > 0 ? (clpVal / uf) : 0;
+            if (elements.saldoFinanciarUfInput) elements.saldoFinanciarUfInput.value = calcSaldoUf > 0 ? calcSaldoUf.toFixed(2) : '';
+            
+            const calcPieUf = Math.max(0, pieBaseUf - calcSaldoUf);
+            if (elements.pieUf) elements.pieUf.value = hasPromoVal ? calcPieUf.toFixed(2) : '';
+            if (elements.pieClpInput) setCLPValue(elements.pieClpInput, hasPromoVal ? Math.round(calcPieUf * uf) : '');
+            if (pieBaseUf > 0 && elements.piePercent) {
+                elements.piePercent.value = ((calcPieUf / pieBaseUf) * 100).toFixed(0);
+            }
+        } else if (triggeredBy === 'saldo-uf' && elements.saldoFinanciarUfInput) {
+            const calcSaldoUf = parseFloat(elements.saldoFinanciarUfInput.value) || 0;
+            if (elements.saldoFinanciarClpInput) setCLPValue(elements.saldoFinanciarClpInput, hasPromoVal ? Math.round(calcSaldoUf * uf) : '');
+            
+            const calcPieUf = Math.max(0, pieBaseUf - calcSaldoUf);
+            if (elements.pieUf) elements.pieUf.value = hasPromoVal ? calcPieUf.toFixed(2) : '';
+            if (elements.pieClpInput) setCLPValue(elements.pieClpInput, hasPromoVal ? Math.round(calcPieUf * uf) : '');
+            if (pieBaseUf > 0 && elements.piePercent) {
+                elements.piePercent.value = ((calcPieUf / pieBaseUf) * 100).toFixed(0);
+            }
+        } else if (triggeredBy === 'pie-clp' && elements.pieClpInput) {
+            const clpVal = parseCLP(elements.pieClpInput.value);
+            const calcPieUf = uf > 0 ? (clpVal / uf) : 0;
+            if (elements.pieUf) elements.pieUf.value = calcPieUf > 0 ? calcPieUf.toFixed(2) : '';
+            if (pieBaseUf > 0 && elements.piePercent) {
+                elements.piePercent.value = ((calcPieUf / pieBaseUf) * 100).toFixed(0);
+            }
+            const calcSaldoUf = Math.max(0, pieBaseUf - calcPieUf);
+            if (elements.saldoFinanciarUfInput) elements.saldoFinanciarUfInput.value = hasPromoVal ? calcSaldoUf.toFixed(2) : '';
+            if (elements.saldoFinanciarClpInput) setCLPValue(elements.saldoFinanciarClpInput, hasPromoVal ? Math.round(calcSaldoUf * uf) : '');
+        } else if (triggeredBy === 'pie-uf' && elements.pieUf) {
+            const pieUfVal = parseFloat(elements.pieUf.value) || 0;
+            if (pieBaseUf > 0 && elements.piePercent) {
+                elements.piePercent.value = ((pieUfVal / pieBaseUf) * 100).toFixed(0);
+            }
+            if (elements.pieClpInput) setCLPValue(elements.pieClpInput, hasPromoVal ? Math.round(pieUfVal * uf) : '');
+            const calcSaldoUf = Math.max(0, pieBaseUf - pieUfVal);
+            if (elements.saldoFinanciarUfInput) elements.saldoFinanciarUfInput.value = hasPromoVal ? calcSaldoUf.toFixed(2) : '';
+            if (elements.saldoFinanciarClpInput) setCLPValue(elements.saldoFinanciarClpInput, hasPromoVal ? Math.round(calcSaldoUf * uf) : '');
+        } else if (triggeredBy === 'percent') {
+            const perc = parseFloat(elements.piePercent.value) || 0;
+            const pieUfVal = pieBaseUf * (perc / 100);
+            if (elements.pieUf) elements.pieUf.value = hasPromoVal ? pieUfVal.toFixed(2) : '';
+            if (elements.pieClpInput) setCLPValue(elements.pieClpInput, hasPromoVal ? Math.round(pieUfVal * uf) : '');
+            const calcSaldoUf = Math.max(0, pieBaseUf - pieUfVal);
+            if (elements.saldoFinanciarUfInput) elements.saldoFinanciarUfInput.value = hasPromoVal ? calcSaldoUf.toFixed(2) : '';
+            if (elements.saldoFinanciarClpInput) setCLPValue(elements.saldoFinanciarClpInput, hasPromoVal ? Math.round(calcSaldoUf * uf) : '');
+        } else {
+            const perc = parseFloat(elements.piePercent.value) || 10;
+            const pieUfVal = pieBaseUf * (perc / 100);
+            if (elements.pieUf) elements.pieUf.value = hasPromoVal ? pieUfVal.toFixed(2) : '';
+            if (elements.pieClpInput) setCLPValue(elements.pieClpInput, hasPromoVal ? Math.round(pieUfVal * uf) : '');
+            const calcSaldoUf = Math.max(0, pieBaseUf - pieUfVal);
+            if (elements.saldoFinanciarUfInput) elements.saldoFinanciarUfInput.value = hasPromoVal ? calcSaldoUf.toFixed(2) : '';
+            if (elements.saldoFinanciarClpInput) setCLPValue(elements.saldoFinanciarClpInput, hasPromoVal ? Math.round(calcSaldoUf * uf) : '');
         }
-    } else if (triggeredBy === 'saldo-uf' && elements.saldoFinanciarUfInput) {
-        const calcSaldoUf = parseFloat(elements.saldoFinanciarUfInput.value) || 0;
-        if (elements.saldoFinanciarClpInput) setCLPValue(elements.saldoFinanciarClpInput, hasPromoVal ? Math.round(calcSaldoUf * uf) : '');
-        
-        const calcPieUf = Math.max(0, pieBaseUf - calcSaldoUf);
-        if (elements.pieUf) elements.pieUf.value = hasPromoVal ? calcPieUf.toFixed(2) : '';
-        if (elements.pieClpInput) setCLPValue(elements.pieClpInput, hasPromoVal ? Math.round(calcPieUf * uf) : '');
-        if (pieBaseUf > 0 && elements.piePercent) {
-            elements.piePercent.value = ((calcPieUf / pieBaseUf) * 100).toFixed(0);
-        }
-    } else if (triggeredBy === 'pie-clp' && elements.pieClpInput) {
-        const clpVal = parseCLP(elements.pieClpInput.value);
-        const calcPieUf = uf > 0 ? (clpVal / uf) : 0;
-        if (elements.pieUf) elements.pieUf.value = calcPieUf > 0 ? calcPieUf.toFixed(2) : '';
-        if (pieBaseUf > 0 && elements.piePercent) {
-            elements.piePercent.value = ((calcPieUf / pieBaseUf) * 100).toFixed(0);
-        }
-        const calcSaldoUf = Math.max(0, pieBaseUf - calcPieUf);
-        if (elements.saldoFinanciarUfInput) elements.saldoFinanciarUfInput.value = hasPromoVal ? calcSaldoUf.toFixed(2) : '';
-        if (elements.saldoFinanciarClpInput) setCLPValue(elements.saldoFinanciarClpInput, hasPromoVal ? Math.round(calcSaldoUf * uf) : '');
-    } else if (triggeredBy === 'pie-uf' && elements.pieUf) {
-        const pieUfVal = parseFloat(elements.pieUf.value) || 0;
-        if (pieBaseUf > 0 && elements.piePercent) {
-            elements.piePercent.value = ((pieUfVal / pieBaseUf) * 100).toFixed(0);
-        }
-        if (elements.pieClpInput) setCLPValue(elements.pieClpInput, hasPromoVal ? Math.round(pieUfVal * uf) : '');
-        const calcSaldoUf = Math.max(0, pieBaseUf - pieUfVal);
-        if (elements.saldoFinanciarUfInput) elements.saldoFinanciarUfInput.value = hasPromoVal ? calcSaldoUf.toFixed(2) : '';
-        if (elements.saldoFinanciarClpInput) setCLPValue(elements.saldoFinanciarClpInput, hasPromoVal ? Math.round(calcSaldoUf * uf) : '');
-    } else if (triggeredBy === 'percent') {
-        const perc = parseFloat(elements.piePercent.value) || 0;
-        const pieUfVal = pieBaseUf * (perc / 100);
-        if (elements.pieUf) elements.pieUf.value = hasPromoVal ? pieUfVal.toFixed(2) : '';
-        if (elements.pieClpInput) setCLPValue(elements.pieClpInput, hasPromoVal ? Math.round(pieUfVal * uf) : '');
-        const calcSaldoUf = Math.max(0, pieBaseUf - pieUfVal);
-        if (elements.saldoFinanciarUfInput) elements.saldoFinanciarUfInput.value = hasPromoVal ? calcSaldoUf.toFixed(2) : '';
-        if (elements.saldoFinanciarClpInput) setCLPValue(elements.saldoFinanciarClpInput, hasPromoVal ? Math.round(calcSaldoUf * uf) : '');
-    } else {
-        const perc = parseFloat(elements.piePercent.value) || 10;
-        const pieUfVal = pieBaseUf * (perc / 100);
-        if (elements.pieUf) elements.pieUf.value = hasPromoVal ? pieUfVal.toFixed(2) : '';
-        if (elements.pieClpInput) setCLPValue(elements.pieClpInput, hasPromoVal ? Math.round(pieUfVal * uf) : '');
-        const calcSaldoUf = Math.max(0, pieBaseUf - pieUfVal);
-        if (elements.saldoFinanciarUfInput) elements.saldoFinanciarUfInput.value = hasPromoVal ? calcSaldoUf.toFixed(2) : '';
-        if (elements.saldoFinanciarClpInput) setCLPValue(elements.saldoFinanciarClpInput, hasPromoVal ? Math.round(calcSaldoUf * uf) : '');
     }
 
     const pieUfVal = parseFloat(elements.pieUf ? elements.pieUf.value : '') || 0;
     const balanceUf = parseFloat(elements.saldoFinanciarUfInput ? elements.saldoFinanciarUfInput.value : '') || Math.max(0, antUf - pieUfVal);
     let cuotasResult;
     if (type === 'cremacion') {
-        cuotasResult = calculateCremacionCuotas(balanceUf, uf, hasPromoVal);
+        const montoFinanciarClp = parseCLP(elements.saldoFinanciarClpInput ? elements.saldoFinanciarClpInput.value : 0);
+        const promoClpVal = parseCLP(elements.valorNiClpInput ? elements.valorNiClpInput.value : 0);
+        const pieClpVal = parseCLP(elements.pieClpInput ? elements.pieClpInput.value : 0);
+        cuotasResult = calculateCremacionCuotas(montoFinanciarClp, promoClpVal, pieClpVal, uf, hasPromoVal);
     } else {
         cuotasResult = calculateSepultacionCuotas(balanceUf, uf, hasPromoVal);
     }

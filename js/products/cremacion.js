@@ -1,41 +1,51 @@
 // js/products/cremacion.js - Lógica Financiera de Cremación Anticipada
 
 function calculateCremacionPreset(rights, uf) {
-    const valoresCremacion = {
-        1: 27,
-        2: 41.59,
-        3: 55.98,
-        4: 65.59
+    const valoresCremacionCLP = {
+        1: 1102806,
+        2: 1699143,
+        3: 2287308,
+        4: 2679418
     };
-    const promoUf = valoresCremacion[rights] || 27;
-    const promoClp = Math.round(promoUf * uf);
-    return { promoUf, promoClp };
+    const promoClp = valoresCremacionCLP[rights] || (1102806 * rights);
+    const promoUf = uf > 0 ? (promoClp / uf) : 0;
+    
+    const precioListaSinIva = Math.round(promoClp / 1.19);
+    const pieCapitalSinIva = Math.round(precioListaSinIva * 0.10);
+    const montoFinanciarClp = precioListaSinIva - pieCapitalSinIva;
+    const montoFinanciarUf = uf > 0 ? (montoFinanciarClp / uf) : 0;
+
+    const pieTotalClp = Math.round(promoClp * 0.10);
+    const pieTotalUf = uf > 0 ? (pieTotalClp / uf) : 0;
+
+    return { 
+        promoClp, 
+        promoUf, 
+        montoFinanciarClp, 
+        montoFinanciarUf,
+        pieTotalClp,
+        pieTotalUf
+    };
 }
 
-function calculateCremacionCuotas(balanceUf, uf, hasPromoVal) {
+function calculateCremacionCuotas(montoFinanciarClp, promoClp, pieTotalClp, uf, hasPromoVal) {
     let factor12 = 0, factor24 = 0, factor36 = 0, factor48 = 0;
     let cuota12 = 0, cuota24 = 0, cuota36 = 0, cuota48 = 0;
 
-    const gaClp = 3500;
-    const seguroClp = 1750;
-    const adicionClp = gaClp + seguroClp; // 5.250 $
+    const adicionClp = 3500 + 1750; // GA ($3.500) + Seguro ($1.750) = $5.250
 
     if (hasPromoVal) {
-        const balanceClp = balanceUf * uf;
-        
-        // 12 y 24 cuotas en pesos con GA ($3.500) y Seguro ($1.750)
-        cuota12 = (balanceClp / 12) + adicionClp;
-        cuota24 = (balanceClp / 24) + adicionClp;
-        
+        const saldoFinanciarConIva = (promoClp > 0 && pieTotalClp > 0) ? (promoClp - pieTotalClp) : (montoFinanciarClp * 1.19);
+
+        cuota12 = Math.round((saldoFinanciarConIva / 12) + adicionClp);
+        cuota24 = Math.round((saldoFinanciarConIva / 24) + adicionClp);
+        cuota36 = Math.round((saldoFinanciarConIva / 36) + adicionClp);
+        cuota48 = Math.round((saldoFinanciarConIva / 48) + adicionClp);
+
         factor12 = uf > 0 ? (cuota12 / uf) : 0;
         factor24 = uf > 0 ? (cuota24 / uf) : 0;
-
-        // 36 y 48 cuotas en UF con GA (0.10 UF) y Seguro (0.05 UF)
-        factor36 = (balanceUf / 36) + 0.10 + 0.05;
-        factor48 = (balanceUf / 48) + 0.10 + 0.05;
-
-        cuota36 = factor36 * uf;
-        cuota48 = factor48 * uf;
+        factor36 = uf > 0 ? (cuota36 / uf) : 0;
+        factor48 = uf > 0 ? (cuota48 / uf) : 0;
     }
 
     return {
