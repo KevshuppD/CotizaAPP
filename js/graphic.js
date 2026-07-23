@@ -36,7 +36,7 @@ function renderVisualGraphic(type, count) {
         elements.visualGraphic.innerHTML = '';
     }
 
-    if (type === 'sepultura-liberador' || type === 'aumento-capacidad') {
+    if (type === 'sepultura-liberador') {
         const reducciones = elements.reduccionesInput ? (parseInt(elements.reduccionesInput.value) || 0) : 0;
         const capacidad = count;
 
@@ -112,6 +112,44 @@ function renderVisualGraphic(type, count) {
             }
 
             stackContainer.appendChild(capBox);
+        }
+
+        container.appendChild(stackContainer);
+    } else if (type === 'aumento-capacidad') {
+        const capacidad = count;
+
+        // Título del gráfico
+        const titulo = document.createElement('div');
+        titulo.style.textAlign = 'center';
+        titulo.style.fontWeight = 'bold';
+        titulo.style.fontSize = '13px';
+        titulo.style.marginBottom = '10px';
+        titulo.style.color = '#333';
+        titulo.textContent = `Aumento de Capacidad: +${capacidad}`;
+        container.appendChild(titulo);
+
+        const stackContainer = document.createElement('div');
+        stackContainer.style.display = 'flex';
+        stackContainer.style.flexDirection = 'column';
+        stackContainer.style.alignItems = 'center';
+        stackContainer.style.gap = '4px';
+
+        // Renderizar bloques apilados limpios
+        for (let i = capacidad; i >= 1; i--) {
+            const box = document.createElement('div');
+            box.style.width = '120px';
+            box.style.height = '60px';
+            box.style.border = '3px solid var(--primary-green)';
+            box.style.borderRadius = '8px';
+            box.style.display = 'flex';
+            box.style.alignItems = 'center';
+            box.style.justifyContent = 'center';
+            box.style.backgroundColor = '#e8f5e9';
+            box.style.fontWeight = 'bold';
+            box.style.fontSize = '11px';
+            box.style.color = '#333';
+            box.textContent = `CAPACIDAD +${i}`;
+            stackContainer.appendChild(box);
         }
 
         container.appendChild(stackContainer);
