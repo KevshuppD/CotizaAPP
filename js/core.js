@@ -149,6 +149,51 @@ function getCaptureOptions() {
     };
 }
 
+function prepareCaptureArea() {
+    const originalEl = document.getElementById('beneficios-text');
+    if (!originalEl) return null;
+
+    let text = '';
+    if (originalEl.tagName === 'TEXTAREA' || originalEl.tagName === 'INPUT') {
+        text = originalEl.value;
+    } else {
+        text = originalEl.innerText || originalEl.textContent || '';
+    }
+
+    // Crear un div estático temporal para que html2canvas renderice los saltos de línea perfectamente
+    const tempDiv = document.createElement('div');
+    tempDiv.id = 'temp-beneficios-export';
+    tempDiv.className = 'editable-textarea-mimic';
+    tempDiv.style.whiteSpace = 'pre-wrap';
+    tempDiv.style.wordBreak = 'break-word';
+    tempDiv.style.textAlign = 'left';
+    tempDiv.style.background = '#ffffff';
+    tempDiv.style.border = '1px solid #ccc';
+    tempDiv.style.padding = '8px';
+    tempDiv.style.minHeight = '80px';
+    tempDiv.style.fontSize = '12px';
+    tempDiv.style.fontFamily = 'inherit';
+    tempDiv.style.borderRadius = '4px';
+    tempDiv.style.boxSizing = 'border-box';
+    tempDiv.style.width = '100%';
+    tempDiv.style.color = '#333';
+    
+    // Asignar el texto limpio (los saltos de línea de innerText se conservan como \n y se respetan gracias a white-space: pre-wrap)
+    tempDiv.textContent = text.trim();
+
+    originalEl.parentNode.insertBefore(tempDiv, originalEl);
+    originalEl.style.display = 'none';
+
+    return { originalEl, tempDiv };
+}
+
+function restoreCaptureArea(state) {
+    if (!state) return;
+    const { originalEl, tempDiv } = state;
+    if (originalEl) originalEl.style.display = '';
+    if (tempDiv && tempDiv.parentNode) tempDiv.parentNode.removeChild(tempDiv);
+}
+
 function exportAsImage() {
     const captureArea = document.getElementById('capture-area');
     if (!captureArea) return;
@@ -158,7 +203,10 @@ function exportAsImage() {
         return;
     }
 
+    const captureState = prepareCaptureArea();
+
     html2canvas(captureArea, getCaptureOptions()).then(canvas => {
+        restoreCaptureArea(captureState);
         const link = document.createElement('a');
         const parkName = (elements.parkSelector ? elements.parkSelector.value : 'parque').toLowerCase().replace(/\s+/g, '-');
         const now = new Date().toISOString().slice(0, 10);
@@ -166,6 +214,7 @@ function exportAsImage() {
         link.href = canvas.toDataURL('image/png');
         link.click();
     }).catch(err => {
+        restoreCaptureArea(captureState);
         console.error('Error al exportar imagen:', err);
         alert('Ocurrió un error al generar la imagen.');
     });
@@ -180,7 +229,10 @@ function shareAsImage() {
         return;
     }
 
+    const captureState = prepareCaptureArea();
+
     html2canvas(captureArea, getCaptureOptions()).then(canvas => {
+        restoreCaptureArea(captureState);
         canvas.toBlob(blob => {
             if (!blob) {
                 alert('No se pudo generar la imagen para compartir.');
@@ -211,6 +263,7 @@ function shareAsImage() {
             }
         }, 'image/png');
     }).catch(err => {
+        restoreCaptureArea(captureState);
         console.error('Error al capturar para compartir:', err);
         alert('Ocurrió un error al preparar la imagen para compartir.');
     });
