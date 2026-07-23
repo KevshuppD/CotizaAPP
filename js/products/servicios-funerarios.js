@@ -15,7 +15,7 @@ function calculateServiciosFunerarios(triggeredBy = '') {
     const refClpInput = document.getElementById('ref-clp-input');
 
     // Actualizar Valor Real si fue disparado por cambio de selectores o al inicio
-    if (triggeredBy === 'service-type' || triggeredBy === 'qty' || triggeredBy === 'init' || (refUfInput && refUfInput.value.trim() === '')) {
+    if (triggeredBy === 'service-type' || triggeredBy === 'qty' || triggeredBy === 'init') {
         if (refUfInput) refUfInput.value = valorRealBase.toFixed(2);
     }
 

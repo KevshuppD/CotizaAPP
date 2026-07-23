@@ -19,7 +19,7 @@ function calculateSepulturaLiberador(triggeredBy = '') {
     const valorRealBase = productPrices[select.value] || 190;
 
     // Actualizar Valor Real si fue disparado por parque, capacidad o inicio
-    if (triggeredBy === 'park' || triggeredBy === 'cap-red' || triggeredBy === 'init' || (elements.refUfInput && elements.refUfInput.value.trim() === '')) {
+    if (triggeredBy === 'park' || triggeredBy === 'cap-red' || triggeredBy === 'init') {
         if (elements.refUfInput) elements.refUfInput.value = valorRealBase.toFixed(2);
     }
 

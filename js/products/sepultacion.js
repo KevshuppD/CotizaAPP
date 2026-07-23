@@ -12,7 +12,7 @@ function calculateSepultacion(triggeredBy = '') {
     const refUfInput = document.getElementById('ref-uf-input');
     const refClpInput = document.getElementById('ref-clp-input');
 
-    if (triggeredBy === 'qty' || triggeredBy === 'init' || (refUfInput && refUfInput.value.trim() === '')) {
+    if (triggeredBy === 'qty' || triggeredBy === 'init') {
         if (refUfInput) refUfInput.value = valorRealBase.toFixed(2);
     }
 
