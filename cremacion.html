@@ -38,15 +38,32 @@
         <div class="section-header">
             <div class="left-col">
                 <div id="sepultacion-fields">
-                    <table>
+                    <div class="percentage-controls-card no-export" style="display: flex; gap: 20px; background: #f9f9f9; padding: 10px 15px; border: 1px dashed #ccc; border-radius: 4px; margin-bottom: 15px; align-items: center;">
+                        <div style="font-weight: bold; font-size: 13px; color: #333;">Ajustes rápidos:</div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 13px;">
+                            <label for="porcentaje-descuento-main" style="font-weight: bold;">Descuento:</label>
+                            <input type="number" id="porcentaje-descuento-main" value="0" min="0" max="100" style="width: 50px; padding: 3px; text-align: center; border: 1px solid #ccc; border-radius: 3px; font-weight: bold;"> %
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 13px;">
+                            <label for="pie-percent" style="font-weight: bold;">Pie:</label>
+                            <input type="number" id="pie-percent" value="10" min="0" max="100" style="width: 50px; padding: 3px; text-align: center; border: 1px solid #ccc; border-radius: 3px; font-weight: bold;"> %
+                        </div>
+                    </div>
+
+                    <table style="width: 100%;">
                         <tr>
-                            <td class="bold" id="park-label">Parque</td>
-                            <td class="bold" colspan="2">
-                                <select id="parque-name" class="park-select" style="font-size: 16px;">
-                                    <option value="EL PRADO">El prado</option>
-                                    <option value="EL MANANTIAL">El manantial</option>
-                                    <option value="SANTIAGO">Santiago</option>
-                                    <option value="CANAÁN">Canaán</option>
+                            <td class="bold" style="width: 40%;">Parque / Opción</td>
+                            <td colspan="2">
+                                <select id="parque-name" class="park-select" style="font-size: 14px; width: 100%;">
+                                    <option value="SANTIAGO">Parque Santiago</option>
+                                    <option value="MANANTIAL">Parque El Manantial</option>
+                                    <option value="CANAAN">Parque Canaan</option>
+                                    <option value="PRADO">Parque El Prado</option>
+                                    <option value="SB_CANAAN">SB Canaan</option>
+                                    <option value="INTEGRA_MANANTIAL_A3">Integra Manantial A3</option>
+                                    <option value="INTEGRA_PREMIUM_A3">Integra Premium A3</option>
+                                    <option value="INTEGRA_PEUMOS">Integra Peumos</option>
+                                    <option value="INTEGRA_CANAAN">Integra Canaan</option>
                                 </select>
                                 <span id="park-static-value" style="display: none; font-weight: normal; font-size: 16px; color: #333;"></span>
                             </td>
@@ -68,9 +85,9 @@
                             </td>
                         </tr>
                         <tr id="discount-row-main">
-                            <td class="bold">Descuento (%)</td>
-                            <td class="uf-col">
-                                <input type="number" id="porcentaje-descuento-main" class="input-inline editable-field" value="0" step="1" style="text-align: center;">
+                            <td class="bold">Descuento</td>
+                            <td class="uf-col gray-bg" id="label-descuento-uf" style="font-weight: bold; text-align: right; padding: 6px;">
+                                0,00 UF
                             </td>
                             <td class="clp-col" id="label-descuento-output" style="font-weight: bold; text-align: right; padding: 6px;">
                                 $0
@@ -88,9 +105,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="bold">
-                                Pie (<input type="number" id="pie-percent" value="10" step="1" style="width: 35px; border: 1px solid #ccc; text-align: center; font-weight: bold;">%)
-                            </td>
+                            <td class="bold">Pie</td>
                             <td class="uf-col">
                                 <input type="number" id="pie-uf" class="input-inline editable-field" value="0.00" step="0.01">
                             </td>

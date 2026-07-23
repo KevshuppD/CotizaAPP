@@ -133,9 +133,13 @@ function calculateSepultacion(triggeredBy = '') {
     const descuentoCLP = descuentoUF * currentUFValue;
     const valorPromoCLP = valorPromoUF * currentUFValue;
 
+    const descUfOutput = document.getElementById('label-descuento-uf');
     const descOutput = document.getElementById('label-descuento-output');
+    if (descUfOutput) {
+        descUfOutput.textContent = `${descuentoUF.toFixed(2).replace('.', ',')} UF`;
+    }
     if (descOutput) {
-        descOutput.textContent = `${descuentoUF.toFixed(2).replace('.', ',')} UF (${formatCurrency(Math.round(descuentoCLP))})`;
+        descOutput.textContent = formatCurrency(Math.round(descuentoCLP));
     }
 
     if (valorNiClpInput && document.activeElement !== valorNiClpInput) {
