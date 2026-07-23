@@ -8,6 +8,10 @@
     --text-dark: #333;
 }
 
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
     background-color: #ffffff;
@@ -17,8 +21,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: fit-content; /* Permite scroll si la pantalla es muy pequeña */
-    overflow-x: auto; /* Habilita la barra de desplazamiento horizontal */
+    width: 100%;
+    overflow-x: hidden;
 }
 
 /* Desktop specific */
@@ -133,35 +137,72 @@ body {
     body {
         padding: 0;
         background-color: white;
+        width: 100% !important;
+        min-width: 100% !important;
+        overflow-x: hidden !important;
     }
     .container {
         width: 100%;
         max-width: 100%;
-        padding: 15px;
+        padding: 10px;
         border: none;
         box-shadow: none;
+        overflow-x: hidden !important;
     }
     .title-logo-wrapper {
         align-items: center;
     }
     .park-logo {
-        height: 60px;
+        height: 50px;
     }
     .header-title-container h1 {
-        font-size: 16px !important;
+        font-size: 15px !important;
     }
     .park-display {
-        font-size: 18px !important;
-        margin-top: 10px;
+        font-size: 16px !important;
+        margin-top: 8px;
     }
     .section-header {
         flex-direction: column;
+        gap: 15px;
     }
     .left-col, .right-col, .visual-col {
         max-width: 100% !important;
+        width: 100% !important;
     }
     .visual-col {
         order: 3;
+    }
+    
+    /* Optimizar tablas en celular */
+    table {
+        font-size: 11px !important;
+    }
+    th, td {
+        padding: 4px 6px !important;
+    }
+    .uf-col, .clp-col {
+        width: 25% !important;
+    }
+    input.editable-field, input.input-inline {
+        padding: 2px 4px !important;
+        font-size: 11px !important;
+    }
+    .currency-input-wrapper {
+        font-size: 11px !important;
+    }
+    .currency-input-wrapper span {
+        font-size: 11px !important;
+        margin-right: 2px;
+    }
+    .currency-input-wrapper input {
+        font-size: 11px !important;
+    }
+    
+    /* Reducir inputs de porcentaje de Pie y Descuento en celular */
+    #pie-percent, #porcentaje-descuento-main {
+        width: 32px !important;
+        font-size: 11px !important;
     }
 }
 
