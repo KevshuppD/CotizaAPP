@@ -42,34 +42,42 @@ function calculateSepulturaLiberador(triggeredBy = '') {
     let descPercent = descPercentEl ? (parseFloat(descPercentEl.value) || 0) : 20;
     let valorPromoUF = valorRealUF * (1 - descPercent / 100);
     let piePercent = piePercentEl ? (parseFloat(piePercentEl.value) || 0) : 10;
-    let pieUF = valorRealUF * (piePercent / 100);
+    let pieUF = valorPromoUF * (piePercent / 100);
     let saldoUF = valorPromoUF - pieUF;
 
     // Lógica bidireccional de entradas
     if (triggeredBy === 'saldo-uf' && saldoFinanciarUfInput) {
         saldoUF = parseFloat(saldoFinanciarUfInput.value) || 0;
-        pieUF = parseFloat(pieUfInput ? pieUfInput.value : '') || (valorRealUF * 0.10);
+        pieUF = parseFloat(pieUfInput ? pieUfInput.value : '') || 0;
         valorPromoUF = saldoUF + pieUF;
 
         const descUF = Math.max(0, valorRealUF - valorPromoUF);
         descPercent = valorRealUF > 0 ? (descUF / valorRealUF) * 100 : 0;
         if (descPercentEl) descPercentEl.value = Math.round(descPercent).toString();
+        
+        piePercent = valorPromoUF > 0 ? (pieUF / valorPromoUF) * 100 : 0;
+        if (piePercentEl) piePercentEl.value = Math.round(piePercent).toString();
     } else if (triggeredBy === 'saldo-clp' && saldoFinanciarClpInput) {
         const clpVal = parseCLP(saldoFinanciarClpInput.value);
         saldoUF = currentUFValue > 0 ? (clpVal / currentUFValue) : 0;
         if (saldoFinanciarUfInput) saldoFinanciarUfInput.value = saldoUF.toFixed(2);
         
-        pieUF = parseFloat(pieUfInput ? pieUfInput.value : '') || (valorRealUF * 0.10);
+        pieUF = parseFloat(pieUfInput ? pieUfInput.value : '') || 0;
         valorPromoUF = saldoUF + pieUF;
 
         const descUF = Math.max(0, valorRealUF - valorPromoUF);
         descPercent = valorRealUF > 0 ? (descUF / valorRealUF) * 100 : 0;
         if (descPercentEl) descPercentEl.value = Math.round(descPercent).toString();
+        
+        piePercent = valorPromoUF > 0 ? (pieUF / valorPromoUF) * 100 : 0;
+        if (piePercentEl) piePercentEl.value = Math.round(piePercent).toString();
     } else if (triggeredBy === 'ni-uf' && valorNiUfDisplay) {
         valorPromoUF = parseFloat(valorNiUfDisplay.value) || 0;
         const descUF = Math.max(0, valorRealUF - valorPromoUF);
         descPercent = valorRealUF > 0 ? (descUF / valorRealUF) * 100 : 0;
         if (descPercentEl) descPercentEl.value = Math.round(descPercent).toString();
+        
+        pieUF = valorPromoUF * (piePercent / 100);
         saldoUF = valorPromoUF - pieUF;
     } else if (triggeredBy === 'ni-clp' && valorNiClpInput) {
         const clpVal = parseCLP(valorNiClpInput.value);
@@ -79,22 +87,29 @@ function calculateSepulturaLiberador(triggeredBy = '') {
         const descUF = Math.max(0, valorRealUF - valorPromoUF);
         descPercent = valorRealUF > 0 ? (descUF / valorRealUF) * 100 : 0;
         if (descPercentEl) descPercentEl.value = Math.round(descPercent).toString();
+        
+        pieUF = valorPromoUF * (piePercent / 100);
+        saldoUF = valorPromoUF - pieUF;
+    } else if (triggeredBy === 'discount-manual' && descPercentEl) {
+        descPercent = parseFloat(descPercentEl.value) || 0;
+        valorPromoUF = valorRealUF * (1 - descPercent / 100);
+        pieUF = valorPromoUF * (piePercent / 100);
         saldoUF = valorPromoUF - pieUF;
     } else if (triggeredBy === 'pie-uf' && pieUfInput) {
         pieUF = parseFloat(pieUfInput.value) || 0;
-        piePercent = valorRealUF > 0 ? (pieUF / valorRealUF) * 100 : 0;
+        piePercent = valorPromoUF > 0 ? (pieUF / valorPromoUF) * 100 : 0;
         if (piePercentEl) piePercentEl.value = Math.round(piePercent).toString();
         saldoUF = valorPromoUF - pieUF;
     } else if (triggeredBy === 'pie-clp' && pieClpInput) {
         const clpVal = parseCLP(pieClpInput.value);
         pieUF = currentUFValue > 0 ? (clpVal / currentUFValue) : 0;
         if (pieUfInput) pieUfInput.value = pieUF.toFixed(2);
-        piePercent = valorRealUF > 0 ? (pieUF / valorRealUF) * 100 : 0;
+        piePercent = valorPromoUF > 0 ? (pieUF / valorPromoUF) * 100 : 0;
         if (piePercentEl) piePercentEl.value = Math.round(piePercent).toString();
         saldoUF = valorPromoUF - pieUF;
     } else if (triggeredBy === 'pie-percent' && piePercentEl) {
         piePercent = parseFloat(piePercentEl.value) || 0;
-        pieUF = valorRealUF * (piePercent / 100);
+        pieUF = valorPromoUF * (piePercent / 100);
         if (pieUfInput) pieUfInput.value = pieUF.toFixed(2);
         saldoUF = valorPromoUF - pieUF;
     } else {
@@ -102,7 +117,7 @@ function calculateSepulturaLiberador(triggeredBy = '') {
         valorPromoUF = valorRealUF * (1 - descPercent / 100);
         
         piePercent = piePercentEl ? (parseFloat(piePercentEl.value) || 0) : (selectedProduct === 'PRADO' ? 5 : 10);
-        pieUF = valorRealUF * (piePercent / 100);
+        pieUF = valorPromoUF * (piePercent / 100);
         if (pieUfInput) pieUfInput.value = pieUF.toFixed(2);
         saldoUF = valorPromoUF - pieUF;
     }

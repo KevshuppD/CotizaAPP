@@ -38,10 +38,22 @@
         <div class="section-header">
             <div class="left-col">
                 <div id="sepultacion-fields">
-                    <table>
+                    <div class="percentage-controls-card no-export" style="display: flex; gap: 20px; background: #f9f9f9; padding: 10px 15px; border: 1px dashed #ccc; border-radius: 4px; margin-bottom: 15px; align-items: center;">
+                        <div style="font-weight: bold; font-size: 13px; color: #333;">Ajustes rápidos:</div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 13px;">
+                            <label for="porcentaje-descuento-main" style="font-weight: bold;">Descuento:</label>
+                            <input type="number" id="porcentaje-descuento-main" value="20" min="0" max="100" style="width: 50px; padding: 3px; text-align: center; border: 1px solid #ccc; border-radius: 3px; font-weight: bold;"> %
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 13px;">
+                            <label for="pie-percent" style="font-weight: bold;">Pie:</label>
+                            <input type="number" id="pie-percent" value="10" min="0" max="100" style="width: 50px; padding: 3px; text-align: center; border: 1px solid #ccc; border-radius: 3px; font-weight: bold;"> %
+                        </div>
+                    </div>
+
+                    <table style="width: 100%;">
                         <tr>
-                            <td class="bold" id="park-label">Producto</td>
-                            <td class="bold" colspan="2">
+                            <td class="bold" style="width: 40%;">Parque / Opción</td>
+                            <td colspan="2">
                                 <select id="parque-name" class="park-select" style="font-size: 14px; width: 100%;">
                                     <option value="PRADO">Producto Prado</option>
                                     <option value="INTEGRA_MANANTIAL_A3">Producto Integra Manantial - Santiago Sector A3</option>
@@ -70,9 +82,9 @@
                             </td>
                         </tr>
                         <tr id="discount-row-main">
-                            <td class="bold">Descuento (%)</td>
-                            <td class="uf-col">
-                                <input type="number" id="porcentaje-descuento-main" class="input-inline editable-field" value="20" step="1" style="text-align: center;">
+                            <td class="bold">Descuento</td>
+                            <td class="uf-col gray-bg" id="label-descuento-uf" style="font-weight: bold; text-align: right; padding: 6px;">
+                                0,00 UF
                             </td>
                             <td class="clp-col" id="label-descuento-output" style="font-weight: bold; text-align: right; padding: 6px;">
                                 $0
@@ -90,9 +102,9 @@
                             </td>
                         </tr>
                         <tr>
-                            <td id="label-pie" class="bold">Pie (%)</td>
-                            <td class="uf-col" style="text-align: center; vertical-align: middle;">
-                                <input type="number" id="pie-percent" class="input-inline editable-field" value="5" step="1" style="text-align: center;">
+                            <td class="bold">Pie</td>
+                            <td class="uf-col">
+                                <input type="number" id="pie-uf" class="input-inline editable-field" value="0.00" step="0.01">
                             </td>
                             <td class="clp-col yellow-bg">
                                 <div class="currency-input-wrapper">
@@ -100,10 +112,9 @@
                                 </div>
                             </td>
                         </tr>
-                        <!-- Fila oculta para compatibilidad con JS -->
+                        <!-- Fila oculta para compatibilidad -->
                         <tr style="display:none;">
                             <td>
-                                <input type="number" id="pie-uf" value="0">
                                 <input type="number" id="valor-ant-uf" value="0">
                                 <input type="text" id="valor-ant-clp-input" value="0">
                                 <input type="text" id="tipo-descuento-main" value="percent">
