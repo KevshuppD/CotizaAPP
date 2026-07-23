@@ -241,10 +241,13 @@ function updateCalculations(triggeredBy = '') {
         return;
     }
 
-    if (type === 'aumento-capacidad' && elements.liberadorGraphicContainer) {
-        const toggleChecked = elements.toggleGraphic ? elements.toggleGraphic.checked : true;
-        elements.liberadorGraphicContainer.style.display = toggleChecked ? 'block' : 'none';
-        if (!toggleChecked) elements.liberadorGraphicContainer.innerHTML = '';
+    if (type === 'aumento-capacidad') {
+        calculateAumentoCapacidad(triggeredBy);
+        if (elements.liberadorGraphicContainer) {
+            const toggleChecked = elements.toggleGraphic ? elements.toggleGraphic.checked : true;
+            elements.liberadorGraphicContainer.style.display = toggleChecked ? 'block' : 'none';
+            if (!toggleChecked) elements.liberadorGraphicContainer.innerHTML = '';
+        }
     }
 
     if (elements.liberadorGraphicContainer && type !== 'sepultura-liberador' && type !== 'aumento-capacidad') {
@@ -305,8 +308,6 @@ function updateCalculations(triggeredBy = '') {
             if (elements.pieClpInput) setCLPValue(elements.pieClpInput, pieTotalClp);
             if (elements.saldoFinanciarClpInput) setCLPValue(elements.saldoFinanciarClpInput, montoFinanciarClp);
             if (elements.saldoFinanciarUfInput) elements.saldoFinanciarUfInput.value = montoFinanciarUf.toFixed(2);
-        } else if (type === 'aumento-capacidad') {
-            calculateAumentoCapacidad(triggeredBy);
         }
     }
 
@@ -341,15 +342,21 @@ function updateCalculations(triggeredBy = '') {
     // 3. Descuento = Valor Referencia - Valor Promocional (Uso Inmediato)
     let descUf = 0;
     let descClp = 0;
-    if (hasPromoVal) {
+    if (type === 'aumento-capacidad') {
+        const descPercentEl = document.getElementById('porcentaje-descuento-main');
+        const descPercent = descPercentEl ? (parseFloat(descPercentEl.value) || 0) : 0;
+        const refUfVal = parseFloat(elements.refUfInput ? elements.refUfInput.value : '') || 0;
+        descUf = refUfVal * (descPercent / 100);
+        descClp = descUf * uf;
+    } else if (hasPromoVal) {
         descUf = Math.max(0, totalRefUf - niUf);
         descClp = descUf * uf;
     }
 
     if (elements.labelDescuentoUf) {
-        elements.labelDescuentoUf.textContent = hasPromoVal ? formatUF(descUf) + ' UF' : '0,00 UF';
+        elements.labelDescuentoUf.textContent = (hasPromoVal || type === 'aumento-capacidad') ? formatUF(descUf) + ' UF' : '0,00 UF';
     }
-    if (elements.labelDescuentoOutput) {
+    if (elements.labelDescuentoOutput && type !== 'aumento-capacidad') {
         elements.labelDescuentoOutput.textContent = hasPromoVal ? formatCurrency(descClp) : '$0';
     }
 
@@ -357,7 +364,7 @@ function updateCalculations(triggeredBy = '') {
     if (type === 'cremacion' && triggeredBy !== 'ant-manual' && triggeredBy !== 'ant-clp' && triggeredBy !== 'ant-uf') {
         const { promoUf } = calculateCremacionPreset(rights, uf);
         elements.valorAntUf.value = promoUf.toFixed(2);
-    } else if (triggeredBy !== 'ant-uf' && triggeredBy !== 'ant-clp') {
+    } else if (type !== 'aumento-capacidad' && triggeredBy !== 'ant-uf' && triggeredBy !== 'ant-clp') {
         if (hasPromoVal) {
             elements.valorAntUf.value = niUf.toFixed(2);
             if (elements.valorAntClpInput) setCLPValue(elements.valorAntClpInput, Math.round(niUf * uf));
@@ -537,7 +544,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'sepultura-liberador': 'sepultura-liberador.html',
         'cremacion': 'cremacion.html',
         'aumento-capacidad': 'aumento-capacidad.html',
-        'mantencion': 'mantencion.html'
+        'mantencion': 'mantencion.html',
+        'servicios-funerarios': 'servicios-funerarios.html'
     };
 
     if (elements.productType) {

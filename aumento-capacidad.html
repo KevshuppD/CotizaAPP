@@ -31,6 +31,7 @@
                 <option value="cremacion">Cremación Anticipada</option>
                 <option value="aumento-capacidad" selected>Aumento de Capacidad</option>
                 <option value="mantencion">Mantención</option>
+                <option value="servicios-funerarios">Servicios Funerarios</option>
             </select>
         </div>
 
@@ -41,11 +42,9 @@
                         <tr>
                             <td class="bold" id="park-label">Parque</td>
                             <td class="bold" colspan="2">
-                                <select id="parque-name" class="park-select" style="font-size: 16px;">
-                                    <option value="EL PRADO">El prado</option>
-                                    <option value="EL MANANTIAL">El manantial</option>
-                                    <option value="SANTIAGO">Santiago</option>
-                                    <option value="CANAÁN">Canaán</option>
+                                <select id="parque-name" class="park-select" style="font-size: 14px; width: 100%;">
+                                    <option value="EL PRADO">El Prado</option>
+                                    <option value="MANANTIAL_SANTIAGO_CANAAN">El Manantial / Santiago / Canaán</option>
                                 </select>
                                 <span id="park-static-value" style="display: none; font-weight: normal; font-size: 16px; color: #333;"></span>
                             </td>
@@ -56,24 +55,13 @@
                             <td class="bold clp-col">$</td>
                         </tr>
                         <tr>
-                            <td id="label-valor-real" class="bold">Valor Real / Lista</td>
-                            <td class="uf-col gray-bg">
-                                <input type="number" id="ref-uf-input" class="input-inline editable-field" value="15.47" step="0.01">
+                            <td id="label-valor-real" class="bold">Valor Real</td>
+                            <td class="uf-col">
+                                <input type="number" id="ref-uf-input" class="input-inline editable-field" value="80" step="0.01">
                             </td>
                             <td class="clp-col">
                                 <div class="currency-input-wrapper">
                                     <input type="text" id="ref-clp-input" class="input-inline editable-field" value="$0">
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td id="label-valor-ni">Valor Promocional (Uso Inmediato)</td>
-                            <td class="uf-col">
-                                <input type="number" id="valor-ni-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
-                            </td>
-                            <td class="clp-col yellow-bg">
-                                <div class="currency-input-wrapper">
-                                    <input type="text" id="valor-ni-clp-input" class="input-inline editable-field" value="" placeholder="$0">
                                 </div>
                             </td>
                         </tr>
@@ -87,20 +75,22 @@
                             </td>
                         </tr>
                         <tr>
-                            <td id="label-valor-ant">Valor anticipado (IVA Incluido)</td>
-                            <td class="uf-col gray-bg" style="position: relative;">
-                                <input type="number" id="valor-ant-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                            <td id="label-valor-ni" class="bold">Valor Promocional</td>
+                            <td class="uf-col">
+                                <input type="number" id="valor-ni-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
                             </td>
-                            <td class="clp-col">
+                            <td class="clp-col yellow-bg">
                                 <div class="currency-input-wrapper">
-                                    <input type="text" id="valor-ant-clp-input" class="input-inline editable-field" value="" placeholder="$0">
+                                    <input type="text" id="valor-ni-clp-input" class="input-inline editable-field" value="" placeholder="$0">
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <td id="label-pie" class="bold">Pie <span id="label-pie-percent">(10%)</span></td>
-                            <td class="uf-col gray-bg">
-                                <input type="number" id="pie-uf" class="input-inline editable-field" value="3.1" step="0.01">
+                            <td class="bold">
+                                Pie (<input type="number" id="pie-percent" value="10" step="1" style="width: 35px; border: 1px solid #ccc; text-align: center; font-weight: bold;">%)
+                            </td>
+                            <td class="uf-col">
+                                <input type="number" id="pie-uf" class="input-inline editable-field" value="0.00" step="0.01">
                             </td>
                             <td class="clp-col yellow-bg">
                                 <div class="currency-input-wrapper">
@@ -108,13 +98,15 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr id="pie-percent-row">
-                            <td colspan="3" style="font-size: 11px; border-top: none; text-align: center;">
-                                % Pie: <input type="number" id="pie-percent" value="10" step="1" style="width: 40px; border: 1px solid #ccc; text-align: center;">%
+                        <!-- Campos ocultos de compatibilidad -->
+                        <tr style="display:none;">
+                            <td>
+                                <input type="number" id="valor-ant-uf" value="0">
+                                <input type="text" id="valor-ant-clp-input" value="0">
                             </td>
                         </tr>
                         <tr id="saldo-financiar-row">
-                            <td class="bold">Monto a Financiar</td>
+                            <td class="bold">Monto a financiar</td>
                             <td class="uf-col gray-bg">
                                 <input type="number" id="saldo-financiar-uf-input" class="input-inline editable-field" value="0" step="0.01">
                             </td>
@@ -181,15 +173,19 @@
                 </table>
 
                 <div id="sepultacion-output">
-                    <div style="border: 1px solid black; margin-bottom: 10px;">
-                        <div class="quantity-box" style="display: flex; justify-content: space-between; align-items: center; border: none; border-bottom: 1px solid black;">
+                    <div style="border: 1px solid black; margin-bottom: 10px; border-radius: 4px;">
+                        <div class="quantity-box" style="display: flex; justify-content: space-between; align-items: center; border: none; padding: 8px 12px;">
                             <span>Capacidad</span>
                             <span class="capacity-value-group">
                                 <input type="number" id="cantidad-rights" class="input-number-center" value="1" min="1" max="2" style="background: transparent; border: none; font-weight: bold; width: 40px;">
                                 <span id="capacity-unit">capacidades</span>
                             </span>
                         </div>
+                    </div>
 
+                    <div style="border: 1px solid black; padding: 10px; margin-bottom: 10px; border-radius: 4px; background: #fff;">
+                        <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px; color: #333;">Beneficios</div>
+                        <textarea id="beneficios-text" style="width: 100%; height: 70px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 12px; resize: none;" placeholder="Escribir beneficios aquí..."></textarea>
                     </div>
 
                     <div id="sepultacion-graphic-container" style="margin-top: 15px; display: flex; justify-content: center; min-height: 150px;"></div>
@@ -200,11 +196,6 @@
 
     <script src="js/core.js"></script>
     <script src="js/graphic.js"></script>
-    <script src="js/products/sepultacion.js"></script>
-    <script src="js/products/cremacion.js"></script>
     <script src="js/products/aumento-capacidad.js"></script>
-    <script src="js/products/sepultura-liberador.js"></script>
-    <script src="js/products/mantencion.js"></script>
-    <script src="script.js"></script>
 </body>
 </html>
