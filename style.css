@@ -514,3 +514,26 @@ input[type=number] {
     -webkit-overflow-scrolling: touch;
 }
 
+.editable-textarea-mimic {
+    width: 100%;
+    min-height: 80px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 12px;
+    background: #fff;
+    text-align: left;
+    white-space: pre-wrap;
+    word-break: break-word;
+    outline: none;
+    cursor: text;
+    overflow-y: auto;
+}
+
+.editable-textarea-mimic[placeholder]:empty:before {
+    content: attr(placeholder);
+    color: #aaa;
+    font-style: italic;
+}
+

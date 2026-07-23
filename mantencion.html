@@ -69,8 +69,16 @@
                 </table>
 
                 <div id="mantencion-output" style="margin-top: 20px;">
-                    <div class="quantity-box">Resumen Mantención</div>
-                    <div id="mantencion-resumen" style="background: #f9f9f9; border: 1px solid #ccc; padding: 10px; margin-top: 10px; min-height: 100px;"></div>
+                    <div style="border: 1px solid black; margin-bottom: 10px; border-radius: 4px; overflow: hidden;">
+                        <div class="quantity-box" style="padding: 8px 12px; border: none;">Resumen Mantención</div>
+                        <div id="mantencion-resumen" style="background: #f9f9f9; padding: 10px; min-height: 100px;"></div>
+                    </div>
+
+                    <div style="border: 1px solid black; padding: 10px; margin-bottom: 10px; border-radius: 4px; background: #fff;">
+                        <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px; color: #333;">Beneficios</div>
+                        <div id="beneficios-text" class="editable-textarea-mimic" contenteditable="true" placeholder="Escribir beneficios aquí..."></div>
+                    </div>
+
                     <div class="cuotas table-responsive" style="margin-top: 15px;">
                         <table>
                             <thead>
@@ -93,12 +101,6 @@
     </div>
 
     <script src="js/core.js"></script>
-    <script src="js/graphic.js"></script>
-    <script src="js/products/sepultacion.js"></script>
-    <script src="js/products/cremacion.js"></script>
-    <script src="js/products/aumento-capacidad.js"></script>
-    <script src="js/products/sepultura-liberador.js"></script>
     <script src="js/products/mantencion.js"></script>
-    <script src="script.js"></script>
 </body>
 </html>

@@ -161,8 +161,8 @@
                 </table>
 
                 <div id="sepultacion-output">
-                    <div style="border: 1px solid black; margin-bottom: 10px;">
-                        <div class="quantity-box" style="display: flex; justify-content: space-between; align-items: center; border: none; padding: 8px;">
+                    <div style="border: 1px solid black; margin-bottom: 10px; border-radius: 4px;">
+                        <div class="quantity-box" style="display: flex; justify-content: space-between; align-items: center; border: none; padding: 8px 12px;">
                             <span style="font-weight: bold;">Capacidad / Reducciones</span>
                             <select id="capacidad-reducciones-select" style="font-weight: bold; font-size: 14px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; background: #fff;">
                                 <option value="2-4">Capacidad 2 - 4 Reducciones</option>
@@ -171,6 +171,11 @@
                                 <option value="8-20">Capacidad 8 - 20 Reducciones</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div style="border: 1px solid black; padding: 10px; margin-bottom: 10px; border-radius: 4px; background: #fff;">
+                        <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px; color: #333;">Beneficios</div>
+                        <div id="beneficios-text" class="editable-textarea-mimic" contenteditable="true" placeholder="Escribir beneficios aquí..."></div>
                     </div>
                     <!-- Inputs ocultos para mantener compatibilidad con JS -->
                     <input type="hidden" id="cantidad-rights" value="2">
@@ -185,11 +190,6 @@
 
     <script src="js/core.js"></script>
     <script src="js/graphic.js"></script>
-    <script src="js/products/sepultacion.js"></script>
-    <script src="js/products/cremacion.js"></script>
-    <script src="js/products/aumento-capacidad.js"></script>
     <script src="js/products/sepultura-liberador.js"></script>
-    <script src="js/products/mantencion.js"></script>
-    <script src="script.js"></script>
 </body>
 </html>
