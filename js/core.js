@@ -118,7 +118,7 @@ function formatUF(value) {
 
 function fetchUFValue() {
     initDOMElements();
-    fetch("https://findic.cl/api/")
+    return fetch("https://findic.cl/api/")
     .then((response) => {
         if (!response.ok) throw new Error("Respuesta no OK de findic.cl");
         return response.json();
@@ -127,13 +127,11 @@ function fetchUFValue() {
         if (data && data.uf && data.uf.valor) {
             currentUFValue = parseFloat(data.uf.valor);
             if (elements.ufInput) elements.ufInput.value = currentUFValue.toFixed(2);
-            if (typeof updateCalculations === 'function') updateCalculations('uf-manual');
         }
     })
     .catch((err) => {
         console.warn('Error al consultar findic.cl:', err);
         if (elements.ufInput) elements.ufInput.value = currentUFValue.toFixed(2);
-        if (typeof updateCalculations === 'function') updateCalculations('uf-manual');
     });
 }
 
