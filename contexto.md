@@ -169,4 +169,36 @@ Al ser un proyecto exclusivamente de cliente (*front-end* puro sin backend), no 
 ---
 
 ## 7. Historial de Actualizaciones e Información Adicional
-*(Esta sección se utilizará para registrar información técnica, fórmulas y datos adicionales del proyecto a solicitud del usuario).*
+
+### Actualización - 24 de Julio, 2026
+Se realizaron las siguientes modificaciones y correcciones en la aplicación:
+
+1. **Compartir y Exportar en PDF (Nueva Funcionalidad):**
+   * Se incorporó la librería `html2pdf.js` en todas las páginas de cotización.
+   * Se agregó el botón **Compartir PDF** (con estilos en color rojo `.btn-pdf` en `style.css`) al lado de compartir imagen.
+   * **Cálculo de Hoja Única Dinámica:** La lógica en `js/core.js` calcula en tiempo real las dimensiones en milímetros del cotizador (`capture-area`) convirtiendo los píxeles a $96\text{ DPI}$ y sumando un margen de $10\text{mm}$ a cada lado. Esto fuerza a que todo el cotizador calce de manera exacta en **una sola hoja de PDF sin cortes**.
+   * **Orientación Dinámica:** Si el dispositivo tiene una pantalla ancha (ancho > 800px), el PDF se genera en formato **horizontal (landscape)**. En pantallas angostas (móviles) se exporta en **vertical (portrait)**.
+
+2. **Limpieza en Compartir Imagen:**
+   * Se modificó la llamada a la API Web Share (`navigator.share`) para compartir únicamente el archivo de imagen generado sin textos o títulos descriptivos preestablecidos.
+
+3. **Reajuste de Fórmulas y Desglose en Cremación Anticipada:**
+   * **Valor Real Base:** Se redujo el precio real de referencia de 30 UF a **27 UF** por capacidad.
+   * **Tablas de Precios Actualizadas:**
+     * 1 Cremación: Real = `$1.102.806` / Promo = `$926.727`
+     * 2 Cremaciones: Real = `$1.699.143` / Promo = `$1.427.851`
+     * 3 Cremaciones: Real = `$2.287.308` / Promo = `$1.922.108`
+     * 4 Cremaciones: Real = `$2.679.418` / Promo = `$2.251.612`
+   * **Estructuración del Pie (Opción A):**
+     * **Pie Capital:** $10\%$ calculado sobre el Valor Promocional Neto.
+     * **IVA Pie:** $19\%$ de IVA aplicado sobre el Pie Capital.
+     * **Pie Total:** La suma del Pie Capital y el IVA Pie.
+     * Se agregaron filas dinámicas de desglose para Pie Capital e IVA Pie en `cremacion.html`.
+   * **Monto a Financiar:** Se define como `Valor Promocional Neto - Pie Capital`.
+   * **Lógica de Cuotas con IVA:**
+     * **Hasta 24 cuotas:** Se calcula la cuota base neta, se le aplica el $19\%$ de IVA y se le suman los cargos exentos en pesos de GA ($\$3.500$) y Seguro ($\$1.750$).
+     * **De 36 cuotas en adelante:** Se calcula en UF aplicando el $19\%$ de IVA a la cuota base neta en UF y se le suma un recargo exento de $0,15\text{ UF}$ (GA + Seguro), convirtiendo finalmente la cuota a CLP.
+   * **Límite de Capacidad:** Se validó estrictamente el ingreso de cantidad a un **máximo de 4 ánforas**.
+
+4. **Corrección de Valor de Referencia en Sepultación Anticipada:**
+   * Se corrigió la función en `js/products/sepultacion.js` para que el valor referencial de capacidad se multiplique dinámicamente por la cantidad de derechos en pantalla (1 derecho = 15,47 UF, 2 derechos = 30,94 UF, etc.) actualizando la etiqueta y el desglose en CLP y UF al instante.
