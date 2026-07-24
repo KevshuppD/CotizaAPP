@@ -7,11 +7,13 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="style.css">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div class="controls">
         <button class="btn" onclick="exportAsImage()">Descargar Imagen</button>
         <button class="btn btn-share" onclick="shareAsImage()">Compartir Imagen</button>
+        <button class="btn btn-pdf" onclick="shareAsPDF()">Compartir PDF</button>
     </div>
 
     <div class="container" id="capture-area">

@@ -288,3 +288,69 @@ function shareAsImage() {
         alert('Ocurrió un error al preparar la imagen para compartir.');
     });
 }
+
+function shareAsPDF() {
+    const captureArea = document.getElementById('capture-area');
+    if (!captureArea) return;
+
+    if (typeof html2pdf === 'undefined') {
+        alert('Error: html2pdf no está disponible.');
+        return;
+    }
+
+    const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
+    const parkName = (parkSelector ? parkSelector.value : 'parque').toLowerCase().replace(/\s+/g, '-');
+    const now = new Date().toISOString().slice(0, 10);
+    const fileName = `cotizacion-${parkName}-${now}.pdf`;
+
+    // Convertir el tamaño en píxeles de captureArea a milímetros (96 DPI: 1 pulgada = 25.4 mm = 96 px)
+    const widthMM = (captureArea.clientWidth * 25.4) / 96;
+    const heightMM = (captureArea.clientHeight * 25.4) / 96;
+
+    const opt = {
+        margin:       10, // Margen de 10mm
+        filename:     fileName,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { 
+            scale: 2, 
+            useCORS: true,
+            ignoreElements: function(element) {
+                return element.classList && element.classList.contains('no-export');
+            }
+        },
+        jsPDF:        { 
+            unit: 'mm', 
+            // Sumar 20mm (10mm por lado de margen) al tamaño de la página para que la cotización calce perfecto en una sola hoja
+            format: [widthMM + 20, heightMM + 20], 
+            orientation: widthMM > heightMM ? 'landscape' : 'portrait' 
+        }
+    };
+
+    html2pdf().set(opt).from(captureArea).toPdf().output('blob').then(blob => {
+        if (!blob) {
+            alert('No se pudo generar el PDF para compartir.');
+            return;
+        }
+
+        const file = new File([blob], fileName, { type: 'application/pdf' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({
+                files: [file]
+            }).catch(err => {
+                if (err.name !== 'AbortError') {
+                    console.error('Error al compartir PDF:', err);
+                }
+            });
+        } else {
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            alert('Tu dispositivo/navegador no soporta compartir PDFs directamente. El documento ha sido descargado.');
+        }
+    }).catch(err => {
+        console.error('Error al generar PDF:', err);
+        alert('Ocurrió un error al preparar el PDF para compartir.');
+    });
+}

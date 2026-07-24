@@ -160,10 +160,22 @@ function calculateSepultacion(triggeredBy = '') {
     }
 
     // Actualizar valor de referencia por derecho
-    const singleRightCLP = 15.47 * currentUFValue;
+    const totalRefUF = 15.47 * qty;
+    const totalRefCLP = totalRefUF * currentUFValue;
+
+    const refLabel = document.getElementById('ref-label');
+    if (refLabel) {
+        refLabel.textContent = qty === 1 ? 'Valor referencia por 1 derecho' : `Valor referencia por ${qty} derechos`;
+    }
+
     const refClpDisplay = document.getElementById('ref-clp-display');
     if (refClpDisplay) {
-        refClpDisplay.textContent = formatCurrency(Math.round(singleRightCLP));
+        refClpDisplay.textContent = formatCurrency(Math.round(totalRefCLP));
+    }
+
+    const refUfDisplay = document.getElementById('ref-uf-display');
+    if (refUfDisplay) {
+        refUfDisplay.textContent = `${totalRefUF.toFixed(2).replace('.', ',')} UF (IVA INCLUIDO)`;
     }
 
     // Calcular cuotas

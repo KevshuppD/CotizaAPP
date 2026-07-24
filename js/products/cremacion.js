@@ -3,26 +3,18 @@
 function calculateCremacion(triggeredBy = '') {
     const qtyInput = document.getElementById('cantidad-rights');
     if (!qtyInput) return;
-    const qty = parseInt(qtyInput.value) || 1;
+    let qty = parseInt(qtyInput.value) || 1;
+    if (qty > 4) {
+        qty = 4;
+        qtyInput.value = 4;
+    } else if (qty < 1) {
+        qty = 1;
+        qtyInput.value = 1;
+    }
 
-    // 1. Obtener Valor Real base según cantidad de ánforas (30 UF por ánfora)
-    const valorRealBase = 30.00 * qty;
-
+    // DOM Elements
     const refUfInput = document.getElementById('ref-uf-input');
     const refClpInput = document.getElementById('ref-clp-input');
-
-    if (triggeredBy === 'qty' || triggeredBy === 'init') {
-        if (refUfInput) refUfInput.value = valorRealBase.toFixed(2);
-    }
-
-    const valorRealUF = parseFloat(refUfInput ? refUfInput.value : '') || valorRealBase;
-    const valorRealCLP = valorRealUF * currentUFValue;
-
-    if (refClpInput && document.activeElement !== refClpInput) {
-        setCLPValue(refClpInput, Math.round(valorRealCLP));
-    }
-
-    // 2. Descuento %, Valor Promocional y Pie
     const descPercentEl = document.getElementById('porcentaje-descuento-main');
     const valorNiUfDisplay = document.getElementById('valor-ni-uf');
     const valorNiClpInput = document.getElementById('valor-ni-clp-input');
@@ -32,59 +24,74 @@ function calculateCremacion(triggeredBy = '') {
     const saldoFinanciarUfInput = document.getElementById('saldo-financiar-uf-input');
     const saldoFinanciarClpInput = document.getElementById('saldo-financiar-clp-input');
 
-    // Valores promocionales fijos en CLP según cantidad
-    const valoresCremacionCLP = {
+    // Valores Reales y Promocionales fijos en CLP según cantidad
+    const valoresRealCremacionCLP = {
         1: 1102806,
         2: 1699143,
         3: 2287308,
         4: 2679418
     };
 
-    let descPercent = descPercentEl ? (parseFloat(descPercentEl.value) || 0) : 0;
-    let valorPromoUF = valorRealUF * (1 - descPercent / 100);
-    let piePercent = piePercentEl ? (parseFloat(piePercentEl.value) || 0) : 10;
-    let pieUF = valorRealUF * (piePercent / 100);
-    let saldoUF = valorPromoUF - pieUF;
+    const valoresPromoCremacionCLP = {
+        1: 926727,
+        2: 1427851,
+        3: 1922108,
+        4: 2251612
+    };
+
+    // Si es qty o init, inicializar los valores de los inputs usando las tablas oficiales
+    if (triggeredBy === 'qty' || triggeredBy === 'init') {
+        const realCLP = valoresRealCremacionCLP[qty] || (1102806 * qty);
+        const promoCLP = valoresPromoCremacionCLP[qty] || (926727 * qty);
+        
+        const realUF = currentUFValue > 0 ? (realCLP / currentUFValue) : 0;
+        const promoUF = currentUFValue > 0 ? (promoCLP / currentUFValue) : 0;
+        
+        if (refUfInput) refUfInput.value = realUF.toFixed(2);
+        if (valorNiUfDisplay) valorNiUfDisplay.value = promoUF.toFixed(2);
+        if (piePercentEl) piePercentEl.value = "10";
+    }
+
+    // Leer valores de los inputs
+    const valorRealUF = parseFloat(refUfInput ? refUfInput.value : '') || 0;
+    const valorRealCLP = valorRealUF * currentUFValue;
+    if (refClpInput && document.activeElement !== refClpInput) {
+        setCLPValue(refClpInput, Math.round(valorRealCLP));
+    }
+
+    let valorPromoUF = parseFloat(valorNiUfDisplay ? valorNiUfDisplay.value : '') || 0;
+    let descPercent = descPercentEl ? (descPercentEl.value === '' ? 16 : parseFloat(descPercentEl.value)) : 16;
+    let piePercent = piePercentEl ? (piePercentEl.value === '' ? 10 : parseFloat(piePercentEl.value)) : 10;
+
+    let pieCapitalUF = 0;
+    let pieTotalUF = 0;
+    let montoFinanciarUF = 0;
 
     // Lógica bidireccional
     if (triggeredBy === 'qty' || triggeredBy === 'init') {
-        // En inicialización o cambio de cantidad, se fuerza el valor promocional fijo si existe en el mapa
-        const fixedPromoCLP = valoresCremacionCLP[qty] || (1102806 * qty);
-        valorPromoUF = currentUFValue > 0 ? (fixedPromoCLP / currentUFValue) : 0;
-        
-        // Recalcular Descuento
-        const descUF = Math.max(0, valorRealUF - valorPromoUF);
-        descPercent = valorRealUF > 0 ? (descUF / valorRealUF) * 100 : 0;
+        // En inicialización o cambio de cantidad, calcular descuento porcentual exacto
+        descPercent = valorRealUF > 0 ? ((valorRealUF - valorPromoUF) / valorRealUF) * 100 : 0;
         if (descPercentEl) descPercentEl.value = Math.round(descPercent).toString();
         
-        // Recalcular Saldo
-        pieUF = valorPromoUF * (piePercent / 100);
-        saldoUF = valorPromoUF - pieUF;
-    } else if (triggeredBy === 'saldo-uf' && saldoFinanciarUfInput) {
-        saldoUF = parseFloat(saldoFinanciarUfInput.value) || 0;
-        pieUF = parseFloat(pieUfInput ? pieUfInput.value : '') || 0;
-        valorPromoUF = saldoUF + pieUF;
-
-        const descUF = Math.max(0, valorRealUF - valorPromoUF);
-        descPercent = valorRealUF > 0 ? (descUF / valorRealUF) * 100 : 0;
-        if (descPercentEl) descPercentEl.value = Math.round(descPercent).toString();
-    } else if (triggeredBy === 'saldo-clp' && saldoFinanciarClpInput) {
-        const clpVal = parseCLP(saldoFinanciarClpInput.value);
-        saldoUF = currentUFValue > 0 ? (clpVal / currentUFValue) : 0;
-        if (saldoFinanciarUfInput) saldoFinanciarUfInput.value = saldoUF.toFixed(2);
+        pieCapitalUF = valorPromoUF * (piePercent / 100);
+        pieTotalUF = pieCapitalUF * 1.19;
+        montoFinanciarUF = valorPromoUF - pieCapitalUF;
+    } else if (triggeredBy === 'discount-manual' && descPercentEl) {
+        descPercent = parseFloat(descPercentEl.value) || 0;
+        valorPromoUF = valorRealUF * (1 - descPercent / 100);
         
-        pieUF = parseFloat(pieUfInput ? pieUfInput.value : '') || 0;
-        valorPromoUF = saldoUF + pieUF;
-
-        const descUF = Math.max(0, valorRealUF - valorPromoUF);
-        descPercent = valorRealUF > 0 ? (descUF / valorRealUF) * 100 : 0;
-        if (descPercentEl) descPercentEl.value = Math.round(descPercent).toString();
+        pieCapitalUF = valorPromoUF * (piePercent / 100);
+        pieTotalUF = pieCapitalUF * 1.19;
+        montoFinanciarUF = valorPromoUF - pieCapitalUF;
     } else if (triggeredBy === 'ni-uf' && valorNiUfDisplay) {
         valorPromoUF = parseFloat(valorNiUfDisplay.value) || 0;
         const descUF = Math.max(0, valorRealUF - valorPromoUF);
         descPercent = valorRealUF > 0 ? (descUF / valorRealUF) * 100 : 0;
         if (descPercentEl) descPercentEl.value = Math.round(descPercent).toString();
-        saldoUF = valorPromoUF - pieUF;
+        
+        pieCapitalUF = valorPromoUF * (piePercent / 100);
+        pieTotalUF = pieCapitalUF * 1.19;
+        montoFinanciarUF = valorPromoUF - pieCapitalUF;
     } else if (triggeredBy === 'ni-clp' && valorNiClpInput) {
         const clpVal = parseCLP(valorNiClpInput.value);
         valorPromoUF = currentUFValue > 0 ? (clpVal / currentUFValue) : 0;
@@ -93,45 +100,61 @@ function calculateCremacion(triggeredBy = '') {
         const descUF = Math.max(0, valorRealUF - valorPromoUF);
         descPercent = valorRealUF > 0 ? (descUF / valorRealUF) * 100 : 0;
         if (descPercentEl) descPercentEl.value = Math.round(descPercent).toString();
-        saldoUF = valorPromoUF - pieUF;
-    } else if (triggeredBy === 'discount-manual' && descPercentEl) {
-        descPercent = parseFloat(descPercentEl.value) || 0;
+        
+        pieCapitalUF = valorPromoUF * (piePercent / 100);
+        pieTotalUF = pieCapitalUF * 1.19;
+        montoFinanciarUF = valorPromoUF - pieCapitalUF;
+    } else if (triggeredBy === 'ref-uf' || triggeredBy === 'ref-clp') {
         valorPromoUF = valorRealUF * (1 - descPercent / 100);
-        saldoUF = valorPromoUF - pieUF;
-    } else if (triggeredBy === 'pie-uf' && pieUfInput) {
-        pieUF = parseFloat(pieUfInput.value) || 0;
-        piePercent = valorPromoUF > 0 ? (pieUF / valorPromoUF) * 100 : 0;
-        if (piePercentEl) piePercentEl.value = Math.round(piePercent).toString();
-        saldoUF = valorPromoUF - pieUF;
-    } else if (triggeredBy === 'pie-clp' && pieClpInput) {
-        const clpVal = parseCLP(pieClpInput.value);
-        pieUF = currentUFValue > 0 ? (clpVal / currentUFValue) : 0;
-        if (pieUfInput) pieUfInput.value = pieUF.toFixed(2);
-        piePercent = valorPromoUF > 0 ? (pieUF / valorPromoUF) * 100 : 0;
-        if (piePercentEl) piePercentEl.value = Math.round(piePercent).toString();
-        saldoUF = valorPromoUF - pieUF;
+        
+        pieCapitalUF = valorPromoUF * (piePercent / 100);
+        pieTotalUF = pieCapitalUF * 1.19;
+        montoFinanciarUF = valorPromoUF - pieCapitalUF;
     } else if (triggeredBy === 'pie-percent' && piePercentEl) {
         piePercent = parseFloat(piePercentEl.value) || 0;
-        pieUF = valorPromoUF * (piePercent / 100);
-        if (pieUfInput) pieUfInput.value = pieUF.toFixed(2);
-        saldoUF = valorPromoUF - pieUF;
+        
+        pieCapitalUF = valorPromoUF * (piePercent / 100);
+        pieTotalUF = pieCapitalUF * 1.19;
+        montoFinanciarUF = valorPromoUF - pieCapitalUF;
+    } else if (triggeredBy === 'pie-uf' && pieUfInput) {
+        pieTotalUF = parseFloat(pieUfInput.value) || 0;
+        pieCapitalUF = pieTotalUF / 1.19;
+        piePercent = valorPromoUF > 0 ? (pieCapitalUF / valorPromoUF) * 100 : 0;
+        if (piePercentEl) piePercentEl.value = Math.round(piePercent).toString();
+        montoFinanciarUF = valorPromoUF - pieCapitalUF;
+    } else if (triggeredBy === 'pie-clp' && pieClpInput) {
+        const clpVal = parseCLP(pieClpInput.value);
+        pieTotalUF = currentUFValue > 0 ? (clpVal / currentUFValue) : 0;
+        if (pieUfInput) pieUfInput.value = pieTotalUF.toFixed(2);
+        
+        pieCapitalUF = pieTotalUF / 1.19;
+        piePercent = valorPromoUF > 0 ? (pieCapitalUF / valorPromoUF) * 100 : 0;
+        if (piePercentEl) piePercentEl.value = Math.round(piePercent).toString();
+        montoFinanciarUF = valorPromoUF - pieCapitalUF;
+    } else if (triggeredBy === 'saldo-uf' && saldoFinanciarUfInput) {
+        montoFinanciarUF = parseFloat(saldoFinanciarUfInput.value) || 0;
+        pieCapitalUF = valorPromoUF - montoFinanciarUF;
+        pieTotalUF = pieCapitalUF * 1.19;
+        piePercent = valorPromoUF > 0 ? (pieCapitalUF / valorPromoUF) * 100 : 0;
+        if (piePercentEl) piePercentEl.value = Math.round(piePercent).toString();
+    } else if (triggeredBy === 'saldo-clp' && saldoFinanciarClpInput) {
+        const clpVal = parseCLP(saldoFinanciarClpInput.value);
+        montoFinanciarUF = currentUFValue > 0 ? (clpVal / currentUFValue) : 0;
+        if (saldoFinanciarUfInput) saldoFinanciarUfInput.value = montoFinanciarUF.toFixed(2);
+        
+        pieCapitalUF = valorPromoUF - montoFinanciarUF;
+        pieTotalUF = pieCapitalUF * 1.19;
+        piePercent = valorPromoUF > 0 ? (pieCapitalUF / valorPromoUF) * 100 : 0;
+        if (piePercentEl) piePercentEl.value = Math.round(piePercent).toString();
     } else {
-        descPercent = descPercentEl ? (parseFloat(descPercentEl.value) || 0) : 0;
-        valorPromoUF = valorRealUF * (1 - descPercent / 100);
-        piePercent = piePercentEl ? (parseFloat(piePercentEl.value) || 0) : 10;
-        pieUF = valorPromoUF * (piePercent / 100);
-        if (pieUfInput) pieUfInput.value = pieUF.toFixed(2);
-        saldoUF = valorPromoUF - pieUF;
+        pieCapitalUF = valorPromoUF * (piePercent / 100);
+        pieTotalUF = pieCapitalUF * 1.19;
+        montoFinanciarUF = valorPromoUF - pieCapitalUF;
     }
 
-    if (valorNiUfDisplay && document.activeElement !== valorNiUfDisplay) {
-        valorNiUfDisplay.value = valorPromoUF.toFixed(2);
-    }
-
-    const descuentoUF = valorRealUF - valorPromoUF;
+    // Actualizar valor de descuento en pantalla
+    const descuentoUF = Math.max(0, valorRealUF - valorPromoUF);
     const descuentoCLP = descuentoUF * currentUFValue;
-    const valorPromoCLP = valorPromoUF * currentUFValue;
-
     const descUfOutput = document.getElementById('label-descuento-uf');
     const descOutput = document.getElementById('label-descuento-output');
     if (descUfOutput) {
@@ -141,30 +164,74 @@ function calculateCremacion(triggeredBy = '') {
         descOutput.textContent = formatCurrency(Math.round(descuentoCLP));
     }
 
+    // Actualizar valor promocional en pantalla
+    if (valorNiUfDisplay && document.activeElement !== valorNiUfDisplay) {
+        valorNiUfDisplay.value = valorPromoUF.toFixed(2);
+    }
+    const valorPromoCLP = valorPromoUF * currentUFValue;
     if (valorNiClpInput && document.activeElement !== valorNiClpInput) {
         setCLPValue(valorNiClpInput, Math.round(valorPromoCLP));
     }
 
-    const pieCLP = pieUF * currentUFValue;
+    // Actualizar Pie Capital (desglose)
+    const labelPieCapitalUf = document.getElementById('label-pie-capital-uf');
+    const labelPieCapitalClp = document.getElementById('label-pie-capital-output');
+    if (labelPieCapitalUf) {
+        labelPieCapitalUf.textContent = `${pieCapitalUF.toFixed(2).replace('.', ',')} UF`;
+    }
+    if (labelPieCapitalClp) {
+        labelPieCapitalClp.textContent = formatCurrency(Math.round(pieCapitalUF * currentUFValue));
+    }
+
+    // Actualizar IVA Pie (desglose)
+    const ivaPieUF = pieCapitalUF * 0.19;
+    const labelIvaPieUf = document.getElementById('label-iva-pie-uf');
+    const labelIvaPieClp = document.getElementById('label-iva-pie-output');
+    if (labelIvaPieUf) {
+        labelIvaPieUf.textContent = `${ivaPieUF.toFixed(2).replace('.', ',')} UF`;
+    }
+    if (labelIvaPieClp) {
+        labelIvaPieClp.textContent = formatCurrency(Math.round(ivaPieUF * currentUFValue));
+    }
+
+    // Actualizar Pie Total en inputs
+    if (pieUfInput && document.activeElement !== pieUfInput) {
+        pieUfInput.value = pieTotalUF.toFixed(2);
+    }
+    const pieTotalCLP = pieTotalUF * currentUFValue;
     if (pieClpInput && document.activeElement !== pieClpInput) {
-        setCLPValue(pieClpInput, Math.round(pieCLP));
+        setCLPValue(pieClpInput, Math.round(pieTotalCLP));
     }
 
-    const saldoCLP = saldoUF * currentUFValue;
+    // Actualizar Monto a Financiar (Saldo)
     if (saldoFinanciarUfInput && document.activeElement !== saldoFinanciarUfInput) {
-        saldoFinanciarUfInput.value = saldoUF.toFixed(2);
+        saldoFinanciarUfInput.value = montoFinanciarUF.toFixed(2);
     }
+    const montoFinanciarCLP = montoFinanciarUF * currentUFValue;
     if (saldoFinanciarClpInput && document.activeElement !== saldoFinanciarClpInput) {
-        setCLPValue(saldoFinanciarClpInput, Math.round(saldoCLP));
+        setCLPValue(saldoFinanciarClpInput, Math.round(montoFinanciarCLP));
     }
 
-    // Calcular cuotas (12, 24, 36, 48 plazos con $5.250 de recargo fijo de GA + Seguro)
+    // Calcular cuotas
     const plazos = [12, 24, 36, 48];
-    const recargoFijoCLP = 3500 + 1750; // $5.250 CLP
 
     plazos.forEach(plazo => {
-        const cuotaCLP = Math.round((saldoCLP / plazo) + recargoFijoCLP);
-        const cuotaUF = currentUFValue > 0 ? (cuotaCLP / currentUFValue) : 0;
+        let cuotaCLP = 0;
+        let cuotaUF = 0;
+
+        if (plazo <= 24) {
+            // Hasta 24 cuotas: dividir monto a financiar por plazo, sumarle 19% IVA, más GA 3500 y seguro 1750
+            const cuotaNetaBase = montoFinanciarCLP / plazo;
+            const cuotaConIva = cuotaNetaBase * 1.19;
+            cuotaCLP = Math.round(cuotaConIva + 3500 + 1750);
+            cuotaUF = currentUFValue > 0 ? (cuotaCLP / currentUFValue) : 0;
+        } else {
+            // De 36 cuotas para arriba: se calcula en UF sumando 0.15 UF de cargos fijos
+            const cuotaNetaBaseUF = montoFinanciarUF / plazo;
+            const cuotaConIvaUF = cuotaNetaBaseUF * 1.19;
+            cuotaUF = cuotaConIvaUF + 0.15;
+            cuotaCLP = Math.round(cuotaUF * currentUFValue);
+        }
 
         const factorEl = document.getElementById(`factor-${plazo}`);
         const cuotaEl = document.getElementById(`cuota-${plazo}`);

@@ -387,6 +387,7 @@ input[type=number] {
 }
 
 .btn-share { background-color: #28a745; }
+.btn-pdf { background-color: #dc3545; }
 
 .label-cell { font-weight: normal; }
 .bold { font-weight: bold; }
