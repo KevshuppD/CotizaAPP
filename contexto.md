@@ -11,19 +11,18 @@ La herramienta permite a los asesores comerciales y clientes calcular de manera 
 
 ```
 CotizaAPP/
-├── index.html                  # Estructura principal DOM y carga de scripts modulares
+├── index.html                  # Estructura principal DOM y carga de scripts modulares (Sepultación)
 ├── style.css                   # Sistema de diseño con variables CSS, layout amplio y responsivo
-├── script.js                   # Orquestador principal, visibilidad de pantallas y enrutamiento
 ├── contexto.md                 # Memoria técnica del proyecto y documentación de fórmulas
 ├── js/
 │   ├── core.js                 # Estado global (currentUFValue), mapa de elementos DOM y helpers de formato
-│   ├── graphic.js              # Renderizado gráfico dinámico (torres de derechos, ánforas, criptas)
 │   └── products/
-│       ├── sepultacion.js      # Lógica de Sepultación Anticipada (promo CLP/UF y fórmula unificada cuotas)
-│       ├── cremacion.js        # Lógica de Cremación (presets 27, 41.59, 55.98, 65.59 UF)
-│       ├── aumento-capacidad.js# Lógica de Aumento de Capacidad (precios por parque El Prado / otros)
-│       ├── sepultura-liberador.js# Lógica de Sepultura con Beneficios (Liberador, cuotas de 12 a 108 meses)
-│       └── mantencion.js       # Lógica de Planes de Mantención
+│       ├── sepultacion.js      # Lógica y renderizado gráfico de Sepultación Anticipada
+│       ├── cremacion.js        # Lógica y renderizado gráfico de Cremación
+│       ├── aumento-capacidad.js# Lógica y renderizado gráfico de Aumento de Capacidad
+│       ├── sepultura-liberador.js# Lógica y renderizado gráfico de Sepultura con Beneficios
+│       ├── mantencion.js       # Lógica de Planes de Mantención
+│       └── servicios-funerarios.js# Lógica de Servicios Funerarios
 ├── anfora.png                  # Asset gráfico para representación de ánforas (cremación)
 ├── cremacion.png               # Imagen informativa para el servicio de cremación
 └── logo-parque.png             # Logotipo institucional para la cabecera
@@ -166,3 +165,8 @@ Al ser un proyecto exclusivamente de cliente (*front-end* puro sin backend), no 
 
 ### Despliegue
 * **Vercel / Netlify / GitHub Pages:** Conectar el repositorio directamente a cualquiera de estas plataformas para un despliegue instantáneo.
+
+---
+
+## 7. Historial de Actualizaciones e Información Adicional
+*(Esta sección se utilizará para registrar información técnica, fórmulas y datos adicionales del proyecto a solicitud del usuario).*

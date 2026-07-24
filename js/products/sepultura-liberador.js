@@ -5,6 +5,16 @@ function calculateSepulturaLiberador(triggeredBy = '') {
     const select = elements.capacidadReduccionesSelect;
     if (!select) return;
 
+    // Elementos DOM locales para evitar ReferenceError
+    const descPercentEl = document.getElementById('porcentaje-descuento-main');
+    const valorNiUfDisplay = document.getElementById('valor-ni-uf');
+    const valorNiClpInput = document.getElementById('valor-ni-clp-input');
+    const piePercentEl = document.getElementById('pie-percent');
+    const pieUfInput = document.getElementById('pie-uf');
+    const pieClpInput = document.getElementById('pie-clp-input');
+    const saldoFinanciarUfInput = document.getElementById('saldo-financiar-uf-input');
+    const saldoFinanciarClpInput = document.getElementById('saldo-financiar-clp-input');
+
     // Mapa de precios en UF por Producto y Opción
     const priceMap = {
         'PRADO': { '2-4': 190, '3-8': 220, '4-12': 250 },
@@ -30,14 +40,7 @@ function calculateSepulturaLiberador(triggeredBy = '') {
         setCLPValue(elements.refClpInput, Math.round(valorRealCLP));
     }
 
-    const descPercentEl = document.getElementById('porcentaje-descuento-main');
-    const valorNiUfDisplay = document.getElementById('valor-ni-uf');
-    const valorNiClpInput = document.getElementById('valor-ni-clp-input');
-    const piePercentEl = document.getElementById('pie-percent');
-    const pieClpInput = document.getElementById('pie-clp-input');
-    const pieUfInput = document.getElementById('pie-uf');
-    const saldoFinanciarUfInput = document.getElementById('saldo-financiar-uf-input');
-    const saldoFinanciarClpInput = document.getElementById('saldo-financiar-clp-input');
+    const descuentoUfInput = document.getElementById('descuento-uf-input');
 
     let descPercent = descPercentEl ? (parseFloat(descPercentEl.value) || 0) : 20;
     let valorPromoUF = valorRealUF * (1 - descPercent / 100);
@@ -71,6 +74,13 @@ function calculateSepulturaLiberador(triggeredBy = '') {
         
         piePercent = valorPromoUF > 0 ? (pieUF / valorPromoUF) * 100 : 0;
         if (piePercentEl) piePercentEl.value = Math.round(piePercent).toString();
+    } else if (triggeredBy === 'desc-uf' && descuentoUfInput) {
+        const descUF = parseFloat(descuentoUfInput.value) || 0;
+        descPercent = valorRealUF > 0 ? (descUF / valorRealUF) * 100 : 0;
+        if (descPercentEl) descPercentEl.value = Math.round(descPercent).toString();
+        valorPromoUF = valorRealUF - descUF;
+        pieUF = valorPromoUF * (piePercent / 100);
+        saldoUF = valorPromoUF - pieUF;
     } else if (triggeredBy === 'ni-uf' && valorNiUfDisplay) {
         valorPromoUF = parseFloat(valorNiUfDisplay.value) || 0;
         const descUF = Math.max(0, valorRealUF - valorPromoUF);
@@ -130,10 +140,9 @@ function calculateSepulturaLiberador(triggeredBy = '') {
     const descuentoCLP = descuentoUF * currentUFValue;
     const valorPromoCLP = valorPromoUF * currentUFValue;
 
-    const descUfOutput = document.getElementById('label-descuento-uf');
     const descOutput = document.getElementById('label-descuento-output');
-    if (descUfOutput) {
-        descUfOutput.textContent = `${descuentoUF.toFixed(2).replace('.', ',')} UF`;
+    if (descuentoUfInput && document.activeElement !== descuentoUfInput) {
+        descuentoUfInput.value = descuentoUF > 0 ? descuentoUF.toFixed(2) : '';
     }
     if (descOutput) {
         descOutput.textContent = formatCurrency(Math.round(descuentoCLP));
@@ -219,9 +228,7 @@ function calculateSepulturaLiberador(triggeredBy = '') {
     if (elements.rightsInput) elements.rightsInput.value = cap;
     if (elements.reduccionesInput) elements.reduccionesInput.value = red;
 
-    if (typeof renderVisualGraphic === 'function') {
-        renderVisualGraphic('sepultura-liberador', cap);
-    }
+    renderSepulturaLiberadorGraphic(cap);
 }
 
 // Inicialización de la página dedicada a Sepultura con Beneficios
@@ -367,3 +374,95 @@ document.addEventListener('DOMContentLoaded', () => {
         calculateSepulturaLiberador('init');
     });
 });
+
+function renderSepulturaLiberadorGraphic(count) {
+    const container = document.getElementById('sepultacion-graphic-container');
+    if (!container) return;
+
+    container.style.display = 'block';
+    container.style.width = '100%';
+    container.style.maxWidth = '250px';
+    container.style.margin = '15px auto 0 auto';
+    container.classList.add('active');
+    container.innerHTML = '';
+
+    const reduccionesInput = document.getElementById('cantidad-reducciones');
+    const reducciones = reduccionesInput ? (parseInt(reduccionesInput.value) || 0) : 0;
+    const capacidad = count;
+
+    // Título del gráfico
+    const titulo = document.createElement('div');
+    titulo.style.textAlign = 'center';
+    titulo.style.fontWeight = 'bold';
+    titulo.style.fontSize = '13px';
+    titulo.style.marginBottom = '10px';
+    titulo.style.color = '#333';
+    titulo.textContent = `Capacidad ${capacidad} - ${reducciones} Reducciones`;
+    container.appendChild(titulo);
+
+    // Contenedor de cuadrados apilados verticalmente
+    const stackContainer = document.createElement('div');
+    stackContainer.style.display = 'flex';
+    stackContainer.style.flexDirection = 'column';
+    stackContainer.style.alignItems = 'center';
+    stackContainer.style.gap = '4px';
+
+    // Cuadrado 1: capacidad base (siempre limpio, sin subdivisiones)
+    const baseBox = document.createElement('div');
+    baseBox.style.width = '120px';
+    baseBox.style.height = '120px';
+    baseBox.style.border = '3px solid var(--primary-green)';
+    baseBox.style.borderRadius = '8px';
+    baseBox.style.display = 'flex';
+    baseBox.style.alignItems = 'center';
+    baseBox.style.justifyContent = 'center';
+    baseBox.style.backgroundColor = '#e8f5e9';
+    baseBox.style.fontWeight = 'bold';
+    baseBox.style.fontSize = '11px';
+    baseBox.style.color = '#333';
+    baseBox.style.textAlign = 'center';
+    baseBox.textContent = 'CAPACIDAD 1';
+    stackContainer.appendChild(baseBox);
+
+    // Cuadrados adicionales: cada uno dividido en 4 reducciones
+    const reduccionesPorCapacidad = 4;
+    for (let i = 2; i <= capacidad; i++) {
+        const capBox = document.createElement('div');
+        capBox.style.width = '120px';
+        capBox.style.height = '120px';
+        capBox.style.border = '3px solid var(--primary-green)';
+        capBox.style.borderRadius = '8px';
+        capBox.style.display = 'grid';
+        capBox.style.gridTemplateColumns = '1fr 1fr';
+        capBox.style.gridTemplateRows = '1fr 1fr';
+        capBox.style.overflow = 'hidden';
+        capBox.style.backgroundColor = '#fff';
+
+        const startReduc = (i - 2) * reduccionesPorCapacidad + 1;
+        for (let r = 0; r < reduccionesPorCapacidad; r++) {
+            const reducNum = startReduc + r;
+            const cell = document.createElement('div');
+            cell.style.display = 'flex';
+            cell.style.alignItems = 'center';
+            cell.style.justifyContent = 'center';
+            cell.style.fontSize = '10px';
+            cell.style.fontWeight = 'bold';
+            cell.style.color = '#fff';
+            cell.style.backgroundColor = 'var(--primary-green)';
+            cell.style.border = '1px solid #3d8b40';
+
+            if (reducNum <= reducciones) {
+                cell.textContent = 'R' + reducNum;
+            } else {
+                cell.style.backgroundColor = '#d0d0d0';
+                cell.style.color = '#999';
+                cell.textContent = 'R' + reducNum;
+            }
+            capBox.appendChild(cell);
+        }
+
+        stackContainer.appendChild(capBox);
+    }
+
+    container.appendChild(stackContainer);
+}

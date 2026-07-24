@@ -187,9 +187,7 @@ function calculateSepultacion(triggeredBy = '') {
         if (cuotaEl) cuotaEl.textContent = formatCurrency(cuotaCLP);
     });
 
-    if (typeof renderVisualGraphic === 'function') {
-        renderVisualGraphic('sepultacion', qty);
-    }
+    renderSepultacionGraphic(qty);
 }
 
 // Inicialización de la página dedicada a Sepultación Anticipada
@@ -328,3 +326,30 @@ document.addEventListener('DOMContentLoaded', () => {
         calculateSepultacion('init');
     });
 });
+
+function renderSepultacionGraphic(count) {
+    const container = document.getElementById('sepultacion-graphic-container');
+    if (!container) return;
+
+    container.style.display = 'block';
+    container.style.width = '100%';
+    container.style.maxWidth = '250px';
+    container.style.margin = '15px auto 0 auto';
+    container.classList.add('active');
+    container.innerHTML = '';
+
+    const top = document.createElement('div');
+    top.className = 'sepultura-header';
+    container.appendChild(top);
+
+    for (let i = count - 1; i >= 0; i--) {
+        const level = document.createElement('div');
+        level.className = 'sepultura-level';
+        level.textContent = 'DERECHO ' + (i + 1);
+        container.appendChild(level);
+    }
+
+    const base = document.createElement('div');
+    base.className = 'sepultura-base';
+    container.appendChild(base);
+}

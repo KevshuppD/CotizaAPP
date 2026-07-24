@@ -152,9 +152,7 @@ function calculateAumentoCapacidad(triggeredBy = '') {
         if (cuotaEl) cuotaEl.textContent = formatCurrency(totalCuotaCLP);
     });
 
-    if (typeof renderVisualGraphic === 'function') {
-        renderVisualGraphic('aumento-capacidad', capacidad);
-    }
+    renderAumentoCapacidadGraphic(capacidad);
 }
 
 // Inicialización de la página dedicada a Aumento de Capacidad
@@ -285,10 +283,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Obtener valor UF del día por API
     fetchUFValue().then(() => {
         calculateAumentoCapacidad('init');
     }).catch(() => {
         calculateAumentoCapacidad('init');
     });
 });
+
+function renderAumentoCapacidadGraphic(count) {
+    const container = document.getElementById('sepultacion-graphic-container');
+    if (!container) return;
+
+    container.style.display = 'block';
+    container.style.width = '100%';
+    container.style.maxWidth = '250px';
+    container.style.margin = '15px auto 0 auto';
+    container.classList.add('active');
+    container.innerHTML = '';
+
+    // Título del gráfico
+    const titulo = document.createElement('div');
+    titulo.style.textAlign = 'center';
+    titulo.style.fontWeight = 'bold';
+    titulo.style.fontSize = '13px';
+    titulo.style.marginBottom = '10px';
+    titulo.style.color = '#333';
+    titulo.textContent = `Aumento de Capacidad: +${count}`;
+    container.appendChild(titulo);
+
+    const stackContainer = document.createElement('div');
+    stackContainer.style.display = 'flex';
+    stackContainer.style.flexDirection = 'column';
+    stackContainer.style.alignItems = 'center';
+    stackContainer.style.gap = '4px';
+
+    // Renderizar bloques apilados limpios
+    for (let i = count; i >= 1; i--) {
+        const box = document.createElement('div');
+        box.style.width = '120px';
+        box.style.height = '60px';
+        box.style.border = '3px solid var(--primary-green)';
+        box.style.borderRadius = '8px';
+        box.style.display = 'flex';
+        box.style.alignItems = 'center';
+        box.style.justifyContent = 'center';
+        box.style.backgroundColor = '#e8f5e9';
+        box.style.fontWeight = 'bold';
+        box.style.fontSize = '11px';
+        box.style.color = '#333';
+        box.textContent = `CAPACIDAD +${i}`;
+        stackContainer.appendChild(box);
+    }
+
+    container.appendChild(stackContainer);
+}

@@ -143,53 +143,85 @@ function getCaptureOptions() {
         backgroundColor: '#ffffff',
         ignoreElements: function(element) {
             return element.classList && element.classList.contains('no-export');
+        },
+        onclone: function(clonedDoc) {
+            // Reemplazar todos los inputs y selects por spans estáticos en el DOM clonado
+            const inputsAndSelects = clonedDoc.querySelectorAll('#capture-area input, #capture-area select');
+            inputsAndSelects.forEach(el => {
+                if (el.closest('.no-export')) return;
+                if (el.tagName === 'INPUT' && (el.type === 'hidden' || el.type === 'submit' || el.type === 'button')) return;
+                if (el.tagName === 'INPUT' && (el.type === 'checkbox' || el.type === 'radio')) return;
+                
+                // Si está oculto, ignorar
+                if (window.getComputedStyle(el).display === 'none') {
+                    return;
+                }
+
+                let valText = '';
+                if (el.tagName === 'SELECT') {
+                    if (el.selectedIndex >= 0) {
+                        valText = el.options[el.selectedIndex].text;
+                    }
+                } else {
+                    valText = el.value || '';
+                }
+
+                const span = clonedDoc.createElement('span');
+                span.textContent = valText;
+
+                // Copiar estilos clave para mantener la apariencia y alineación
+                const computedStyle = window.getComputedStyle(el);
+                span.style.fontWeight = 'bold';
+                span.style.color = '#111';
+                span.style.fontFamily = computedStyle.fontFamily || 'inherit';
+                span.style.fontSize = computedStyle.fontSize || '11px';
+                
+                if (el.tagName === 'INPUT') {
+                    span.style.whiteSpace = 'nowrap';
+                } else {
+                    span.style.whiteSpace = 'normal';
+                }
+
+                if (el.classList.contains('editable-field') || el.classList.contains('input-inline')) {
+                    span.style.padding = '2px 4px';
+                }
+
+                el.style.display = 'none';
+                el.parentNode.insertBefore(span, el);
+            });
+
+            // 3. Reemplazar beneficios-text con div estático en el clon
+            const beneficiosEl = clonedDoc.getElementById('beneficios-text');
+            if (beneficiosEl) {
+                let text = '';
+                if (beneficiosEl.tagName === 'TEXTAREA' || beneficiosEl.tagName === 'INPUT') {
+                    text = beneficiosEl.value;
+                } else {
+                    text = beneficiosEl.innerText || beneficiosEl.textContent || '';
+                }
+
+                const tempDiv = clonedDoc.createElement('div');
+                tempDiv.className = 'editable-textarea-mimic';
+                tempDiv.style.whiteSpace = 'pre-wrap';
+                tempDiv.style.wordBreak = 'break-word';
+                tempDiv.style.textAlign = 'left';
+                tempDiv.style.background = '#ffffff';
+                tempDiv.style.border = '1px solid #ccc';
+                tempDiv.style.padding = '8px';
+                tempDiv.style.minHeight = '80px';
+                tempDiv.style.fontSize = '12px';
+                tempDiv.style.fontFamily = 'inherit';
+                tempDiv.style.borderRadius = '4px';
+                tempDiv.style.boxSizing = 'border-box';
+                tempDiv.style.width = '100%';
+                tempDiv.style.color = '#333';
+                tempDiv.textContent = text.trim();
+
+                beneficiosEl.parentNode.insertBefore(tempDiv, beneficiosEl);
+                beneficiosEl.style.display = 'none';
+            }
         }
     };
-}
-
-function prepareCaptureArea() {
-    const originalEl = document.getElementById('beneficios-text');
-    if (!originalEl) return null;
-
-    let text = '';
-    if (originalEl.tagName === 'TEXTAREA' || originalEl.tagName === 'INPUT') {
-        text = originalEl.value;
-    } else {
-        text = originalEl.innerText || originalEl.textContent || '';
-    }
-
-    // Crear un div estático temporal para que html2canvas renderice los saltos de línea perfectamente
-    const tempDiv = document.createElement('div');
-    tempDiv.id = 'temp-beneficios-export';
-    tempDiv.className = 'editable-textarea-mimic';
-    tempDiv.style.whiteSpace = 'pre-wrap';
-    tempDiv.style.wordBreak = 'break-word';
-    tempDiv.style.textAlign = 'left';
-    tempDiv.style.background = '#ffffff';
-    tempDiv.style.border = '1px solid #ccc';
-    tempDiv.style.padding = '8px';
-    tempDiv.style.minHeight = '80px';
-    tempDiv.style.fontSize = '12px';
-    tempDiv.style.fontFamily = 'inherit';
-    tempDiv.style.borderRadius = '4px';
-    tempDiv.style.boxSizing = 'border-box';
-    tempDiv.style.width = '100%';
-    tempDiv.style.color = '#333';
-    
-    // Asignar el texto limpio (los saltos de línea de innerText se conservan como \n y se respetan gracias a white-space: pre-wrap)
-    tempDiv.textContent = text.trim();
-
-    originalEl.parentNode.insertBefore(tempDiv, originalEl);
-    originalEl.style.display = 'none';
-
-    return { originalEl, tempDiv };
-}
-
-function restoreCaptureArea(state) {
-    if (!state) return;
-    const { originalEl, tempDiv } = state;
-    if (originalEl) originalEl.style.display = '';
-    if (tempDiv && tempDiv.parentNode) tempDiv.parentNode.removeChild(tempDiv);
 }
 
 function exportAsImage() {
@@ -201,10 +233,7 @@ function exportAsImage() {
         return;
     }
 
-    const captureState = prepareCaptureArea();
-
     html2canvas(captureArea, getCaptureOptions()).then(canvas => {
-        restoreCaptureArea(captureState);
         const link = document.createElement('a');
         const parkName = (elements.parkSelector ? elements.parkSelector.value : 'parque').toLowerCase().replace(/\s+/g, '-');
         const now = new Date().toISOString().slice(0, 10);
@@ -212,7 +241,6 @@ function exportAsImage() {
         link.href = canvas.toDataURL('image/png');
         link.click();
     }).catch(err => {
-        restoreCaptureArea(captureState);
         console.error('Error al exportar imagen:', err);
         alert('Ocurrió un error al generar la imagen.');
     });
@@ -227,10 +255,7 @@ function shareAsImage() {
         return;
     }
 
-    const captureState = prepareCaptureArea();
-
     html2canvas(captureArea, getCaptureOptions()).then(canvas => {
-        restoreCaptureArea(captureState);
         canvas.toBlob(blob => {
             if (!blob) {
                 alert('No se pudo generar la imagen para compartir.');
@@ -244,8 +269,6 @@ function shareAsImage() {
 
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 navigator.share({
-                    title: 'Cotización Parque',
-                    text: 'Te comparto la cotización en formato imagen.',
                     files: [file]
                 }).catch(err => {
                     if (err.name !== 'AbortError') {
@@ -261,7 +284,6 @@ function shareAsImage() {
             }
         }, 'image/png');
     }).catch(err => {
-        restoreCaptureArea(captureState);
         console.error('Error al capturar para compartir:', err);
         alert('Ocurrió un error al preparar la imagen para compartir.');
     });

@@ -173,9 +173,7 @@ function calculateCremacion(triggeredBy = '') {
         if (cuotaEl) cuotaEl.textContent = formatCurrency(cuotaCLP);
     });
 
-    if (typeof renderVisualGraphic === 'function') {
-        renderVisualGraphic('cremacion', qty);
-    }
+    renderCremacionGraphic(qty);
 }
 
 // Inicialización de la página dedicada a Cremación Anticipada
@@ -314,3 +312,67 @@ document.addEventListener('DOMContentLoaded', () => {
         calculateCremacion('init');
     });
 });
+
+function renderCremacionGraphic(count) {
+    const container = document.getElementById('sepultacion-graphic-container');
+    if (!container) return;
+
+    container.style.display = 'block';
+    container.style.width = '100%';
+    container.style.maxWidth = '250px';
+    container.style.margin = '15px auto 0 auto';
+    container.classList.add('active');
+    container.innerHTML = '';
+
+    container.style.maxWidth = '100%';
+    const bannerImg = document.createElement('img');
+    bannerImg.src = 'cremacion.png';
+    bannerImg.alt = 'Servicio de Cremación';
+    bannerImg.style.width = '100%';
+    bannerImg.style.maxWidth = '100%';
+    bannerImg.style.height = 'auto';
+    bannerImg.style.borderRadius = '8px';
+    bannerImg.style.marginBottom = '12px';
+    bannerImg.style.border = '1px solid #00763a';
+    bannerImg.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+    container.appendChild(bannerImg);
+
+    const gridContainer = document.createElement('div');
+    gridContainer.style.display = 'grid';
+    gridContainer.style.gridTemplateColumns = 'repeat(2, minmax(100px, 1fr))';
+    gridContainer.style.gap = '10px';
+    gridContainer.style.padding = '5px';
+    gridContainer.style.width = '100%';
+    
+    for (let i = 0; i < count; i++) {
+        const anforaWrapper = document.createElement('div');
+        anforaWrapper.style.display = 'flex';
+        anforaWrapper.style.flexDirection = 'column';
+        anforaWrapper.style.alignItems = 'center';
+        anforaWrapper.style.padding = '8px';
+        anforaWrapper.style.border = '2px dashed var(--primary-green)';
+        anforaWrapper.style.borderRadius = '10px';
+        anforaWrapper.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+        anforaWrapper.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+
+        const img = document.createElement('img');
+        img.src = 'anfora.png';
+        img.alt = 'Ánfora ' + (i + 1);
+        img.style.width = '55px';
+        img.style.height = '55px';
+        img.style.objectFit = 'contain';
+        img.style.marginBottom = '4px';
+
+        const label = document.createElement('span');
+        label.textContent = 'Ánfora ' + (i + 1);
+        label.style.fontSize = '12px';
+        label.style.fontWeight = 'bold';
+        label.style.color = 'var(--text-dark)';
+
+        anforaWrapper.appendChild(img);
+        anforaWrapper.appendChild(label);
+        gridContainer.appendChild(anforaWrapper);
+    }
+    
+    container.appendChild(gridContainer);
+}
