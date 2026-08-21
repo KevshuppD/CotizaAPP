@@ -224,6 +224,21 @@ function getCaptureOptions() {
     };
 }
 
+function showToast(message, duration = 4000) {
+    let toast = document.getElementById('cotizaapp-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'cotizaapp-toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(() => {
+        toast.classList.remove('show');
+    }, duration);
+}
+
 function exportAsImage() {
     const captureArea = document.getElementById('capture-area');
     if (!captureArea) return;
@@ -235,18 +250,20 @@ function exportAsImage() {
 
     html2canvas(captureArea, getCaptureOptions()).then(canvas => {
         const link = document.createElement('a');
-        const parkName = (elements.parkSelector ? elements.parkSelector.value : 'parque').toLowerCase().replace(/\s+/g, '-');
+        const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
+        const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
         const now = new Date().toISOString().slice(0, 10);
         link.download = `cotizacion-${parkName}-${now}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
+        showToast('¡Imagen descargada exitosamente!');
     }).catch(err => {
         console.error('Error al exportar imagen:', err);
         alert('Ocurrió un error al generar la imagen.');
     });
 }
 
-function shareAsImage() {
+async function shareAsImage() {
     const captureArea = document.getElementById('capture-area');
     if (!captureArea) return;
 
@@ -255,38 +272,62 @@ function shareAsImage() {
         return;
     }
 
-    html2canvas(captureArea, getCaptureOptions()).then(canvas => {
-        canvas.toBlob(blob => {
+    try {
+        const canvas = await html2canvas(captureArea, getCaptureOptions());
+        canvas.toBlob(async blob => {
             if (!blob) {
                 alert('No se pudo generar la imagen para compartir.');
                 return;
             }
 
-            const parkName = (elements.parkSelector ? elements.parkSelector.value : 'parque').toLowerCase().replace(/\s+/g, '-');
+            const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
+            const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
             const now = new Date().toISOString().slice(0, 10);
             const fileName = `cotizacion-${parkName}-${now}.png`;
             const file = new File([blob], fileName, { type: 'image/png' });
 
+            // 1. Si el navegador/dispositivo soporta compartir archivos nativamente (móviles / macOS)
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                navigator.share({
-                    files: [file]
-                }).catch(err => {
-                    if (err.name !== 'AbortError') {
-                        console.error('Error al compartir:', err);
-                    }
-                });
+                try {
+                    await navigator.share({
+                        title: 'Cotización Parque',
+                        files: [file]
+                    });
+                    return;
+                } catch (shareErr) {
+                    if (shareErr.name === 'AbortError') return;
+                }
+            }
+
+            // 2. En navegadores de escritorio (Firefox / Chrome / Edge): Copiar directo al portapapeles
+            let copied = false;
+            if (navigator.clipboard && window.ClipboardItem) {
+                try {
+                    await navigator.clipboard.write([
+                        new ClipboardItem({ 'image/png': blob })
+                    ]);
+                    copied = true;
+                } catch (clipErr) {
+                    console.warn('No se pudo escribir imagen al portapapeles:', clipErr);
+                }
+            }
+
+            // Descargar la imagen
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = URL.createObjectURL(blob);
+            link.click();
+
+            if (copied) {
+                showToast('¡Imagen copiada al portapapeles y descargada! Puedes pegarla con Ctrl+V en WhatsApp o correo.');
             } else {
-                const link = document.createElement('a');
-                link.download = fileName;
-                link.href = URL.createObjectURL(blob);
-                link.click();
-                alert('Tu dispositivo/navegador no soporta compartir imágenes directamente. La imagen ha sido descargada.');
+                showToast('¡Imagen descargada exitosamente!');
             }
         }, 'image/png');
-    }).catch(err => {
+    } catch (err) {
         console.error('Error al capturar para compartir:', err);
         alert('Ocurrió un error al preparar la imagen para compartir.');
-    });
+    }
 }
 
 function shareAsPDF() {
@@ -299,16 +340,15 @@ function shareAsPDF() {
     }
 
     const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
-    const parkName = (parkSelector ? parkSelector.value : 'parque').toLowerCase().replace(/\s+/g, '-');
+    const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
     const now = new Date().toISOString().slice(0, 10);
     const fileName = `cotizacion-${parkName}-${now}.pdf`;
 
-    // Convertir el tamaño en píxeles de captureArea a milímetros (96 DPI: 1 pulgada = 25.4 mm = 96 px)
     const widthMM = (captureArea.clientWidth * 25.4) / 96;
     const heightMM = (captureArea.clientHeight * 25.4) / 96;
 
     const opt = {
-        margin:       10, // Margen de 10mm
+        margin:       10,
         filename:     fileName,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { 
@@ -320,13 +360,12 @@ function shareAsPDF() {
         },
         jsPDF:        { 
             unit: 'mm', 
-            // Sumar 20mm (10mm por lado de margen) al tamaño de la página para que la cotización calce perfecto en una sola hoja
             format: [widthMM + 20, heightMM + 20], 
             orientation: widthMM > heightMM ? 'landscape' : 'portrait' 
         }
     };
 
-    html2pdf().set(opt).from(captureArea).toPdf().output('blob').then(blob => {
+    html2pdf().set(opt).from(captureArea).toPdf().output('blob').then(async blob => {
         if (!blob) {
             alert('No se pudo generar el PDF para compartir.');
             return;
@@ -335,22 +374,25 @@ function shareAsPDF() {
         const file = new File([blob], fileName, { type: 'application/pdf' });
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            navigator.share({
-                files: [file]
-            }).catch(err => {
-                if (err.name !== 'AbortError') {
-                    console.error('Error al compartir PDF:', err);
-                }
-            });
-        } else {
-            const link = document.createElement('a');
-            link.download = fileName;
-            link.href = URL.createObjectURL(blob);
-            link.click();
-            alert('Tu dispositivo/navegador no soporta compartir PDFs directamente. El documento ha sido descargado.');
+            try {
+                await navigator.share({
+                    title: 'Cotización en PDF',
+                    files: [file]
+                });
+                return;
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+            }
         }
+
+        const link = document.createElement('a');
+        link.download = fileName;
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        showToast('¡PDF generado y descargado exitosamente!');
     }).catch(err => {
         console.error('Error al generar PDF:', err);
         alert('Ocurrió un error al preparar el PDF para compartir.');
     });
 }
+
