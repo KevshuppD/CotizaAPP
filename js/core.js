@@ -431,41 +431,55 @@ async function doShareAsImage(orientation) {
     }, 50);
 }
 
-function doShareAsPDF(orientation) {
+async function doShareAsPDF(orientation) {
     const captureArea = document.getElementById('capture-area');
     if (!captureArea) return;
 
-    if (typeof html2pdf === 'undefined') {
-        alert('Error: html2pdf no está disponible.');
+    if (typeof html2canvas === 'undefined') {
+        alert('Error: html2canvas no está disponible.');
         return;
     }
 
     captureArea.classList.remove('export-horizontal', 'export-vertical');
     captureArea.classList.add(orientation === 'vertical' ? 'export-vertical' : 'export-horizontal');
 
-    setTimeout(() => {
-        const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
-        const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
-        const now = new Date().toISOString().slice(0, 10);
-        const fileName = `cotizacion-${parkName}-${orientation}-${now}.pdf`;
-
-        const widthMM = (captureArea.clientWidth * 25.4) / 96;
-        const heightMM = (captureArea.clientHeight * 25.4) / 96;
-
-        const opt = {
-            margin:       10,
-            filename:     fileName,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  getCaptureOptions(orientation),
-            jsPDF:        { 
-                unit: 'mm', 
-                format: [widthMM + 20, heightMM + 20], 
-                orientation: widthMM > heightMM ? 'landscape' : 'portrait' 
-            }
-        };
-
-        html2pdf().set(opt).from(captureArea).toPdf().output('blob').then(async blob => {
+    setTimeout(async () => {
+        try {
+            const canvas = await html2canvas(captureArea, getCaptureOptions(orientation));
             captureArea.classList.remove('export-horizontal', 'export-vertical');
+
+            const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
+            const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
+            const now = new Date().toISOString().slice(0, 10);
+            const fileName = `cotizacion-${parkName}-${orientation}-${now}.pdf`;
+
+            const PDFConstructor = window.jsPDF || (window.jspdf && window.jspdf.jsPDF);
+            if (!PDFConstructor) {
+                alert('Error: Librería PDF no disponible.');
+                return;
+            }
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+            // Escala 2x -> conversión a milímetros (96 DPI)
+            const imgWidthMM = (canvas.width * 25.4) / (96 * 2);
+            const imgHeightMM = (canvas.height * 25.4) / (96 * 2);
+            const margin = 8; // 8mm de margen perimetral
+
+            const pageWidth = imgWidthMM + (margin * 2);
+            const pageHeight = imgHeightMM + (margin * 2);
+            const isLandscape = pageWidth > pageHeight;
+
+            // Instanciar documento PDF de exactamente 1 página
+            const doc = new PDFConstructor({
+                orientation: isLandscape ? 'landscape' : 'portrait',
+                unit: 'mm',
+                format: [pageWidth, pageHeight],
+                compress: true
+            });
+
+            doc.addImage(imgData, 'JPEG', margin, margin, imgWidthMM, imgHeightMM, undefined, 'FAST');
+            const blob = doc.output('blob');
 
             if (!blob) {
                 alert('No se pudo generar el PDF para compartir.');
@@ -490,11 +504,11 @@ function doShareAsPDF(orientation) {
             link.download = fileName;
             link.href = URL.createObjectURL(blob);
             link.click();
-            showToast('¡PDF generado y descargado exitosamente!');
-        }).catch(err => {
+            showToast('¡PDF generado en 1 sola hoja exitosamente!');
+        } catch (err) {
             captureArea.classList.remove('export-horizontal', 'export-vertical');
             console.error('Error al generar PDF:', err);
             alert('Ocurrió un error al preparar el PDF para compartir.');
-        });
+        }
     }, 50);
 }
