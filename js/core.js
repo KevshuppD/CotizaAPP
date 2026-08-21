@@ -154,15 +154,6 @@ function getCaptureOptions(orientation = 'horizontal') {
             if (clonedCaptureArea) {
                 clonedCaptureArea.classList.remove('export-horizontal', 'export-vertical');
                 clonedCaptureArea.classList.add(isVertical ? 'export-vertical' : 'export-horizontal');
-
-                // Asegurar que las imágenes mantengan su proporción perfecta en la clonación
-                const imgs = clonedCaptureArea.querySelectorAll('img');
-                imgs.forEach(img => {
-                    img.style.objectFit = 'contain';
-                    img.style.height = 'auto';
-                    img.style.maxWidth = '100%';
-                    img.style.flexShrink = '0';
-                });
             }
 
             // Reemplazar todos los inputs y selects por spans estáticos en el DOM clonado

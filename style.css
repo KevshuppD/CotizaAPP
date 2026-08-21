@@ -631,20 +631,6 @@ input[type=number] {
     margin-top: 10px !important;
 }
 
-/* Reglas de protección de imágenes para evitar aplastamiento */
-#capture-area img,
-.container.export-horizontal img,
-.container.export-vertical img,
-.park-logo,
-#jardin-graphic-container img,
-#sepultacion-graphic-container img,
-#anforas-image-grid img {
-    height: auto !important;
-    max-width: 100% !important;
-    object-fit: contain !important;
-    flex-shrink: 0 !important;
-}
-
 /* Orientation Modal */
 .modal-overlay {
     position: fixed;
