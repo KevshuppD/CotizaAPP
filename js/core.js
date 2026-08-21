@@ -431,50 +431,57 @@ async function doShareAsImage(orientation) {
     }, 50);
 }
 
-function doShareAsPDF(orientation) {
+async function doShareAsPDF(orientation) {
     const captureArea = document.getElementById('capture-area');
     if (!captureArea) return;
 
-    if (typeof html2pdf === 'undefined') {
-        alert('Error: La librería html2pdf no está disponible.');
+    if (typeof html2canvas === 'undefined') {
+        alert('Error: html2canvas no está disponible.');
         return;
     }
 
     captureArea.classList.remove('export-horizontal', 'export-vertical');
     captureArea.classList.add(orientation === 'vertical' ? 'export-vertical' : 'export-horizontal');
 
-    setTimeout(() => {
-        const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
-        const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
-        const now = new Date().toISOString().slice(0, 10);
-        const fileName = `cotizacion-${parkName}-${orientation}-${now}.pdf`;
-
-        const widthMM = (captureArea.clientWidth * 25.4) / 96;
-        const heightMM = (captureArea.clientHeight * 25.4) / 96;
-
-        const opt = {
-            margin: 6,
-            filename: fileName,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: getCaptureOptions(orientation),
-            jsPDF: {
-                unit: 'mm',
-                format: [widthMM + 12, heightMM + 12],
-                orientation: widthMM > heightMM ? 'landscape' : 'portrait'
-            },
-            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-        };
-
-        html2pdf().set(opt).from(captureArea).toPdf().get('pdf').then(pdf => {
-            // Eliminar cualquier hoja sobrante para garantizar exactamente 1 sola hoja
-            while (pdf.internal.getNumberOfPages() > 1) {
-                pdf.deletePage(pdf.internal.getNumberOfPages());
-            }
-        }).output('blob').then(async blob => {
+    setTimeout(async () => {
+        try {
+            const canvas = await html2canvas(captureArea, getCaptureOptions(orientation));
             captureArea.classList.remove('export-horizontal', 'export-vertical');
 
+            const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
+            const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
+            const now = new Date().toISOString().slice(0, 10);
+            const fileName = `cotizacion-${parkName}-${orientation}-${now}.pdf`;
+
+            const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+            if (!jsPDFClass) {
+                alert('Error: La librería jsPDF no está disponible.');
+                return;
+            }
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+            // Escala 2x de html2canvas (96 DPI -> 1 pulgada = 25.4 mm)
+            const imgWidthMM = (canvas.width * 25.4) / (96 * 2);
+            const imgHeightMM = (canvas.height * 25.4) / (96 * 2);
+            const margin = 8; // Margen de 8mm
+
+            const pageWidth = imgWidthMM + (margin * 2);
+            const pageHeight = imgHeightMM + (margin * 2);
+            const isLandscape = pageWidth > pageHeight;
+
+            const doc = new jsPDFClass({
+                orientation: isLandscape ? 'l' : 'p',
+                unit: 'mm',
+                format: [pageWidth, pageHeight],
+                compress: true
+            });
+
+            doc.addImage(imgData, 'JPEG', margin, margin, imgWidthMM, imgHeightMM, undefined, 'FAST');
+            const blob = doc.output('blob');
+
             if (!blob) {
-                alert('No se pudo generar el PDF para compartir.');
+                alert('No se pudo generar el archivo PDF.');
                 return;
             }
 
@@ -496,11 +503,11 @@ function doShareAsPDF(orientation) {
             link.download = fileName;
             link.href = URL.createObjectURL(blob);
             link.click();
-            showToast('¡PDF generado en 1 sola hoja exitosamente!');
-        }).catch(err => {
+            showToast('¡PDF generado en 1 sola hoja completa exitosamente!');
+        } catch (err) {
             captureArea.classList.remove('export-horizontal', 'export-vertical');
             console.error('Error al generar PDF:', err);
             alert('Ocurrió un error al preparar el PDF para compartir.');
-        });
+        }
     }, 50);
 }
