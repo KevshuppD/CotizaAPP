@@ -3,23 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cotización Mantención</title>
+    <title>Cotización Mantención Perpetua</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="style.css">
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div class="controls">
-        <button class="btn" onclick="exportAsImage()">Descargar Imagen</button>
-        <button class="btn btn-share" onclick="shareAsImage()">Compartir Imagen</button>
-        <button class="btn btn-pdf" onclick="shareAsPDF()">Compartir PDF</button>
+        <button class="btn" onclick="window.print()">Imprimir</button>
     </div>
 
     <div class="container" id="capture-area">
         <div class="header-title-container">
             <div class="title-logo-wrapper">
-                <h1 id="main-title">Mantención</h1>
+                <h1 id="main-title">Mantención Perpetua</h1>
                 <img src="logo-parque.png" alt="Logo" class="park-logo" onerror="this.style.display='none'">
             </div>
             <div id="park-name-display" class="park-display">NUESTROS PARQUES</div>
@@ -29,80 +25,21 @@
             <label for="product-type" style="font-weight: bold; margin-right: 10px;">Tipo de Producto:</label>
             <select id="product-type" class="park-select" style="width: auto; padding: 5px 10px;">
                 <option value="sepultacion">Derecho de Sepultación Anticipada</option>
-                <option value="sepultura-liberador">Sepultura con Beneficios</option>
+                <option value="sepultura-auco-uf">Sepultura Parque Auco (UF)</option>
+                <option value="sepultura-auco-pesos">Sepultura Parque Auco (Pesos)</option>
+                <option value="jardin-auco-uf">Jardín Familiar Parque Auco (UF)</option>
+                <option value="jardin-auco-pesos">Jardín Familiar Parque Auco (Pesos)</option>
                 <option value="cremacion">Cremación Anticipada</option>
                 <option value="aumento-capacidad">Aumento de Capacidad</option>
-                <option value="mantencion" selected>Mantención</option>
-                <option value="servicios-funerarios">Servicios Funerarios</option>
+                <option value="mantencion" selected>Mantención Perpetua</option>
             </select>
         </div>
 
-        <div class="section-header">
-            <div class="left-col">
-                <div id="mantencion-fields" style="margin-top: 20px;">
-                    <table>
-                        <tr>
-                            <td style="width: 60%;">Valor Plan + IVA (UF)</td>
-                            <td class="uf-col"><input type="number" id="valor-plan-uf" class="input-inline" value="0" step="0.01"></td>
-                        </tr>
-                        <tr>
-                            <td>Descuento (%)</td>
-                            <td class="uf-col"><input type="number" id="descuento-porcentaje" class="input-inline" value="20" min="0" max="100" step="1"></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-
-            <div class="right-col">
-                <table>
-                    <tr>
-                        <td class="bold">FECHA</td>
-                        <td id="current-date" style="text-align: right;">--/--/----</td>
-                    </tr>
-                    <tr>
-                        <td class="bold">UF HOY</td>
-                        <td style="text-align: right; font-weight: bold;">
-                            <div class="currency-input-wrapper">
-                                <span>$</span>
-                                <input type="number" id="uf-value-input" class="input-inline editable-field" value="40844.79" step="0.01">
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <div id="mantencion-output" style="margin-top: 20px;">
-                    <div style="border: 1px solid black; margin-bottom: 10px; border-radius: 4px; overflow: hidden;">
-                        <div class="quantity-box" style="padding: 8px 12px; border: none;">Resumen Mantención</div>
-                        <div id="mantencion-resumen" style="background: #f9f9f9; padding: 10px; min-height: 100px;"></div>
-                    </div>
-
-                    <div style="border: 1px solid black; padding: 10px; margin-bottom: 10px; border-radius: 4px; background: #fff;">
-                        <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px; color: #333;">Beneficios</div>
-                        <div id="beneficios-text" class="editable-textarea-mimic" contenteditable="true" placeholder="Escribir beneficios aquí..."></div>
-                    </div>
-
-                    <div class="cuotas table-responsive" style="margin-top: 15px;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Plazo</th>
-                                    <th>Cuota UF</th>
-                                    <th>S.Desgravamen</th>
-                                    <th>G.Operacionales</th>
-                                    <th>IVA UF</th>
-                                    <th>Total Cuota UF</th>
-                                    <th>Total Cuota CLP</th>
-                                </tr>
-                            </thead>
-                            <tbody id="mantencion-cuotas-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+        <div style="min-height: 350px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 16px;">
+            <p>Sección en desarrollo...</p>
         </div>
     </div>
 
     <script src="js/core.js"></script>
-    <script src="js/products/mantencion.js"></script>
 </body>
 </html>

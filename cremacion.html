@@ -22,74 +22,47 @@
                 <h1 id="main-title">Cotización Cremación Anticipada</h1>
                 <img src="logo-parque.png" alt="Logo" class="park-logo" onerror="this.style.display='none'">
             </div>
-            <div id="park-name-display" class="park-display">PARQUE PRADO</div>
+            <div id="park-name-display" class="park-display">PARQUE AUCO</div>
         </div>
 
         <div class="product-selector-container no-export">
             <label for="product-type" style="font-weight: bold; margin-right: 10px;">Tipo de Producto:</label>
             <select id="product-type" class="park-select" style="width: auto; padding: 5px 10px;">
                 <option value="sepultacion">Derecho de Sepultación Anticipada</option>
-                <option value="sepultura-liberador">Sepultura con Beneficios</option>
+                <option value="sepultura-auco-uf">Sepultura Parque Auco (UF)</option>
+                <option value="sepultura-auco-pesos">Sepultura Parque Auco (Pesos)</option>
+                <option value="jardin-auco-uf">Jardín Familiar Parque Auco (UF)</option>
+                <option value="jardin-auco-pesos">Jardín Familiar Parque Auco (Pesos)</option>
                 <option value="cremacion" selected>Cremación Anticipada</option>
                 <option value="aumento-capacidad">Aumento de Capacidad</option>
-                <option value="mantencion">Mantención</option>
-                <option value="servicios-funerarios">Servicios Funerarios</option>
+                <option value="mantencion">Mantención Perpetua</option>
             </select>
         </div>
 
         <div class="section-header">
-            <div class="left-col">
-                <div id="sepultacion-fields">
-                    <div class="percentage-controls-card no-export" style="display: flex; gap: 20px; background: #f9f9f9; padding: 10px 15px; border: 1px dashed #ccc; border-radius: 4px; margin-bottom: 15px; align-items: center;">
-                        <div style="font-weight: bold; font-size: 13px; color: #333;">Ajustes rápidos:</div>
-                        <div style="display: flex; align-items: center; gap: 6px; font-size: 13px;">
-                            <label for="porcentaje-descuento-main" style="font-weight: bold;">Descuento:</label>
-                            <input type="number" id="porcentaje-descuento-main" value="20" min="0" max="100" style="width: 50px; padding: 3px; text-align: center; border: 1px solid #ccc; border-radius: 3px; font-weight: bold;"> %
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 6px; font-size: 13px;">
-                            <label for="pie-percent" style="font-weight: bold;">Pie:</label>
-                            <input type="number" id="pie-percent" value="10" min="0" max="100" style="width: 50px; padding: 3px; text-align: center; border: 1px solid #ccc; border-radius: 3px; font-weight: bold;"> %
-                        </div>
-                    </div>
-
+            <div class="left-col" style="flex: 1 1 54%;">
+                <div id="cremacion-fields">
                     <table style="width: 100%;">
                         <tr>
-                            <td class="bold" style="width: 40%;">Parque / Opción</td>
-                            <td colspan="2">
-                                <select id="parque-name" class="park-select" style="font-size: 14px; width: 100%;">
-                                    <option value="SANTIAGO">Parque Santiago</option>
-                                    <option value="MANANTIAL">Parque El Manantial</option>
-                                    <option value="CANAAN">Parque Canaan</option>
-                                    <option value="PRADO">Parque El Prado</option>
-                                    <option value="SB_CANAAN">SB Canaan</option>
-                                    <option value="INTEGRA_MANANTIAL_A3">Integra Manantial A3</option>
-                                    <option value="INTEGRA_PREMIUM_A3">Integra Premium A3</option>
-                                    <option value="INTEGRA_PEUMOS">Integra Peumos</option>
-                                    <option value="INTEGRA_CANAAN">Integra Canaan</option>
-                                </select>
-                                <span id="park-static-value" style="display: none; font-weight: normal; font-size: 16px; color: #333;"></span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
+                            <td style="width: 40%;"></td>
                             <td class="bold uf-col">UF</td>
                             <td class="bold clp-col">$</td>
                         </tr>
                         <tr>
                             <td id="label-valor-real" class="bold">Valor Real</td>
                             <td class="uf-col">
-                                <input type="number" id="ref-uf-input" class="input-inline editable-field" value="27.00" step="0.01">
+                                <input type="number" id="ref-uf-input" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
                             </td>
                             <td class="clp-col">
                                 <div class="currency-input-wrapper">
-                                    <input type="text" id="ref-clp-input" class="input-inline editable-field" value="$0">
+                                    <input type="text" id="ref-clp-input" class="input-inline editable-field" value="" placeholder="$0">
                                 </div>
                             </td>
                         </tr>
                         <tr id="discount-row-main">
                             <td class="bold">Descuento</td>
-                            <td class="uf-col gray-bg" id="label-descuento-uf" style="font-weight: bold; text-align: right; padding: 6px;">
-                                0,00 UF
+                            <td class="uf-col">
+                                <input type="number" id="descuento-uf-input" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
                             </td>
                             <td class="clp-col" id="label-descuento-output" style="font-weight: bold; text-align: right; padding: 6px;">
                                 $0
@@ -107,93 +80,93 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="bold">Pie Capital (10%)</td>
-                            <td class="uf-col gray-bg" id="label-pie-capital-uf" style="font-weight: bold; text-align: right; padding: 6px;">
-                                0,00 UF
-                            </td>
-                            <td class="clp-col gray-bg" id="label-pie-capital-output" style="font-weight: bold; text-align: right; padding: 6px;">
-                                $0
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="bold">IVA Pie (19%)</td>
-                            <td class="uf-col gray-bg" id="label-iva-pie-uf" style="font-weight: bold; text-align: right; padding: 6px;">
-                                0,00 UF
-                            </td>
-                            <td class="clp-col gray-bg" id="label-iva-pie-output" style="font-weight: bold; text-align: right; padding: 6px;">
-                                $0
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="bold">Pie Total</td>
+                            <td class="bold">Pie</td>
                             <td class="uf-col">
-                                <input type="number" id="pie-uf" class="input-inline editable-field" value="0.00" step="0.01">
+                                <input type="number" id="pie-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
                             </td>
                             <td class="clp-col yellow-bg">
                                 <div class="currency-input-wrapper">
-                                    <input type="text" id="pie-clp-input" class="input-inline editable-field" value="$0">
+                                    <input type="text" id="pie-clp-input" class="input-inline editable-field" value="" placeholder="$0">
                                 </div>
-                            </td>
-                        </tr>
-                        <!-- Campos ocultos de compatibilidad -->
-                        <tr style="display:none;">
-                            <td>
-                                <input type="number" id="valor-ant-uf" value="0">
-                                <input type="text" id="valor-ant-clp-input" value="0">
                             </td>
                         </tr>
                         <tr id="saldo-financiar-row">
-                            <td class="bold">Monto a financiar</td>
+                            <td class="bold">Saldo a Financiar</td>
                             <td class="uf-col gray-bg">
-                                <input type="number" id="saldo-financiar-uf-input" class="input-inline editable-field" value="0" step="0.01">
+                                <input type="number" id="saldo-financiar-uf-input" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
                             </td>
                             <td class="clp-col">
                                 <div class="currency-input-wrapper">
-                                    <input type="text" id="saldo-financiar-clp-input" class="input-inline editable-field" value="$0">
+                                    <input type="text" id="saldo-financiar-clp-input" class="input-inline editable-field" value="" placeholder="$0">
                                 </div>
                             </td>
                         </tr>
                     </table>
 
-                    <table id="main-cuotas-table" style="margin-top: 20px;">
-                        <tr>
-                            <td style="width: 40%;">12 Cuotas</td>
-                            <td class="uf-col gray-bg" id="factor-12"></td>
-                            <td class="clp-col">
-                                <div id="cuota-12">$0</div>
-                                <div class="small-note" id="adj-12"></div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>24 Cuotas</td>
-                            <td class="uf-col gray-bg" id="factor-24"></td>
-                            <td class="clp-col">
-                                <div id="cuota-24">$0</div>
-                                <div class="small-note" id="adj-24"></div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>36 Cuotas</td>
-                            <td class="uf-col gray-bg" id="factor-36">0,815</td>
-                            <td class="clp-col">
-                                <div id="cuota-36">$0</div>
-                                <div class="small-note" id="adj-36"></div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>48 Cuotas</td>
-                            <td class="uf-col gray-bg" id="factor-48">0,621</td>
-                            <td class="clp-col">
-                                <div id="cuota-48">$0</div>
-                                <div class="small-note" id="adj-48"></div>
-                            </td>
-                        </tr>
-                    </table>
+                    <div id="cremacion-cuotas-container" style="margin-top: 15px;">
+                        <div class="cuotas table-responsive" style="margin-top: 10px;">
+                            <table style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40%;">Plazo</th>
+                                        <th class="uf-col">Total Cuota UF</th>
+                                        <th class="clp-col">Total Cuota CLP</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="bold">12 cuotas</td>
+                                        <td class="uf-col">
+                                            <input type="number" id="cuota-12-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                        </td>
+                                        <td class="clp-col yellow-bg">
+                                            <div class="currency-input-wrapper">
+                                                <input type="text" id="cuota-12-clp" class="input-inline editable-field" value="" placeholder="$0">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bold">24 cuotas</td>
+                                        <td class="uf-col">
+                                            <input type="number" id="cuota-24-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                        </td>
+                                        <td class="clp-col yellow-bg">
+                                            <div class="currency-input-wrapper">
+                                                <input type="text" id="cuota-24-clp" class="input-inline editable-field" value="" placeholder="$0">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bold">36 cuotas</td>
+                                        <td class="uf-col">
+                                            <input type="number" id="cuota-36-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                        </td>
+                                        <td class="clp-col yellow-bg">
+                                            <div class="currency-input-wrapper">
+                                                <input type="text" id="cuota-36-clp" class="input-inline editable-field" value="" placeholder="$0">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bold">48 cuotas</td>
+                                        <td class="uf-col">
+                                            <input type="number" id="cuota-48-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                        </td>
+                                        <td class="clp-col yellow-bg">
+                                            <div class="currency-input-wrapper">
+                                                <input type="text" id="cuota-48-clp" class="input-inline editable-field" value="" placeholder="$0">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="right-col">
-                <table>
+            <div class="right-col" style="flex: 1 1 43%;">
+                <table style="margin-bottom: 20px;">
                     <tr>
                         <td class="bold">FECHA</td>
                         <td id="current-date" style="text-align: right;">--/--/----</td>
@@ -209,14 +182,16 @@
                     </tr>
                 </table>
 
-                <div id="sepultacion-output">
+                <div id="cremacion-output">
                     <div style="border: 1px solid black; margin-bottom: 10px; border-radius: 4px;">
                         <div class="quantity-box" style="display: flex; justify-content: space-between; align-items: center; border: none; padding: 8px 12px;">
-                            <span>Capacidad</span>
-                            <span class="capacity-value-group">
-                                <input type="number" id="cantidad-rights" class="input-number-center" value="1" min="1" max="4" style="background: transparent; border: none; font-weight: bold; width: 40px;">
-                                <span id="capacity-unit">Anforas</span>
-                            </span>
+                            <span style="font-weight: bold;">Cantidad de Ánforas</span>
+                            <select id="anforas-select" style="font-weight: bold; font-size: 14px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; background: #fff;">
+                                <option value="1" selected>1 Ánfora</option>
+                                <option value="2">2 Ánforas</option>
+                                <option value="3">3 Ánforas</option>
+                                <option value="4">4 Ánforas</option>
+                            </select>
                         </div>
                     </div>
 
@@ -225,7 +200,7 @@
                         <div id="beneficios-text" class="editable-textarea-mimic" contenteditable="true" placeholder="Escribir beneficios aquí..."></div>
                     </div>
 
-                    <div id="sepultacion-graphic-container" style="margin-top: 15px; display: flex; justify-content: center; min-height: 150px;"></div>
+                    <div id="cremacion-graphic-container" style="margin-top: 15px; display: flex; justify-content: center; min-height: 120px;"></div>
                 </div>
             </div>
         </div>

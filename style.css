@@ -1,6 +1,6 @@
 :root {
-    --primary-green: #2e7d32;
-    --header-green: #92d050;
+    --primary-green: #23C27E;
+    --header-green: #23C27E;
     --primary-red: #d90000;
     --highlight-yellow: #ffff00;
     --border-color: #000;
@@ -44,7 +44,7 @@ body {
         padding: 8px 12px;
     }
     .park-logo {
-        height: 90px;
+        height: 130px;
     }
     .header-title-container h1 {
         font-size: 26px !important;
@@ -79,7 +79,7 @@ body {
         padding: 10px 14px;
     }
     .park-logo {
-        height: 105px;
+        height: 155px;
     }
     .header-title-container h1 {
         font-size: 28px !important;
@@ -94,8 +94,11 @@ body {
     display: flex;
     flex-direction: column;
     margin-bottom: 25px;
-    border-bottom: 3px solid var(--header-green);
-    padding-bottom: 10px;
+    background: linear-gradient(135deg, #189860 0%, #23C27E 55%, #2ad88d 100%);
+    border-radius: 12px;
+    padding: 20px 24px 16px 24px;
+    box-shadow: 0 4px 15px rgba(35, 194, 126, 0.2);
+    border-bottom: 3px solid #168053;
 }
 
 .title-logo-wrapper {
@@ -106,30 +109,41 @@ body {
 }
 
 .park-logo {
-    height: 80px;
+    height: 120px;
     width: auto;
     object-fit: contain;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    display: inline-block;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 .header-title-container h1 {
-    color: var(--primary-green);
+    color: #ffffff;
     font-size: clamp(18px, 4vw, 24px);
     text-transform: uppercase;
     margin: 0;
     font-weight: bold;
     line-height: 1.2;
-    max-width: 70%;
+    max-width: 75%;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
 .park-display {
-    color: var(--primary-green);
+    color: #ffffff;
     font-size: clamp(20px, 4vw, 26px);
     text-transform: uppercase;
-    font-weight: bold;
+    font-weight: 800;
     text-align: center;
     line-height: 1.2;
-    margin-top: 15px;
+    margin-top: 12px;
     width: 100%;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Mobile specific (Android/iOS) */
@@ -153,7 +167,10 @@ body {
         align-items: center;
     }
     .park-logo {
-        height: 50px;
+        height: 75px;
+        padding: 0;
+        border: none;
+        background: transparent;
     }
     .header-title-container h1 {
         font-size: 15px !important;
@@ -478,7 +495,7 @@ input[type=number] {
 
 .sepultura-header {
     height: 30px;
-    background: #4caf50;
+    background: var(--primary-green);
     border-radius: 5px 5px 0 0;
     margin-bottom: -2px;
     z-index: 1;

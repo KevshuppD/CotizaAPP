@@ -85,11 +85,13 @@ document.addEventListener('DOMContentLoaded', () => {
         productSelector.addEventListener('change', () => {
             const productPageMap = {
                 'sepultacion': 'index.html',
-                'sepultura-liberador': 'sepultura-liberador.html',
+                'sepultura-auco-uf': 'sepultura-auco-uf.html',
+                'sepultura-auco-pesos': 'sepultura-auco-pesos.html',
+                'jardin-auco-uf': 'jardin-auco-uf.html',
+                'jardin-auco-pesos': 'jardin-auco-pesos.html',
                 'cremacion': 'cremacion.html',
                 'aumento-capacidad': 'aumento-capacidad.html',
-                'mantencion': 'mantencion.html',
-                'servicios-funerarios': 'servicios-funerarios.html'
+                'mantencion': 'mantencion.html'
             };
             window.location.href = productPageMap[productSelector.value] || 'mantencion.html';
         });

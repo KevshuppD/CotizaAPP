@@ -1,7 +1,6 @@
-// js/products/sepultura-liberador.js - Lógica Financiera e Inicialización de Sepultura con Beneficios (Liberador)
+// js/products/sepultura-liberador.js - Lógica Financiera e Inicialización de Sepultura Parque Auco
 
 function calculateSepulturaLiberador(triggeredBy = '') {
-    const selectedProduct = elements.parkSelector ? elements.parkSelector.value : 'PRADO';
     const select = elements.capacidadReduccionesSelect;
     if (!select) return;
 
@@ -15,21 +14,18 @@ function calculateSepulturaLiberador(triggeredBy = '') {
     const saldoFinanciarUfInput = document.getElementById('saldo-financiar-uf-input');
     const saldoFinanciarClpInput = document.getElementById('saldo-financiar-clp-input');
 
-    // Mapa de precios en UF por Producto y Opción
+    // Mapa de precios en UF por Capacidad/Reducciones
     const priceMap = {
-        'PRADO': { '2-4': 190, '3-8': 220, '4-12': 250 },
-        'INTEGRA_MANANTIAL_A3': { '2-4': 102, '3-8': 107, '4-12': 110 },
-        'INTEGRA_PREMIUM_A3': { '2-4': 110, '3-8': 120, '4-12': 125 },
-        'INTEGRA_PEUMOS': { '2-4': 87, '3-8': 92, '4-12': 95 },
-        'INTEGRA_CANAAN': { '2-4': 92, '3-8': 97, '4-12': 100 },
-        'SB_CANAAN': { '2-4': 77, '3-8': 87, '4-12': 95 }
+        '2-4': 190,
+        '3-8': 220,
+        '4-12': 250,
+        '8-20': 450
     };
 
-    const productPrices = priceMap[selectedProduct] || priceMap['PRADO'];
-    const valorRealBase = productPrices[select.value] || 190;
+    const valorRealBase = priceMap[select.value] || 190;
 
-    // Actualizar Valor Real si fue disparado por parque, capacidad o inicio
-    if (triggeredBy === 'park' || triggeredBy === 'cap-red' || triggeredBy === 'init') {
+    // Actualizar Valor Real si fue disparado por capacidad o inicio
+    if (triggeredBy === 'cap-red' || triggeredBy === 'init' || triggeredBy === 'park') {
         if (elements.refUfInput) elements.refUfInput.value = valorRealBase.toFixed(2);
     }
 
@@ -278,8 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'sepultura-liberador': 'sepultura-liberador.html',
                 'cremacion': 'cremacion.html',
                 'aumento-capacidad': 'aumento-capacidad.html',
-                'mantencion': 'mantencion.html',
-                'servicios-funerarios': 'servicios-funerarios.html'
+                'mantencion': 'mantencion.html'
             };
             window.location.href = productPageMap[productSelector.value] || 'sepultura-liberador.html';
         });

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COTIZACIÓN JARDIN FAMILIAR PARQUE DE AUCO</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="controls">
+        <button class="btn" onclick="exportAsImage()">Descargar Imagen</button>
+        <button class="btn btn-share" onclick="shareAsImage()">Compartir Imagen</button>
+        <button class="btn btn-pdf" onclick="shareAsPDF()">Compartir PDF</button>
+    </div>
+
+    <div class="container" id="capture-area">
+        <div class="header-title-container">
+            <div class="title-logo-wrapper">
+                <h1 id="main-title">COTIZACIÓN JARDIN FAMILIAR PARQUE DE AUCO</h1>
+                <img src="logo-parque.png" alt="Logo" class="park-logo" onerror="this.style.display='none'">
+            </div>
+            <div id="park-name-display" class="park-display">PARQUE AUCO</div>
+        </div>
+
+        <div class="product-selector-container no-export">
+            <label for="product-type" style="font-weight: bold; margin-right: 10px;">Tipo de Producto:</label>
+            <select id="product-type" class="park-select" style="width: auto; padding: 5px 10px;">
+                <option value="sepultacion">Derecho de Sepultación Anticipada</option>
+                <option value="sepultura-auco-uf">Sepultura Parque Auco (UF)</option>
+                <option value="sepultura-auco-pesos">Sepultura Parque Auco (Pesos)</option>
+                <option value="jardin-auco-uf" selected>Jardín Familiar Parque Auco (UF)</option>
+                <option value="jardin-auco-pesos">Jardín Familiar Parque Auco (Pesos)</option>
+                <option value="cremacion">Cremación Anticipada</option>
+                <option value="aumento-capacidad">Aumento de Capacidad</option>
+                <option value="mantencion">Mantención Perpetua</option>
+            </select>
+        </div>
+
+        <div class="section-header">
+            <div class="left-col" style="flex: 1 1 54%;">
+                <div id="sepultacion-fields">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">
+                        <!-- FECHA -->
+                        <div style="border: 1px solid black; border-radius: 4px; padding: 6px 10px; background: #fff; display: flex; justify-content: space-between; align-items: center;">
+                            <span class="bold" style="font-size: 12px;">FECHA</span>
+                            <span id="current-date" style="font-weight: bold; font-size: 13px;">--/--/----</span>
+                        </div>
+
+                        <!-- UF HOY -->
+                        <div style="border: 1px solid black; border-radius: 4px; padding: 6px 10px; background: #fff; display: flex; justify-content: space-between; align-items: center;">
+                            <span class="bold" style="font-size: 12px;">UF HOY</span>
+                            <div class="currency-input-wrapper" style="font-weight: bold; justify-content: flex-end;">
+                                <span>$</span>
+                                <input type="number" id="uf-value-input" class="input-inline editable-field" value="40844.79" step="0.01" style="font-weight: bold; width: 85px; text-align: right;">
+                            </div>
+                        </div>
+
+                        <!-- CAPACIDAD -->
+                        <div style="border: 1px solid black; border-radius: 4px; padding: 6px 10px; background: #fff; display: flex; justify-content: space-between; align-items: center;">
+                            <span class="bold" style="font-size: 12px;">Capacidad</span>
+                            <select id="capacidad-select" style="font-weight: bold; font-size: 13px; padding: 3px 6px; border: 1px solid #ccc; border-radius: 4px; background: #fff;">
+                                <option value="4" selected>Capacidad 4</option>
+                                <option value="6">Capacidad 6</option>
+                            </select>
+                        </div>
+
+                        <!-- REDUCCIONES -->
+                        <div style="border: 1px solid black; border-radius: 4px; padding: 6px 10px; background: #fff; display: flex; justify-content: space-between; align-items: center;">
+                            <span class="bold" style="font-size: 12px;">Reducciones</span>
+                            <select id="reducciones-select" style="font-weight: bold; font-size: 13px; padding: 3px 6px; border: 1px solid #ccc; border-radius: 4px; background: #fff;">
+                                <option value="4" selected>4 Reducciones</option>
+                                <option value="8">8 Reducciones</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 40%;"></td>
+                            <td class="bold uf-col">UF</td>
+                            <td class="bold clp-col">$</td>
+                        </tr>
+                        <tr>
+                            <td id="label-valor-real" class="bold">Valor Real</td>
+                            <td class="uf-col">
+                                <input type="number" id="ref-uf-input" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                            </td>
+                            <td class="clp-col">
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="ref-clp-input" class="input-inline editable-field" value="" placeholder="$0">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr id="discount-row-main">
+                            <td class="bold">
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <span>Descuento</span>
+                                    <div style="display: inline-flex; align-items: center; gap: 2px;">
+                                        <input type="number" id="porcentaje-descuento-main" class="input-inline editable-field" value="" placeholder="0" min="0" max="100" style="width: 42px; text-align: center; padding: 2px 4px; font-size: 12px; font-weight: bold; border-radius: 4px; border: 1px solid #ccc;">
+                                        <span style="font-size: 12px; font-weight: bold;">%</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="uf-col">
+                                <input type="number" id="descuento-uf-input" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                            </td>
+                            <td class="clp-col">
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="descuento-clp-input" class="input-inline editable-field" value="" placeholder="$0">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr id="capital-anterior-row">
+                            <td class="bold">Capital Anterior</td>
+                            <td class="uf-col">
+                                <input type="number" id="capital-anterior-uf-input" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                            </td>
+                            <td class="clp-col">
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="capital-anterior-clp-input" class="input-inline editable-field" value="" placeholder="$0">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="label-valor-ni" class="bold">Valor Promocional</td>
+                            <td class="uf-col">
+                                <input type="number" id="valor-ni-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                            </td>
+                            <td class="clp-col yellow-bg">
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="valor-ni-clp-input" class="input-inline editable-field" value="" placeholder="$0">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bold">
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <span>Pie</span>
+                                    <div style="display: inline-flex; align-items: center; gap: 2px;">
+                                        <input type="number" id="pie-percent" class="input-inline editable-field" value="10" min="0" max="100" style="width: 42px; text-align: center; padding: 2px 4px; font-size: 12px; font-weight: bold; border-radius: 4px; border: 1px solid #ccc;">
+                                        <span style="font-size: 12px; font-weight: bold;">%</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="uf-col">
+                                <input type="number" id="pie-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                            </td>
+                            <td class="clp-col yellow-bg">
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="pie-clp-input" class="input-inline editable-field" value="" placeholder="$0">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr id="saldo-financiar-row">
+                            <td class="bold">Saldo a Financiar</td>
+                            <td class="uf-col gray-bg">
+                                <input type="number" id="saldo-financiar-uf-input" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                            </td>
+                            <td class="clp-col">
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="saldo-financiar-clp-input" class="input-inline editable-field" value="" placeholder="$0">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div id="jardin-cuotas-container" style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span class="bold" style="font-size: 13px;">Opciones de Cuotas</span>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <label for="cuotas-count-select" style="font-size: 12px; font-weight: bold; color: #555;">Mostrar:</label>
+                                <select id="cuotas-count-select" style="font-weight: bold; font-size: 12px; padding: 2px 8px; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer;">
+                                    <option value="1">1 cuota</option>
+                                    <option value="2">2 cuotas</option>
+                                    <option value="3">3 cuotas</option>
+                                    <option value="4">4 cuotas</option>
+                                    <option value="5">5 cuotas</option>
+                                    <option value="6" selected>6 cuotas (Todas)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="cuotas table-responsive">
+                            <table style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40%;">Plazo</th>
+                                        <th class="uf-col">Total Cuota UF</th>
+                                        <th class="clp-col">Total Cuota CLP</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="cuota-row-1">
+                                        <td class="bold">
+                                            <select class="input-inline editable-field plazo-selector" style="font-weight: bold; width: 100%;">
+                                                <option value="12" selected>12 cuotas</option>
+                                                <option value="24">24 cuotas</option>
+                                                <option value="36">36 cuotas</option>
+                                                <option value="48">48 cuotas</option>
+                                                <option value="60">60 cuotas</option>
+                                                <option value="72">72 cuotas</option>
+                                            </select>
+                                        </td>
+                                        <td class="uf-col">
+                                            <input type="number" id="cuota-1-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                        </td>
+                                        <td class="clp-col yellow-bg">
+                                            <div class="currency-input-wrapper">
+                                                <input type="text" id="cuota-1-clp" class="input-inline editable-field" value="" placeholder="$0">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="cuota-row-2">
+                                        <td class="bold">
+                                            <select class="input-inline editable-field plazo-selector" style="font-weight: bold; width: 100%;">
+                                                <option value="12">12 cuotas</option>
+                                                <option value="24" selected>24 cuotas</option>
+                                                <option value="36">36 cuotas</option>
+                                                <option value="48">48 cuotas</option>
+                                                <option value="60">60 cuotas</option>
+                                                <option value="72">72 cuotas</option>
+                                            </select>
+                                        </td>
+                                        <td class="uf-col">
+                                            <input type="number" id="cuota-2-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                        </td>
+                                        <td class="clp-col yellow-bg">
+                                            <div class="currency-input-wrapper">
+                                                <input type="text" id="cuota-2-clp" class="input-inline editable-field" value="" placeholder="$0">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="cuota-row-3">
+                                        <td class="bold">
+                                            <select class="input-inline editable-field plazo-selector" style="font-weight: bold; width: 100%;">
+                                                <option value="12">12 cuotas</option>
+                                                <option value="24">24 cuotas</option>
+                                                <option value="36" selected>36 cuotas</option>
+                                                <option value="48">48 cuotas</option>
+                                                <option value="60">60 cuotas</option>
+                                                <option value="72">72 cuotas</option>
+                                            </select>
+                                        </td>
+                                        <td class="uf-col">
+                                            <input type="number" id="cuota-3-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                        </td>
+                                        <td class="clp-col yellow-bg">
+                                            <div class="currency-input-wrapper">
+                                                <input type="text" id="cuota-3-clp" class="input-inline editable-field" value="" placeholder="$0">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="cuota-row-4">
+                                        <td class="bold">
+                                            <select class="input-inline editable-field plazo-selector" style="font-weight: bold; width: 100%;">
+                                                <option value="12">12 cuotas</option>
+                                                <option value="24">24 cuotas</option>
+                                                <option value="36">36 cuotas</option>
+                                                <option value="48" selected>48 cuotas</option>
+                                                <option value="60">60 cuotas</option>
+                                                <option value="72">72 cuotas</option>
+                                            </select>
+                                        </td>
+                                        <td class="uf-col">
+                                            <input type="number" id="cuota-4-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                        </td>
+                                        <td class="clp-col yellow-bg">
+                                            <div class="currency-input-wrapper">
+                                                <input type="text" id="cuota-4-clp" class="input-inline editable-field" value="" placeholder="$0">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="cuota-row-5">
+                                        <td class="bold">
+                                            <select class="input-inline editable-field plazo-selector" style="font-weight: bold; width: 100%;">
+                                                <option value="12">12 cuotas</option>
+                                                <option value="24">24 cuotas</option>
+                                                <option value="36">36 cuotas</option>
+                                                <option value="48">48 cuotas</option>
+                                                <option value="60" selected>60 cuotas</option>
+                                                <option value="72">72 cuotas</option>
+                                            </select>
+                                        </td>
+                                        <td class="uf-col">
+                                            <input type="number" id="cuota-5-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                        </td>
+                                        <td class="clp-col yellow-bg">
+                                            <div class="currency-input-wrapper">
+                                                <input type="text" id="cuota-5-clp" class="input-inline editable-field" value="" placeholder="$0">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="cuota-row-6">
+                                        <td class="bold">
+                                            <select class="input-inline editable-field plazo-selector" style="font-weight: bold; width: 100%;">
+                                                <option value="12">12 cuotas</option>
+                                                <option value="24">24 cuotas</option>
+                                                <option value="36">36 cuotas</option>
+                                                <option value="48">48 cuotas</option>
+                                                <option value="60">60 cuotas</option>
+                                                <option value="72" selected>72 cuotas</option>
+                                            </select>
+                                        </td>
+                                        <td class="uf-col">
+                                            <input type="number" id="cuota-6-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                        </td>
+                                        <td class="clp-col yellow-bg">
+                                            <div class="currency-input-wrapper">
+                                                <input type="text" id="cuota-6-clp" class="input-inline editable-field" value="" placeholder="$0">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="jardin-beneficios-container" style="border: 1px solid black; padding: 10px; margin-top: 15px; border-radius: 4px; background: #fff;">
+                        <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px; color: #333;">Beneficios</div>
+                        <div id="beneficios-text" class="editable-textarea-mimic" contenteditable="true" placeholder="Escribir beneficios aquí..."></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-col" style="flex: 1 1 43%;">
+                <div id="jardin-output">
+                    <div id="jardin-graphic-container" style="display: flex; justify-content: center; align-items: flex-start; width: 100%;">
+                        <img src="jardin.jpg" alt="Jardín Familiar Parque de Auco" style="width: 100%; max-width: 100%; height: auto; object-fit: contain; display: block; border-radius: 8px; border: 2px solid var(--primary-green); box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/core.js"></script>
+    <script src="js/products/jardin-auco-uf.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "cotizaapp",
+  "version": "1.0.0",
+  "description": "Cotizador interactivo para parques funerarios",
+  "main": "index.html",
+  "scripts": {
+    "dev": "serve -p 3000 .",
+    "start": "serve -p 3000 ."
+  },
+  "keywords": [
+    "cotizador",
+    "funeraria"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "serve": "^14.2.4"
+  }
+}

@@ -11,25 +11,35 @@ La herramienta permite a los asesores comerciales y clientes calcular de manera 
 
 ```
 CotizaAPP/
-├── index.html                  # Estructura principal DOM y carga de scripts modulares (Sepultación)
+├── package.json                # Configuración de dependencias y scripts de desarrollo (serve)
+├── index.html                  # Cotizador de Derecho de Sepultación Anticipada
+├── sepultura-auco-uf.html      # Cotizador Sepultura Parque Auco (UF)
+├── sepultura-auco-pesos.html   # Cotizador Sepultura Parque Auco (Pesos)
+├── cremacion.html              # Cotizador Cremación Anticipada
+├── aumento-capacidad.html      # Cotizador Aumento de Capacidad
+├── mantencion.html             # Cotizador Mantención Perpetua
+├── servicios-funerarios.html   # Cotizador Servicios Funerarios
 ├── style.css                   # Sistema de diseño con variables CSS, layout amplio y responsivo
 ├── contexto.md                 # Memoria técnica del proyecto y documentación de fórmulas
 ├── js/
 │   ├── core.js                 # Estado global (currentUFValue), mapa de elementos DOM y helpers de formato
 │   └── products/
 │       ├── sepultacion.js      # Lógica y renderizado gráfico de Sepultación Anticipada
+│       ├── sepultura-auco-uf.js# Lógica y factores de Sepultura Parque Auco (UF)
+│       ├── sepultura-auco-pesos.js# Lógica y factores de Sepultura Parque Auco (Pesos)
 │       ├── cremacion.js        # Lógica y renderizado gráfico de Cremación
 │       ├── aumento-capacidad.js# Lógica y renderizado gráfico de Aumento de Capacidad
-│       ├── sepultura-liberador.js# Lógica y renderizado gráfico de Sepultura con Beneficios
 │       ├── mantencion.js       # Lógica de Planes de Mantención
 │       └── servicios-funerarios.js# Lógica de Servicios Funerarios
 ├── anfora.png                  # Asset gráfico para representación de ánforas (cremación)
+├── sarcofago.png               # Asset gráfico para representación de sarcófagos (sepultura)
 ├── cremacion.png               # Imagen informativa para el servicio de cremación
 └── logo-parque.png             # Logotipo institucional para la cabecera
 ```
 
 ### Integraciones y Librerías Externas
-* **[html2canvas.js](https://html2canvas.hertzen.com/)**: Cargado vía CDN en `index.html` para renderizar el área de cotización (`#capture-area`) y generar imágenes PNG exportables.
+* **[html2canvas.js](https://html2canvas.hertzen.com/)**: Cargado vía CDN para renderizar el área de cotización (`#capture-area`) y generar imágenes PNG exportables.
+* **[html2pdf.js](https://ekoopmans.github.io/html2pdf.js/)**: Cargado vía CDN para generar y exportar la cotización en formato PDF de hoja única.
 * **API UF (findic.cl / mindicador.cl)**: Consumo de endpoints REST para obtener el valor actualizado de la Unidad de Fomento (UF) en tiempo real en Chile.
 
 ---
@@ -38,32 +48,64 @@ CotizaAPP/
 
 La aplicación gestiona 5 modalidades principales seleccionables en el encabezado:
 
-1. **Derecho de Sepultación Anticipada**:
-   * Permite seleccionar el parque (*El Prado, El Manantial, Santiago, Canaán*).
-   * Ingreso de capacidad (número de derechos, 1 a 10).
-   * Muestra valor real, valor anticipado, pie mínimo (10%) y opciones de pago en 12, 24, 36 y 48 cuotas.
-   * Visualización gráfica en torre de los niveles de sepultura.
+1. **Derecho de Sepultación Anticipada** (`index.html`):
+   * Cotizador simplificado y limpio.
+   * Campos principales: Valor Real (UF / CLP), Descuento (UF / CLP) y Valor Promocional (UF / CLP), con cálculo bidireccional automático ($\text{Descuento} = \text{Valor Real} - \text{Valor Promocional}$).
+   * Panel lateral con Fecha, UF Hoy editable y cuadro de Beneficios interactivo.
 
-2. **Cremación Anticipada**:
-   * Precios automáticos prediseñados según la cantidad de ánforas (1 a 4).
-   * Muestra imagen de servicio y renderizado gráfico interactivo de ánforas.
-   * Aplica gastos administrativos específicos ($5.250 CLP) y factores ajustados.
+2. **Sepultura Parque Auco (UF)** (`sepultura-auco-uf.html`):
+   * Cotizador simplificado y limpio en UF con tasa del 0,55% mensual.
+   * Campos: Valor Real, Descuento, Valor Promocional, Pie y Saldo a Financiar.
+   * Selector de capacidad (Capacidad 1, 2, 4, 6 y 8) con representación gráfica interactiva.
+   * Cuadro editable de Beneficios para anotaciones comerciales personalizadas.
+   * Tabla de 12 a 72 cuotas con desglose de Factor, Gasto Administrativo fijo (0,10 UF) y Total Cuota en UF (redondeado a 2 decimales) y CLP.
 
-3. **Aumento de Capacidad**:
-   * Diseñado para añadir 1 o 2 capacidades adicionales a parcelas existentes.
-   * Valores base según el parque seleccionado.
-   * Renderizado gráfico que resalta los nuevos niveles de capacidad agregados.
+3. **Sepultura Parque Auco (Pesos)** (`sepultura-auco-pesos.html`):
+   * Cotizador en moneda nacional para Parque Auco con cálculo nativo en pesos ($).
+   * Operaciones principales calculadas en $ CLP:
+     * $\text{Descuento CLP} = \text{Valor Real CLP} - \text{Valor Promocional CLP}$
+     * $\text{Saldo a Financiar CLP} = \text{Valor Promocional CLP} - \text{Pie CLP}$
+     * La columna UF actúa como conversión informativa dividiendo por la UF del día.
+   * Selector de capacidad (Capacidad 1, 2, 4, 6 y 8) con gráfico de sarcófagos organizado en 2 columnas (1..4 izquierda, 5..8 derecha).
+   * Cuadro editable de Beneficios interactivo.
+   * Factores específicos en pesos (12: 0, 24: 0,04992, 36: 0,03615, 48: 0,02938, 60: 0,02808, 72: 0,025603).
+   * Gasto Administrativo fijo en pesos de **$3.964 CLP** sumado al valor de cada cuota.
 
-4. **Mantención**:
-   * Cotización de planes anuales/periódicos de mantención de sepulturas.
-   * Opciones de descuento en porcentaje.
-   * Desglose del pie con IVA incluido y tabla de cuotas a 24, 36 y 48 meses con cálculo de IVA UF, seguro de desgravamen y gastos operacionales.
+4. **Jardín Familiar Parque Auco (UF)** (`jardin-auco-uf.html`):
+   * Título institucional: `COTIZACIÓN JARDIN FAMILIAR PARQUE DE AUCO`.
+   * Descuento y Pie multidireccionales: Ingreso por porcentaje (`%`, Pie por defecto 10%), por **UF** o por **$ CLP**.
+   * Fórmulas:
+     * $\text{Valor Promocional} = \text{Valor Real} - \text{Descuento} - \text{Capital Anterior}$
+     * $\text{Pie} = \text{Valor Promocional} \times (\text{pie-percent} / 100)$
+     * $\text{Saldo a Financiar} = \text{Valor Promocional} - \text{Pie}$
+   * Tabla de cuotas rellenables/editables con **selector de cantidad a mostrar** (1 a 6 cuotas) y selector de plazo por fila (12 a 72 cuotas) con conversión bidireccional automática UF / $ CLP.
+   * Panel superior con Fecha, UF Hoy, Selector de Capacidad (4 y 6) y Selector de Reducciones (4 y 8). Cuadro editable de **Beneficios ubicado debajo de la tabla de cuotas**. Panel derecho con imagen completa `jardin.jpg`.
 
-5. **Sepultura con Beneficios**:
-   * Esquema avanzado para parques liberadores con capacidades de 1 a 4 criptas.
-   * Admite modalidades de descuento flexible (% porcentaje, UF o $ CLP).
-   * Selección de tipo de pie (% porcentaje, UF o $ CLP).
-   * Proyección ampliada de cuotas a plazos de 12, 24, 36, 48, 60, 72, 84, 96 y 108 meses con desglose de seguro y gastos de administración.
+5. **Jardín Familiar Parque Auco (Pesos)** (`jardin-auco-pesos.html`):
+   * Título institucional: `COTIZACIÓN JARDIN FAMILIAR PARQUE DE AUCO`.
+   * Descuento y Pie multidireccionales: Ingreso por porcentaje (`%`, Pie por defecto 10%), por **UF** o por **$ CLP**.
+   * Fórmulas en pesos:
+     * $\text{Valor Promocional CLP} = \text{Valor Real CLP} - \text{Descuento CLP} - \text{Capital Anterior CLP}$
+     * $\text{Pie CLP} = \text{Valor Promocional CLP} \times (\text{pie-percent} / 100)$
+     * $\text{Saldo a Financiar CLP} = \text{Valor Promocional CLP} - \text{Pie CLP}$
+   * Tabla de cuotas rellenables/editables con **selector de cantidad a mostrar** (1 a 6 cuotas) y selector de plazo por fila (12 a 72 cuotas) con conversión bidireccional automática UF / $ CLP.
+   * Panel superior con Fecha, UF Hoy, Selector de Capacidad (4 y 6) y Selector de Reducciones (4 y 8). Cuadro editable de **Beneficios ubicado debajo de la tabla de cuotas**. Panel derecho con imagen completa `jardin.jpg`.
+
+6. **Cremación Anticipada** (`cremacion.html`):
+   * Campos financieros editables con conversión bidireccional UF / $:
+     * **Valor Real**, **Descuento** ($\text{Real} - \text{Promo}$), **Valor Promocional**, **Pie** y **Saldo a Financiar**.
+   * Tabla de cuotas con campos rellenables/editables en UF y $ para:
+     * **12 cuotas**, **24 cuotas**, **36 cuotas** y **48 cuotas**.
+   * Panel lateral con Fecha, UF Hoy, Selector de 1 a 4 Ánforas, cuadro de Beneficios y renderizado gráfico de `anfora.png` (1 imagen por cada ánfora).
+
+7. **Aumento de Capacidad** (`aumento-capacidad.html`):
+   * Estructura limpia y en blanco para cálculo manual directo (mismos recuadros de sepultura).
+   * Campos financieros editables (UF y $ CLP): Valor Real, Descuento, Valor Promocional, Pie y Saldo a Financiar.
+   * Tabla de cuotas con campos rellenables en UF y $ para 12, 24, 36 y 48 cuotas.
+   * Panel lateral con Fecha, UF Hoy y cuadro de Beneficios.
+
+8. **Mantención Perpetua** (`mantencion.html`):
+   * Cotizador especializado para planes de mantención perpetua en parques.
 
 ---
 
@@ -202,3 +244,48 @@ Se realizaron las siguientes modificaciones y correcciones en la aplicación:
 
 4. **Corrección de Valor de Referencia en Sepultación Anticipada:**
    * Se corrigió la función en `js/products/sepultacion.js` para que el valor referencial de capacidad se multiplique dinámicamente por la cantidad de derechos en pantalla (1 derecho = 15,47 UF, 2 derechos = 30,94 UF, etc.) actualizando la etiqueta y el desglose en CLP y UF al instante.
+
+### Actualización - 21 de Agosto, 2026
+1. **Rediseño del Encabezado y Armonización del Logotipo:**
+   * Se transformó el bloque del encabezado (`.header-title-container`) en un banner institucional verde con degradado esmeralda vivo basado en `#23C27E` (`#189860` a `#2ad88d`), borde inferior y sombra sutil.
+   * El logo blanco con hoja verde (`logo-parque.png`) ahora se integra con mayor tamaño de forma 100% nativa y transparente (`background: transparent; filter: drop-shadow(...)`).
+   * La tipografía del título principal y el nombre del parque (`#ffffff`) ofrecen un contraste nítido y moderno.
+
+2. **Ajuste de Paleta de Colores Institucional (#23C27E):**
+   * Se ajustaron las variables en `style.css`: `--primary-green` y `--header-green` a `#23C27E`, logrando una visualización brillante, clara y homogénea en toda la plataforma.
+
+3. **División de Sepultura Parque Auco en 2 Productos (UF y Pesos):**
+   * Se separó el producto en dos opciones seleccionables en el menú principal:
+     1. **Sepultura Parque Auco (UF)** (`sepultura-auco-uf.html` / `js/products/sepultura-auco-uf.js`):
+        * **Fórmula de Cotización:**
+          * $\text{Descuento UF} = \text{Valor Real UF} - \text{Valor Promocional UF}$
+          * $\text{Descuento CLP} = \text{Descuento UF} \times \text{UF Hoy}$
+          * $\text{Saldo UF} = \text{Valor Promocional UF} - \text{Pie UF}$
+          * $\text{Cuota Base UF} = \text{Saldo UF} \times \text{Factor}$ (en 12 cuotas: $\text{Saldo UF} / 12$)
+          * $\text{Gasto Administrativo UF} = \mathbf{0,10\text{ UF}}$ *(fijo para todos los plazos)*
+          * $\text{Total Cuota UF} = \text{redondear}(\text{Cuota Base UF} + 0,10\text{ UF},\, 2\text{ decimales})$
+          * $\text{Total Cuota CLP} = \text{Total Cuota UF} \times \text{UF Hoy}$
+        * **Plazos y Factores (0,55% mensual):**
+          * 12 cuotas: Sin factor (saldo UF / 12).
+          * 24 cuotas: `0,04459`
+          * 36 cuotas: `0,03069`
+          * 48 cuotas: `0,02376`
+          * 60 cuotas: `0,01961`
+          * 72 cuotas: `0,01686`
+     2. **Sepultura Parque Auco (Pesos)** (`sepultura-auco-pesos.html` / `js/products/sepultura-auco-pesos.js`):
+        * Plazos y Factores:
+          * 12 cuotas: Sin factor (saldo CLP / 12).
+          * 24 cuotas: `0,04992`
+          * 36 cuotas: `0,03615`
+          * 48 cuotas: `0,02938`
+          * 60 cuotas: `0,02808`
+          * 72 cuotas: `0,025603`
+   * Se sincronizó la navegación en todos los selectores de productos de la aplicación.
+
+4. **Entorno de Desarrollo con Node.js:**
+   * Se integró `package.json` con la dependencia `serve`.
+   * El proyecto se puede servir ejecutando `npm run dev` en el puerto `3000`.
+
+
+
+

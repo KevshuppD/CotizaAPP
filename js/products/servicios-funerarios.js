@@ -229,7 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
         productSelector.addEventListener('change', () => {
             const productPageMap = {
                 'sepultacion': 'index.html',
-                'sepultura-liberador': 'sepultura-liberador.html',
+                'sepultura-auco-uf': 'sepultura-auco-uf.html',
+                'sepultura-auco-pesos': 'sepultura-auco-pesos.html',
                 'cremacion': 'cremacion.html',
                 'aumento-capacidad': 'aumento-capacidad.html',
                 'mantencion': 'mantencion.html',
