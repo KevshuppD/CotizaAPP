@@ -1,6 +1,7 @@
 // js/core.js - Estado Global, Elementos DOM y Helpers de Formato
 
 let currentUFValue = 40844.79; // Valor UF actual por defecto
+let pendingExportAction = null;
 
 const elements = {};
 
@@ -239,98 +240,196 @@ function showToast(message, duration = 4000) {
     }, duration);
 }
 
-function exportAsImage() {
-    const captureArea = document.getElementById('capture-area');
-    if (!captureArea) return;
-
-    if (typeof html2canvas === 'undefined') {
-        alert('Error: html2canvas no está disponible.');
-        return;
+// Modal de Selección de Orientación (Horizontal vs Vertical)
+function ensureOrientationModal() {
+    let modal = document.getElementById('orientation-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'orientation-modal';
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h3>Seleccionar Orientación</h3>
+                    <button class="modal-close-btn" onclick="closeOrientationModal()">&times;</button>
+                </div>
+                <p class="modal-subtitle">Elige el formato en que deseas generar la cotización:</p>
+                <div class="orientation-options">
+                    <button class="orientation-opt-btn" onclick="executeOrientation('vertical')">
+                        <div class="orientation-opt-icon">📱</div>
+                        <div class="orientation-opt-text">
+                            <span class="orientation-opt-title">Vertical (Retrato)</span>
+                            <span class="orientation-opt-desc">Ideal para celulares, WhatsApp y lectura vertical</span>
+                        </div>
+                    </button>
+                    <button class="orientation-opt-btn" onclick="executeOrientation('horizontal')">
+                        <div class="orientation-opt-icon">🖥️</div>
+                        <div class="orientation-opt-text">
+                            <span class="orientation-opt-title">Horizontal (Apaisado)</span>
+                            <span class="orientation-opt-desc">Formato panorámico estándar de escritorio</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        `;
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeOrientationModal();
+        });
+        document.body.appendChild(modal);
     }
-
-    html2canvas(captureArea, getCaptureOptions()).then(canvas => {
-        const link = document.createElement('a');
-        const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
-        const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
-        const now = new Date().toISOString().slice(0, 10);
-        link.download = `cotizacion-${parkName}-${now}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        showToast('¡Imagen descargada exitosamente!');
-    }).catch(err => {
-        console.error('Error al exportar imagen:', err);
-        alert('Ocurrió un error al generar la imagen.');
-    });
+    return modal;
 }
 
-async function shareAsImage() {
-    const captureArea = document.getElementById('capture-area');
-    if (!captureArea) return;
+function openOrientationModal(action) {
+    pendingExportAction = action;
+    const modal = ensureOrientationModal();
+    modal.classList.add('active');
+}
 
-    if (typeof html2canvas === 'undefined') {
-        alert('Error: html2canvas no está disponible.');
-        return;
+function closeOrientationModal() {
+    const modal = document.getElementById('orientation-modal');
+    if (modal) modal.classList.remove('active');
+    pendingExportAction = null;
+}
+
+function executeOrientation(orientation) {
+    const action = pendingExportAction;
+    closeOrientationModal();
+
+    if (!action) return;
+
+    if (action === 'exportImage') {
+        doExportAsImage(orientation);
+    } else if (action === 'shareImage') {
+        doShareAsImage(orientation);
+    } else if (action === 'sharePDF') {
+        doShareAsPDF(orientation);
     }
+}
 
-    try {
-        const canvas = await html2canvas(captureArea, getCaptureOptions());
-        canvas.toBlob(async blob => {
-            if (!blob) {
-                alert('No se pudo generar la imagen para compartir.');
-                return;
-            }
+// Botones disparadores que abren el modal
+function exportAsImage() {
+    openOrientationModal('exportImage');
+}
 
-            const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
-            const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
-            const now = new Date().toISOString().slice(0, 10);
-            const fileName = `cotizacion-${parkName}-${now}.png`;
-            const file = new File([blob], fileName, { type: 'image/png' });
-
-            // 1. Si el navegador/dispositivo soporta compartir archivos nativamente (móviles / macOS)
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        title: 'Cotización Parque',
-                        files: [file]
-                    });
-                    return;
-                } catch (shareErr) {
-                    if (shareErr.name === 'AbortError') return;
-                }
-            }
-
-            // 2. En navegadores de escritorio (Firefox / Chrome / Edge): Copiar directo al portapapeles
-            let copied = false;
-            if (navigator.clipboard && window.ClipboardItem) {
-                try {
-                    await navigator.clipboard.write([
-                        new ClipboardItem({ 'image/png': blob })
-                    ]);
-                    copied = true;
-                } catch (clipErr) {
-                    console.warn('No se pudo escribir imagen al portapapeles:', clipErr);
-                }
-            }
-
-            // Descargar la imagen
-            const link = document.createElement('a');
-            link.download = fileName;
-            link.href = URL.createObjectURL(blob);
-            link.click();
-
-            if (copied) {
-                showToast('¡Imagen copiada al portapapeles y descargada! Puedes pegarla con Ctrl+V en WhatsApp o correo.');
-            } else {
-                showToast('¡Imagen descargada exitosamente!');
-            }
-        }, 'image/png');
-    } catch (err) {
-        console.error('Error al capturar para compartir:', err);
-        alert('Ocurrió un error al preparar la imagen para compartir.');
-    }
+function shareAsImage() {
+    openOrientationModal('shareImage');
 }
 
 function shareAsPDF() {
+    openOrientationModal('sharePDF');
+}
+
+// Ejecución con la orientación seleccionada
+function doExportAsImage(orientation) {
+    const captureArea = document.getElementById('capture-area');
+    if (!captureArea) return;
+
+    if (typeof html2canvas === 'undefined') {
+        alert('Error: html2canvas no está disponible.');
+        return;
+    }
+
+    captureArea.classList.remove('export-horizontal', 'export-vertical');
+    captureArea.classList.add(orientation === 'vertical' ? 'export-vertical' : 'export-horizontal');
+
+    // Esperar un frame para que el reflow aplique el estilo antes de capturar
+    requestAnimationFrame(() => {
+        html2canvas(captureArea, getCaptureOptions()).then(canvas => {
+            captureArea.classList.remove('export-horizontal', 'export-vertical');
+
+            const link = document.createElement('a');
+            const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
+            const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
+            const now = new Date().toISOString().slice(0, 10);
+            link.download = `cotizacion-${parkName}-${orientation}-${now}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast(`¡Imagen ${orientation === 'vertical' ? 'vertical' : 'horizontal'} descargada exitosamente!`);
+        }).catch(err => {
+            captureArea.classList.remove('export-horizontal', 'export-vertical');
+            console.error('Error al exportar imagen:', err);
+            alert('Ocurrió un error al generar la imagen.');
+        });
+    });
+}
+
+async function doShareAsImage(orientation) {
+    const captureArea = document.getElementById('capture-area');
+    if (!captureArea) return;
+
+    if (typeof html2canvas === 'undefined') {
+        alert('Error: html2canvas no está disponible.');
+        return;
+    }
+
+    captureArea.classList.remove('export-horizontal', 'export-vertical');
+    captureArea.classList.add(orientation === 'vertical' ? 'export-vertical' : 'export-horizontal');
+
+    requestAnimationFrame(async () => {
+        try {
+            const canvas = await html2canvas(captureArea, getCaptureOptions());
+            captureArea.classList.remove('export-horizontal', 'export-vertical');
+
+            canvas.toBlob(async blob => {
+                if (!blob) {
+                    alert('No se pudo generar la imagen para compartir.');
+                    return;
+                }
+
+                const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
+                const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
+                const now = new Date().toISOString().slice(0, 10);
+                const fileName = `cotizacion-${parkName}-${orientation}-${now}.png`;
+                const file = new File([blob], fileName, { type: 'image/png' });
+
+                // 1. Si el navegador soporta compartir archivos (móviles / macOS)
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            title: 'Cotización Parque',
+                            files: [file]
+                        });
+                        return;
+                    } catch (shareErr) {
+                        if (shareErr.name === 'AbortError') return;
+                    }
+                }
+
+                // 2. En escritorio: Copiar directo al portapapeles
+                let copied = false;
+                if (navigator.clipboard && window.ClipboardItem) {
+                    try {
+                        await navigator.clipboard.write([
+                            new ClipboardItem({ 'image/png': blob })
+                        ]);
+                        copied = true;
+                    } catch (clipErr) {
+                        console.warn('No se pudo escribir imagen al portapapeles:', clipErr);
+                    }
+                }
+
+                // Descargar como respaldo
+                const link = document.createElement('a');
+                link.download = fileName;
+                link.href = URL.createObjectURL(blob);
+                link.click();
+
+                if (copied) {
+                    showToast('¡Imagen copiada al portapapeles y descargada! Puedes pegarla con Ctrl+V en WhatsApp o correo.');
+                } else {
+                    showToast('¡Imagen descargada exitosamente!');
+                }
+            }, 'image/png');
+        } catch (err) {
+            captureArea.classList.remove('export-horizontal', 'export-vertical');
+            console.error('Error al capturar para compartir:', err);
+            alert('Ocurrió un error al preparar la imagen para compartir.');
+        }
+    });
+}
+
+function doShareAsPDF(orientation) {
     const captureArea = document.getElementById('capture-area');
     if (!captureArea) return;
 
@@ -339,60 +438,67 @@ function shareAsPDF() {
         return;
     }
 
-    const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
-    const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
-    const now = new Date().toISOString().slice(0, 10);
-    const fileName = `cotizacion-${parkName}-${now}.pdf`;
+    captureArea.classList.remove('export-horizontal', 'export-vertical');
+    captureArea.classList.add(orientation === 'vertical' ? 'export-vertical' : 'export-horizontal');
 
-    const widthMM = (captureArea.clientWidth * 25.4) / 96;
-    const heightMM = (captureArea.clientHeight * 25.4) / 96;
+    requestAnimationFrame(() => {
+        const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
+        const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
+        const now = new Date().toISOString().slice(0, 10);
+        const fileName = `cotizacion-${parkName}-${orientation}-${now}.pdf`;
 
-    const opt = {
-        margin:       10,
-        filename:     fileName,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { 
-            scale: 2, 
-            useCORS: true,
-            ignoreElements: function(element) {
-                return element.classList && element.classList.contains('no-export');
+        const widthMM = (captureArea.clientWidth * 25.4) / 96;
+        const heightMM = (captureArea.clientHeight * 25.4) / 96;
+
+        const opt = {
+            margin:       10,
+            filename:     fileName,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true,
+                ignoreElements: function(element) {
+                    return element.classList && element.classList.contains('no-export');
+                }
+            },
+            jsPDF:        { 
+                unit: 'mm', 
+                format: [widthMM + 20, heightMM + 20], 
+                orientation: orientation === 'vertical' ? 'portrait' : 'landscape' 
             }
-        },
-        jsPDF:        { 
-            unit: 'mm', 
-            format: [widthMM + 20, heightMM + 20], 
-            orientation: widthMM > heightMM ? 'landscape' : 'portrait' 
-        }
-    };
+        };
 
-    html2pdf().set(opt).from(captureArea).toPdf().output('blob').then(async blob => {
-        if (!blob) {
-            alert('No se pudo generar el PDF para compartir.');
-            return;
-        }
+        html2pdf().set(opt).from(captureArea).toPdf().output('blob').then(async blob => {
+            captureArea.classList.remove('export-horizontal', 'export-vertical');
 
-        const file = new File([blob], fileName, { type: 'application/pdf' });
-
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-                await navigator.share({
-                    title: 'Cotización en PDF',
-                    files: [file]
-                });
+            if (!blob) {
+                alert('No se pudo generar el PDF para compartir.');
                 return;
-            } catch (err) {
-                if (err.name === 'AbortError') return;
             }
-        }
 
-        const link = document.createElement('a');
-        link.download = fileName;
-        link.href = URL.createObjectURL(blob);
-        link.click();
-        showToast('¡PDF generado y descargado exitosamente!');
-    }).catch(err => {
-        console.error('Error al generar PDF:', err);
-        alert('Ocurrió un error al preparar el PDF para compartir.');
+            const file = new File([blob], fileName, { type: 'application/pdf' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        title: 'Cotización en PDF',
+                        files: [file]
+                    });
+                    return;
+                } catch (err) {
+                    if (err.name === 'AbortError') return;
+                }
+            }
+
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            showToast('¡PDF generado y descargado exitosamente!');
+        }).catch(err => {
+            captureArea.classList.remove('export-horizontal', 'export-vertical');
+            console.error('Error al generar PDF:', err);
+            alert('Ocurrió un error al preparar el PDF para compartir.');
+        });
     });
 }
-
