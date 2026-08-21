@@ -587,21 +587,23 @@ input[type=number] {
     min-width: 1260px !important;
     max-width: 1260px !important;
     padding: 40px 45px !important;
+    box-sizing: border-box !important;
 }
 .container.export-horizontal .section-header {
     display: flex !important;
     flex-direction: row !important;
     gap: 25px !important;
+    align-items: flex-start !important;
 }
 .container.export-horizontal .left-col {
     flex: 1 1 54% !important;
+    width: 54% !important;
     max-width: 58% !important;
-    width: auto !important;
 }
 .container.export-horizontal .right-col {
     flex: 1 1 43% !important;
+    width: 43% !important;
     max-width: 45% !important;
-    width: auto !important;
 }
 
 .container.export-vertical {
@@ -609,11 +611,13 @@ input[type=number] {
     min-width: 780px !important;
     max-width: 780px !important;
     padding: 30px 35px !important;
+    box-sizing: border-box !important;
 }
 .container.export-vertical .section-header {
     display: flex !important;
     flex-direction: column !important;
     gap: 20px !important;
+    align-items: stretch !important;
 }
 .container.export-vertical .left-col {
     width: 100% !important;
@@ -625,6 +629,20 @@ input[type=number] {
     max-width: 100% !important;
     flex: none !important;
     margin-top: 10px !important;
+}
+
+/* Reglas de protección de imágenes para evitar aplastamiento */
+#capture-area img,
+.container.export-horizontal img,
+.container.export-vertical img,
+.park-logo,
+#jardin-graphic-container img,
+#sepultacion-graphic-container img,
+#anforas-image-grid img {
+    height: auto !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+    flex-shrink: 0 !important;
 }
 
 /* Orientation Modal */

@@ -136,16 +136,35 @@ function fetchUFValue() {
     });
 }
 
-function getCaptureOptions() {
+function getCaptureOptions(orientation = 'horizontal') {
+    const isVertical = orientation === 'vertical';
+    const targetWidth = isVertical ? 780 : 1260;
+
     return {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
+        windowWidth: targetWidth + 60,
         ignoreElements: function(element) {
             return element.classList && element.classList.contains('no-export');
         },
         onclone: function(clonedDoc) {
+            const clonedCaptureArea = clonedDoc.getElementById('capture-area');
+            if (clonedCaptureArea) {
+                clonedCaptureArea.classList.remove('export-horizontal', 'export-vertical');
+                clonedCaptureArea.classList.add(isVertical ? 'export-vertical' : 'export-horizontal');
+
+                // Asegurar que las imágenes mantengan su proporción perfecta en la clonación
+                const imgs = clonedCaptureArea.querySelectorAll('img');
+                imgs.forEach(img => {
+                    img.style.objectFit = 'contain';
+                    img.style.height = 'auto';
+                    img.style.maxWidth = '100%';
+                    img.style.flexShrink = '0';
+                });
+            }
+
             // Reemplazar todos los inputs y selects por spans estáticos en el DOM clonado
             const inputsAndSelects = clonedDoc.querySelectorAll('#capture-area input, #capture-area select');
             inputsAndSelects.forEach(el => {
@@ -153,7 +172,6 @@ function getCaptureOptions() {
                 if (el.tagName === 'INPUT' && (el.type === 'hidden' || el.type === 'submit' || el.type === 'button')) return;
                 if (el.tagName === 'INPUT' && (el.type === 'checkbox' || el.type === 'radio')) return;
                 
-                // Si está oculto, ignorar
                 if (window.getComputedStyle(el).display === 'none') {
                     return;
                 }
@@ -170,18 +188,12 @@ function getCaptureOptions() {
                 const span = clonedDoc.createElement('span');
                 span.textContent = valText;
 
-                // Copiar estilos clave para mantener la apariencia y alineación
                 const computedStyle = window.getComputedStyle(el);
                 span.style.fontWeight = 'bold';
                 span.style.color = '#111';
                 span.style.fontFamily = computedStyle.fontFamily || 'inherit';
                 span.style.fontSize = computedStyle.fontSize || '11px';
-                
-                if (el.tagName === 'INPUT') {
-                    span.style.whiteSpace = 'nowrap';
-                } else {
-                    span.style.whiteSpace = 'normal';
-                }
+                span.style.whiteSpace = el.tagName === 'INPUT' ? 'nowrap' : 'normal';
 
                 if (el.classList.contains('editable-field') || el.classList.contains('input-inline')) {
                     span.style.padding = '2px 4px';
@@ -333,9 +345,8 @@ function doExportAsImage(orientation) {
     captureArea.classList.remove('export-horizontal', 'export-vertical');
     captureArea.classList.add(orientation === 'vertical' ? 'export-vertical' : 'export-horizontal');
 
-    // Esperar un frame para que el reflow aplique el estilo antes de capturar
-    requestAnimationFrame(() => {
-        html2canvas(captureArea, getCaptureOptions()).then(canvas => {
+    setTimeout(() => {
+        html2canvas(captureArea, getCaptureOptions(orientation)).then(canvas => {
             captureArea.classList.remove('export-horizontal', 'export-vertical');
 
             const link = document.createElement('a');
@@ -351,7 +362,7 @@ function doExportAsImage(orientation) {
             console.error('Error al exportar imagen:', err);
             alert('Ocurrió un error al generar la imagen.');
         });
-    });
+    }, 50);
 }
 
 async function doShareAsImage(orientation) {
@@ -366,9 +377,9 @@ async function doShareAsImage(orientation) {
     captureArea.classList.remove('export-horizontal', 'export-vertical');
     captureArea.classList.add(orientation === 'vertical' ? 'export-vertical' : 'export-horizontal');
 
-    requestAnimationFrame(async () => {
+    setTimeout(async () => {
         try {
-            const canvas = await html2canvas(captureArea, getCaptureOptions());
+            const canvas = await html2canvas(captureArea, getCaptureOptions(orientation));
             captureArea.classList.remove('export-horizontal', 'export-vertical');
 
             canvas.toBlob(async blob => {
@@ -426,7 +437,7 @@ async function doShareAsImage(orientation) {
             console.error('Error al capturar para compartir:', err);
             alert('Ocurrió un error al preparar la imagen para compartir.');
         }
-    });
+    }, 50);
 }
 
 function doShareAsPDF(orientation) {
@@ -441,7 +452,7 @@ function doShareAsPDF(orientation) {
     captureArea.classList.remove('export-horizontal', 'export-vertical');
     captureArea.classList.add(orientation === 'vertical' ? 'export-vertical' : 'export-horizontal');
 
-    requestAnimationFrame(() => {
+    setTimeout(() => {
         const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
         const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
         const now = new Date().toISOString().slice(0, 10);
@@ -454,17 +465,11 @@ function doShareAsPDF(orientation) {
             margin:       10,
             filename:     fileName,
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { 
-                scale: 2, 
-                useCORS: true,
-                ignoreElements: function(element) {
-                    return element.classList && element.classList.contains('no-export');
-                }
-            },
+            html2canvas:  getCaptureOptions(orientation),
             jsPDF:        { 
                 unit: 'mm', 
                 format: [widthMM + 20, heightMM + 20], 
-                orientation: orientation === 'vertical' ? 'portrait' : 'landscape' 
+                orientation: widthMM > heightMM ? 'landscape' : 'portrait' 
             }
         };
 
@@ -500,5 +505,5 @@ function doShareAsPDF(orientation) {
             console.error('Error al generar PDF:', err);
             alert('Ocurrió un error al preparar el PDF para compartir.');
         });
-    });
+    }, 50);
 }
