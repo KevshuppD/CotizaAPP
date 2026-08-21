@@ -1,4 +1,4 @@
-// js/products/cremacion.js - Lógica Financiera Cremación Anticipada
+// js/products/cremacion.js - Lógica Financiera Cremación
 
 function calculateCremacion(triggeredBy = '') {
     const refUfInput = document.getElementById('ref-uf-input');

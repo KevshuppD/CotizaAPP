@@ -15,7 +15,7 @@ CotizaAPP/
 ├── index.html                  # Cotizador de Derecho de Sepultación Anticipada
 ├── sepultura-auco-uf.html      # Cotizador Sepultura Parque Auco (UF)
 ├── sepultura-auco-pesos.html   # Cotizador Sepultura Parque Auco (Pesos)
-├── cremacion.html              # Cotizador Cremación Anticipada
+├── cremacion.html              # Cotizador Cremación
 ├── aumento-capacidad.html      # Cotizador Aumento de Capacidad
 ├── mantencion.html             # Cotizador Mantención Perpetua
 ├── servicios-funerarios.html   # Cotizador Servicios Funerarios
@@ -91,7 +91,7 @@ La aplicación gestiona 5 modalidades principales seleccionables en el encabezad
    * Tabla de cuotas rellenables/editables con **selector de cantidad a mostrar** (1 a 6 cuotas) y selector de plazo por fila (12 a 72 cuotas) con conversión bidireccional automática UF / $ CLP.
    * Panel superior con Fecha, UF Hoy, Selector de Capacidad (4 y 6) y Selector de Reducciones (4 y 8). Cuadro editable de **Beneficios ubicado debajo de la tabla de cuotas**. Panel derecho con imagen completa `jardin.jpg`.
 
-6. **Cremación Anticipada** (`cremacion.html`):
+6. **Cremación** (`cremacion.html`):
    * Campos financieros editables con conversión bidireccional UF / $:
      * **Valor Real**, **Descuento** ($\text{Real} - \text{Promo}$), **Valor Promocional**, **Pie** y **Saldo a Financiar**.
    * Tabla de cuotas con campos rellenables/editables en UF y $ para:
@@ -224,7 +224,7 @@ Se realizaron las siguientes modificaciones y correcciones en la aplicación:
 2. **Limpieza en Compartir Imagen:**
    * Se modificó la llamada a la API Web Share (`navigator.share`) para compartir únicamente el archivo de imagen generado sin textos o títulos descriptivos preestablecidos.
 
-3. **Reajuste de Fórmulas y Desglose en Cremación Anticipada:**
+3. **Reajuste de Fórmulas y Desglose en Cremación:**
    * **Valor Real Base:** Se redujo el precio real de referencia de 30 UF a **27 UF** por capacidad.
    * **Tablas de Precios Actualizadas:**
      * 1 Cremación: Real = `$1.102.806` / Promo = `$926.727`
