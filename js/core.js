@@ -431,55 +431,47 @@ async function doShareAsImage(orientation) {
     }, 50);
 }
 
-async function doShareAsPDF(orientation) {
+function doShareAsPDF(orientation) {
     const captureArea = document.getElementById('capture-area');
     if (!captureArea) return;
 
-    if (typeof html2canvas === 'undefined') {
-        alert('Error: html2canvas no está disponible.');
+    if (typeof html2pdf === 'undefined') {
+        alert('Error: La librería html2pdf no está disponible.');
         return;
     }
 
     captureArea.classList.remove('export-horizontal', 'export-vertical');
     captureArea.classList.add(orientation === 'vertical' ? 'export-vertical' : 'export-horizontal');
 
-    setTimeout(async () => {
-        try {
-            const canvas = await html2canvas(captureArea, getCaptureOptions(orientation));
-            captureArea.classList.remove('export-horizontal', 'export-vertical');
+    setTimeout(() => {
+        const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
+        const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
+        const now = new Date().toISOString().slice(0, 10);
+        const fileName = `cotizacion-${parkName}-${orientation}-${now}.pdf`;
 
-            const parkSelector = document.getElementById('parque-name') || document.getElementById('parque-select') || document.getElementById('parque-selector');
-            const parkName = (parkSelector ? parkSelector.value : (elements.parkSelector ? elements.parkSelector.value : 'parque')).toLowerCase().replace(/\s+/g, '-');
-            const now = new Date().toISOString().slice(0, 10);
-            const fileName = `cotizacion-${parkName}-${orientation}-${now}.pdf`;
+        const widthMM = (captureArea.clientWidth * 25.4) / 96;
+        const heightMM = (captureArea.clientHeight * 25.4) / 96;
 
-            const PDFConstructor = window.jsPDF || (window.jspdf && window.jspdf.jsPDF);
-            if (!PDFConstructor) {
-                alert('Error: Librería PDF no disponible.');
-                return;
-            }
-
-            const imgData = canvas.toDataURL('image/jpeg', 0.98);
-
-            // Escala 2x -> conversión a milímetros (96 DPI)
-            const imgWidthMM = (canvas.width * 25.4) / (96 * 2);
-            const imgHeightMM = (canvas.height * 25.4) / (96 * 2);
-            const margin = 8; // 8mm de margen perimetral
-
-            const pageWidth = imgWidthMM + (margin * 2);
-            const pageHeight = imgHeightMM + (margin * 2);
-            const isLandscape = pageWidth > pageHeight;
-
-            // Instanciar documento PDF de exactamente 1 página
-            const doc = new PDFConstructor({
-                orientation: isLandscape ? 'landscape' : 'portrait',
+        const opt = {
+            margin: 6,
+            filename: fileName,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: getCaptureOptions(orientation),
+            jsPDF: {
                 unit: 'mm',
-                format: [pageWidth, pageHeight],
-                compress: true
-            });
+                format: [widthMM + 12, heightMM + 12],
+                orientation: widthMM > heightMM ? 'landscape' : 'portrait'
+            },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
 
-            doc.addImage(imgData, 'JPEG', margin, margin, imgWidthMM, imgHeightMM, undefined, 'FAST');
-            const blob = doc.output('blob');
+        html2pdf().set(opt).from(captureArea).toPdf().get('pdf').then(pdf => {
+            // Eliminar cualquier hoja sobrante para garantizar exactamente 1 sola hoja
+            while (pdf.internal.getNumberOfPages() > 1) {
+                pdf.deletePage(pdf.internal.getNumberOfPages());
+            }
+        }).output('blob').then(async blob => {
+            captureArea.classList.remove('export-horizontal', 'export-vertical');
 
             if (!blob) {
                 alert('No se pudo generar el PDF para compartir.');
@@ -505,10 +497,10 @@ async function doShareAsPDF(orientation) {
             link.href = URL.createObjectURL(blob);
             link.click();
             showToast('¡PDF generado en 1 sola hoja exitosamente!');
-        } catch (err) {
+        }).catch(err => {
             captureArea.classList.remove('export-horizontal', 'export-vertical');
             console.error('Error al generar PDF:', err);
             alert('Ocurrió un error al preparar el PDF para compartir.');
-        }
+        });
     }, 50);
 }
