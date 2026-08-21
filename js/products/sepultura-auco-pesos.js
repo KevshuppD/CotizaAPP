@@ -98,7 +98,6 @@ function calculateSepulturaAucoPesos(triggeredBy = '') {
 
     // 3. Cálculo de Cuotas en Pesos con Factores y Gasto Administrativo de $3.964 CLP
     const plazosPesos = [
-        { plazo: 12, factor: 0.00000 },
         { plazo: 24, factor: 0.04992 },
         { plazo: 36, factor: 0.03615 },
         { plazo: 48, factor: 0.02938 },

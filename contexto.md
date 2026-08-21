@@ -58,7 +58,7 @@ La aplicación gestiona 5 modalidades principales seleccionables en el encabezad
    * Campos: Valor Real, Descuento, Valor Promocional, Pie y Saldo a Financiar.
    * Selector de capacidad (Capacidad 1, 2, 4, 6 y 8) con representación gráfica interactiva.
    * Cuadro editable de Beneficios para anotaciones comerciales personalizadas.
-   * Tabla de 12 a 72 cuotas con desglose de Factor, Gasto Administrativo fijo (0,10 UF) y Total Cuota en UF (redondeado a 2 decimales) y CLP.
+   * Tabla de 24 a 72 cuotas con desglose de Factor, Gasto Administrativo fijo (0,10 UF) y Total Cuota en UF (redondeado a 2 decimales) y CLP.
 
 3. **Sepultura Parque Auco (Pesos)** (`sepultura-auco-pesos.html`):
    * Cotizador en moneda nacional para Parque Auco con cálculo nativo en pesos ($).
@@ -68,7 +68,7 @@ La aplicación gestiona 5 modalidades principales seleccionables en el encabezad
      * La columna UF actúa como conversión informativa dividiendo por la UF del día.
    * Selector de capacidad (Capacidad 1, 2, 4, 6 y 8) con gráfico de sarcófagos organizado en 2 columnas (1..4 izquierda, 5..8 derecha).
    * Cuadro editable de Beneficios interactivo.
-   * Factores específicos en pesos (12: 0, 24: 0,04992, 36: 0,03615, 48: 0,02938, 60: 0,02808, 72: 0,025603).
+   * Factores específicos en pesos de 24 a 72 cuotas (24: 0,04992, 36: 0,03615, 48: 0,02938, 60: 0,02808, 72: 0,025603).
    * Gasto Administrativo fijo en pesos de **$3.964 CLP** sumado al valor de cada cuota.
 
 4. **Jardín Familiar Parque Auco (UF)** (`jardin-auco-uf.html`):
