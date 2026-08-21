@@ -140,16 +140,26 @@ function createAnforaCard(num, compact = false) {
     itemWrapper.style.width = '100%';
     itemWrapper.style.boxSizing = 'border-box';
 
+    const imgWrapper = document.createElement('div');
+    imgWrapper.style.width = '100%';
+    imgWrapper.style.height = compact ? '85px' : '120px';
+    imgWrapper.style.display = 'flex';
+    imgWrapper.style.alignItems = 'center';
+    imgWrapper.style.justifyContent = 'center';
+
     const img = document.createElement('img');
     img.src = 'anfora.png';
     img.alt = 'Ánfora ' + num;
-    img.style.width = '100%';
+    img.style.maxWidth = '100%';
+    img.style.maxHeight = '100%';
+    img.style.width = 'auto';
     img.style.height = 'auto';
-    img.style.maxHeight = compact ? '90px' : '130px';
     img.style.objectFit = 'contain';
     img.style.display = 'block';
-    img.style.marginBottom = '4px';
     img.style.filter = 'drop-shadow(0 3px 5px rgba(0, 0, 0, 0.12))';
+
+    imgWrapper.appendChild(img);
+    itemWrapper.appendChild(imgWrapper);
 
     const label = document.createElement('span');
     label.textContent = 'Ánfora ' + num;
@@ -157,8 +167,8 @@ function createAnforaCard(num, compact = false) {
     label.style.fontWeight = 'bold';
     label.style.color = '#1b5e20';
     label.style.whiteSpace = 'nowrap';
+    label.style.marginTop = '4px';
 
-    itemWrapper.appendChild(img);
     itemWrapper.appendChild(label);
     return itemWrapper;
 }
