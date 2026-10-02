@@ -97,12 +97,19 @@ La aplicación gestiona los siguientes módulos seleccionables en el encabezado:
    * Cuadro de Beneficios editable y fotografía institucional de la fuente (`fuenteauco.jpeg`) en la columna derecha.
 
 5. **Cremación** (`cremacion.html`):
-   * Nombre comercial unificado como **Cremación**.
-   * Campos financieros editables con cálculo bidireccional (Real, Promo, Descuento, Pie, Saldo).
-   * Selector de cuotas rellenables en UF y $ para 12, 24, 36 y 48 cuotas.
+   * Módulo unificado con selector interactivo de **Modalidad de Financiamiento**:
+     * 🔹 **Financiamiento UF**: $\text{Total Cuota UF} = \frac{\text{Saldo a Financiar UF}}{\text{Plazo}} + 0,10\text{ UF (Gasto Adm.)}$.
+     * 💵 **Financiamiento Pesos ($)**: $\text{Total Cuota CLP} = \frac{\text{Saldo a Financiar CLP}}{\text{Plazo}} + \$3.964\text{ CLP (Gasto Adm.)}$.
+   * **Estructura Financiera**:
+     $$\text{Valor Promocional} = \text{Valor Real} - \text{Descuento} - \text{Capital Anterior}$$
+     $$\text{Pie} = \text{Valor Promocional} \times \left(\frac{\%\text{ Pie}}{100}\right) \quad (\text{10\% por defecto, editable})$$
+     $$\text{Saldo a Financiar} = \text{Valor Promocional} - \text{Pie}$$
+   * Descuento y Pie multidireccionales en `%`, UF o $ CLP, con fila editable de **Capital Anterior**.
+   * Selector interactivo de cuotas con checkboxes ("Todas", filtros de plazos 12, 24, 36, 48, 60, 72) y tabla con columnas de **Cuota Base**, **Gasto Adm.** y **Total Cuota**.
    * Selector de 1 a 4 ánforas con renderizado gráfico de `anfora.png` con proporción protegida.
+   * Cuadro editable de Beneficios, Fecha y UF Hoy.
 
-7. **Aumento de Capacidad** (`aumento-capacidad.html`):
+6. **Aumento de Capacidad** (`aumento-capacidad.html`):
    * Cotizador con campos en blanco para cálculo comercial manual.
    * Cuadro de cuotas rellenables de 12 a 48 cuotas y panel de Beneficios.
 
