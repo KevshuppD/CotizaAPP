@@ -31,82 +31,163 @@
             <label for="product-type" style="font-weight: bold; margin-right: 10px;">Tipo de Producto:</label>
             <select id="product-type" class="park-select" style="width: auto; padding: 5px 10px;">
                 <option value="sepultacion">Derecho de Sepultación Anticipada</option>
-                <option value="sepultura-auco-uf">Sepultura Parque Auco (UF)</option>
-                <option value="sepultura-auco-pesos">Sepultura Parque Auco (Pesos)</option>
-                <option value="jardin-auco-uf">Jardín Familiar Parque Auco (UF)</option>
-                <option value="jardin-auco-pesos">Jardín Familiar Parque Auco (Pesos)</option>
+                <option value="sepultura-auco">Sepultura Parque Auco</option>
+                <option value="jardin-auco">Jardín Familiar Parque Auco</option>
+                <option value="fuente-auco">Fuente de Auco</option>
                 <option value="cremacion">Cremación</option>
                 <option value="aumento-capacidad">Aumento de Capacidad</option>
                 <option value="mantencion" selected>Mantención Perpetua</option>
+                <option value="servicios-funerarios">Servicios Funerarios</option>
             </select>
         </div>
 
-        <div class="section-header">
-            <div class="left-col" style="flex: 1 1 54%;">
-                <div id="mantencion-fields">
-                    <table style="width: 100%;">
-                        <tr>
-                            <td class="bold" style="width: 50%;">Valor Plan + IVA (UF)</td>
-                            <td>
-                                <input type="number" id="valor-plan-uf" class="input-inline editable-field" value="28" placeholder="0.00" step="0.01">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="bold">Descuento (%)</td>
-                            <td>
-                                <input type="number" id="descuento-porcentaje" class="input-inline editable-field" value="0" placeholder="0" min="0" max="100" step="1">
-                            </td>
-                        </tr>
-                    </table>
-
-                    <div id="mantencion-resumen" style="margin-top: 15px; padding: 12px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px;"></div>
-
-                    <div id="mantencion-cuotas-container" style="margin-top: 15px;">
-                        <div class="cuotas table-responsive" style="margin-top: 10px;">
-                            <table style="width: 100%;">
-                                <thead>
-                                    <tr>
-                                        <th>Plazo</th>
-                                        <th>Cuota Base</th>
-                                        <th>Gasto Adm.</th>
-                                        <th>Seguro</th>
-                                        <th>IVA</th>
-                                        <th>Total UF</th>
-                                        <th>Total CLP</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="mantencion-cuotas-body">
-                                </tbody>
-                            </table>
+        <!-- CUADRO ESPECIAL SUPERIOR: VALOR MANTENCIÓN ANUAL (IVA INCLUIDA) -->
+        <div style="background: #eef9f3; border: 2px solid var(--primary-green); border-radius: 8px; padding: 14px 20px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(35, 194, 126, 0.15);">
+            <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 15px 30px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 20px;">📋</span>
+                    <span class="bold" style="font-size: 15px; color: #168053; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Valor Mantención Anual (IVA incluido)
+                    </span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="bold" style="font-size: 13px; color: #222;">UF:</span>
+                        <input type="number" id="mantencion-anual-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01" style="width: 100px; font-weight: bold; text-align: center; border: 1.5px solid #23C27E; background: #fff; border-radius: 4px; padding: 4px 8px;">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="bold" style="font-size: 13px; color: #222;">$:</span>
+                        <div class="currency-input-wrapper" style="background: #fff; border: 1.5px solid #23C27E; border-radius: 4px; padding: 2px 8px; display: flex; align-items: center;">
+                            <input type="text" id="mantencion-anual-clp" class="input-inline editable-field" value="" placeholder="$0" style="width: 120px; font-weight: bold; text-align: center; border: none; padding: 2px 0;">
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="right-col" style="flex: 1 1 43%;">
+        <div class="section-header">
+            <!-- COLUMNA IZQUIERDA: VALOR REAL, DESCUENTO, SALDO Y CUOTAS -->
+            <div class="left-col" style="flex: 1 1 58%;">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%; text-align: left; background: #e8e8e8;">Concepto</th>
+                            <th class="bold uf-col" style="background: #e8e8e8; text-align: center;">UF</th>
+                            <th class="bold clp-col" style="background: #e8e8e8; text-align: center;">$ (Pesos)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- VALOR REAL (IVA INCLUIDO) -->
+                        <tr>
+                            <td class="bold">Valor Real (IVA incluido)</td>
+                            <td class="uf-col">
+                                <input type="number" id="valor-real-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                            </td>
+                            <td class="clp-col">
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="valor-real-clp" class="input-inline editable-field" value="" placeholder="$0">
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- DESCUENTO COMERCIAL (%, UF, $) -->
+                        <tr id="discount-row-main">
+                            <td class="bold">
+                                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
+                                    <span>Descuento Comercial</span>
+                                    <div style="display: inline-flex; align-items: center; gap: 2px;">
+                                        <input type="number" id="descuento-percent" class="input-inline editable-field" value="" placeholder="0" min="0" max="100" step="1" style="width: 46px; text-align: center; padding: 2px 4px; font-size: 12px; font-weight: bold; border-radius: 4px; border: 1px solid #ccc;">
+                                        <span style="font-size: 12px; font-weight: bold;">%</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="uf-col">
+                                <input type="number" id="descuento-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                            </td>
+                            <td class="clp-col">
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="descuento-clp" class="input-inline editable-field" value="" placeholder="$0">
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- SALDO A FINANCIAR -->
+                        <tr id="saldo-financiar-row" style="background: #fdfae6;">
+                            <td class="bold" style="color: #111;">Saldo a Financiar</td>
+                            <td class="uf-col gray-bg" style="font-weight: bold;">
+                                <input type="number" id="saldo-financiar-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01" style="font-weight: bold; color: #168053;">
+                            </td>
+                            <td class="clp-col yellow-bg" style="font-weight: bold;">
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="saldo-financiar-clp" class="input-inline editable-field" value="" placeholder="$0" style="font-weight: bold; color: #168053;">
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- SECCIÓN DE CUOTAS CON SELECTOR -->
+                <div id="mantencion-cuotas-container" style="margin-top: 22px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                        <span class="bold" style="font-size: 14px; color: #23C27E; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Opciones de Financiamiento (Hasta 6 cuotas)
+                        </span>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <label for="cuotas-select" style="font-size: 12px; font-weight: bold; color: #444;">Seleccionar Cuotas:</label>
+                            <select id="cuotas-select" style="font-weight: bold; font-size: 12px; padding: 4px 8px; border: 1px solid #23C27E; border-radius: 4px; background: #fff; cursor: pointer; color: #333;">
+                                <option value="all" selected>Todas (1 a 6 cuotas)</option>
+                                <option value="1">1 cuota</option>
+                                <option value="2">2 cuotas</option>
+                                <option value="3">3 cuotas</option>
+                                <option value="4">4 cuotas</option>
+                                <option value="5">5 cuotas</option>
+                                <option value="6">6 cuotas</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="cuotas table-responsive" style="margin-top: 5px;">
+                        <table style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 28%; text-align: left;">Plazo</th>
+                                    <th class="uf-col" style="width: 22%; text-align: center;">Valor Cuota UF</th>
+                                    <th class="clp-col" style="width: 25%; text-align: right;">Valor Cuota CLP</th>
+                                    <th style="width: 25%; text-align: right;">Total ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mantencion-cuotas-body">
+                                <!-- Filas generadas dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: FECHA, UF HOY Y BENEFICIOS -->
+            <div class="right-col" style="flex: 1 1 39%;">
                 <table style="margin-bottom: 20px;">
                     <tr>
                         <td class="bold">FECHA</td>
-                        <td id="current-date" style="text-align: right;">--/--/----</td>
+                        <td id="current-date" style="text-align: right; font-weight: bold;">--/--/----</td>
                     </tr>
                     <tr>
                         <td class="bold">UF HOY</td>
                         <td style="text-align: right; font-weight: bold;">
-                            <div class="currency-input-wrapper">
+                            <div class="currency-input-wrapper" style="justify-content: flex-end;">
                                 <span>$</span>
-                                <input type="number" id="uf-value-input" class="input-inline editable-field" value="40844.79" step="0.01">
+                                <input type="number" id="uf-value-input" class="input-inline editable-field" value="40844.79" step="0.01" style="font-weight: bold; width: 90px; text-align: right;">
                             </div>
                         </td>
                     </tr>
                 </table>
 
                 <div id="mantencion-output">
-                    <div style="border: 1px solid black; padding: 10px; margin-bottom: 10px; border-radius: 4px; background: #fff;">
-                        <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px; color: #333;">Beneficios y Coberturas</div>
-                        <div id="beneficios-text" class="editable-textarea-mimic" contenteditable="true" placeholder="Escribir beneficios aquí...">• Mantención perpetua del parque
-• Cuidado de áreas verdes y jardinería
-• Seguridad y vigilancia permanente
-• Conservación de infraestructura general</div>
+                    <div style="border: 1px solid #000; padding: 12px; margin-bottom: 10px; border-radius: 6px; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+                        <div style="font-weight: bold; font-size: 13px; margin-bottom: 8px; color: #168053; text-transform: uppercase;">
+                            Beneficios y Coberturas
+                        </div>
+                        <div id="beneficios-text" class="editable-textarea-mimic" contenteditable="true" placeholder="Escribir beneficios aquí..." style="min-height: 120px; line-height: 1.6; font-size: 13px;"></div>
                     </div>
                 </div>
             </div>

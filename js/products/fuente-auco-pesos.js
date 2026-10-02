@@ -1,4 +1,4 @@
-// js/products/jardin-auco-pesos.js - Lógica Financiera Jardín Familiar Parque Auco (Pesos)
+// js/products/fuente-auco-pesos.js - Lógica Financiera Fuente de Auco (Pesos)
 
 function updateCuotasCount() {
     const countSelect = document.getElementById('cuotas-count-select');
@@ -12,7 +12,7 @@ function updateCuotasCount() {
     }
 }
 
-function calculateJardinAucoPesos(triggeredBy = '') {
+function calculateFuenteAucoPesos(triggeredBy = '') {
     const refUfInput = document.getElementById('ref-uf-input');
     const refClpInput = document.getElementById('ref-clp-input');
     const descPercentEl = document.getElementById('porcentaje-descuento-main');
@@ -142,23 +142,27 @@ function calculateJardinAucoPesos(triggeredBy = '') {
         }
     } else if (triggeredBy === 'pie-clp' && pieClpInput) {
         pieCLP = parseCLP(pieClpInput.value);
-        const ufVal = currentUFValue > 0 ? (pieCLP / currentUFValue) : 0;
-        if (pieUfInput) pieUfInput.value = ufVal > 0 ? ufVal.toFixed(2) : '';
+        if (pieUfInput) {
+            const ufVal = currentUFValue > 0 && pieCLP > 0 ? (pieCLP / currentUFValue) : 0;
+            pieUfInput.value = ufVal > 0 ? ufVal.toFixed(2) : '';
+        }
         if (piePercentEl && valorPromoCLP > 0) {
             const p = (pieCLP / valorPromoCLP) * 100;
             piePercentEl.value = Math.round(p * 10) / 10;
         }
-    } else if (valorPromoCLP > 0 && piePercentEl && parseFloat(piePercentEl.value) > 0 && triggeredBy !== 'pie-uf' && triggeredBy !== 'pie-clp' && triggeredBy !== 'saldo-uf' && triggeredBy !== 'saldo-clp') {
-        const percent = parseFloat(piePercentEl.value) || 0;
-        pieCLP = Math.round(valorPromoCLP * (percent / 100));
-        if (pieClpInput && document.activeElement !== pieClpInput) setCLPValue(pieClpInput, pieCLP > 0 ? pieCLP : '');
+    } else if (triggeredBy !== 'pie-uf' && triggeredBy !== 'pie-clp') {
+        const percent = piePercentEl && parseFloat(piePercentEl.value) >= 0 ? parseFloat(piePercentEl.value) : 10;
+        pieCLP = valorPromoCLP > 0 ? Math.round(valorPromoCLP * (percent / 100)) : 0;
+        if (pieClpInput && document.activeElement !== pieClpInput) {
+            setCLPValue(pieClpInput, pieCLP > 0 ? pieCLP : '');
+        }
         if (pieUfInput && document.activeElement !== pieUfInput) {
             const ufVal = currentUFValue > 0 && pieCLP > 0 ? (pieCLP / currentUFValue) : 0;
             pieUfInput.value = ufVal > 0 ? ufVal.toFixed(2) : '';
         }
     }
 
-    // 4. Saldo a financiar = Valor Promocional - Pie
+    // 4. Saldo a Financiar = Valor Promocional - Pie
     let saldoCLP = 0;
     if (triggeredBy === 'saldo-uf' && saldoFinanciarUfInput) {
         const ufVal = parseFloat(saldoFinanciarUfInput.value) || 0;
@@ -181,24 +185,28 @@ function calculateJardinAucoPesos(triggeredBy = '') {
         }
     }
 
-    // 5. Cuotas Editables (1 al 6)
+    // 5. Sincronización de cuotas rellenables
     for (let i = 1; i <= 6; i++) {
         const ufCuota = document.getElementById(`cuota-${i}-uf`);
         const clpCuota = document.getElementById(`cuota-${i}-clp`);
 
-        if (triggeredBy === `cuota-${i}-clp` && clpCuota) {
-            const val = parseCLP(clpCuota.value);
-            const u = currentUFValue > 0 ? (val / currentUFValue) : 0;
-            if (ufCuota) ufCuota.value = u > 0 ? u.toFixed(2) : '';
-        } else if (triggeredBy === `cuota-${i}-uf` && ufCuota) {
-            const u = parseFloat(ufCuota.value) || 0;
-            if (clpCuota && document.activeElement !== clpCuota) {
-                setCLPValue(clpCuota, u > 0 ? Math.round(u * currentUFValue) : '');
+        if (triggeredBy === `cuota-${i}-uf` && ufCuota) {
+            const ufVal = parseFloat(ufCuota.value) || 0;
+            const clpVal = currentUFValue > 0 ? Math.round(ufVal * currentUFValue) : 0;
+            if (clpCuota) setCLPValue(clpCuota, clpVal > 0 ? clpVal : '');
+        } else if (triggeredBy === `cuota-${i}-clp` && clpCuota) {
+            const clpVal = parseCLP(clpCuota.value);
+            const ufVal = currentUFValue > 0 ? (clpVal / currentUFValue) : 0;
+            if (ufCuota) ufCuota.value = ufVal > 0 ? ufVal.toFixed(2) : '';
+        } else if (triggeredBy === 'uf-manual' || triggeredBy === 'init') {
+            if (clpCuota && parseCLP(clpCuota.value) > 0 && ufCuota) {
+                const ufVal = (parseCLP(clpCuota.value) / currentUFValue);
+                ufCuota.value = ufVal.toFixed(2);
             }
         }
     }
 
-    // Sincronizar conversiones si cambió la UF
+    // Sincronizar conversiones UF al inicializar o cambiar UF
     if (triggeredBy === 'uf-manual' || triggeredBy === 'init') {
         if (refUfInput && valorRealCLP > 0) refUfInput.value = (valorRealCLP / currentUFValue).toFixed(2);
         if (descuentoUfInput && descuentoCLP > 0) descuentoUfInput.value = (descuentoCLP / currentUFValue).toFixed(2);
@@ -206,15 +214,6 @@ function calculateJardinAucoPesos(triggeredBy = '') {
         if (valorNiUfDisplay && valorPromoCLP > 0) valorNiUfDisplay.value = (valorPromoCLP / currentUFValue).toFixed(2);
         if (pieUfInput && pieCLP > 0) pieUfInput.value = (pieCLP / currentUFValue).toFixed(2);
         if (saldoFinanciarUfInput && saldoCLP > 0) saldoFinanciarUfInput.value = (saldoCLP / currentUFValue).toFixed(2);
-
-        for (let i = 1; i <= 6; i++) {
-            const ufCuota = document.getElementById(`cuota-${i}-uf`);
-            const clpCuota = document.getElementById(`cuota-${i}-clp`);
-            if (ufCuota && clpCuota) {
-                const u = parseFloat(ufCuota.value) || 0;
-                if (u > 0) setCLPValue(clpCuota, Math.round(u * currentUFValue));
-            }
-        }
     }
 }
 
@@ -243,8 +242,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 'sepultura-auco': 'sepultura-auco.html',
                 'sepultura-auco-uf': 'sepultura-auco.html',
                 'sepultura-auco-pesos': 'sepultura-auco.html',
-                'jardin-auco-uf': 'jardin-auco-uf.html',
-                'jardin-auco-pesos': 'jardin-auco-pesos.html',
+                'jardin-auco': 'jardin-auco.html',
+                'jardin-auco-uf': 'jardin-auco.html',
+                'jardin-auco-pesos': 'jardin-auco.html',
                 'fuente-auco-uf': 'fuente-auco-uf.html',
                 'fuente-auco-pesos': 'fuente-auco-pesos.html',
                 'cremacion': 'cremacion.html',
@@ -252,8 +252,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 'mantencion': 'mantencion.html',
                 'servicios-funerarios': 'servicios-funerarios.html'
             };
-            window.location.href = productPageMap[productSelector.value] || 'jardin-auco-pesos.html';
+            window.location.href = productPageMap[productSelector.value] || 'fuente-auco-pesos.html';
         });
+    }
+
+    // Capacidad y Reducciones
+    const capacidadSelect = document.getElementById('capacidad-select');
+    const reduccionesDisplay = document.getElementById('reducciones-display');
+    const reduccionesMap = {
+        2: 4, // Capacidad 2 -> 4 Reducciones
+        4: 8  // Capacidad 4 -> 8 Reducciones
+    };
+
+    function updateFuenteReducciones(cap) {
+        if (!reduccionesDisplay) return;
+        const count = reduccionesMap[cap] !== undefined ? reduccionesMap[cap] : 4;
+        reduccionesDisplay.textContent = `${count} Reducciones`;
+    }
+
+    if (capacidadSelect) {
+        capacidadSelect.addEventListener('change', () => {
+            const cap = parseInt(capacidadSelect.value, 10) || 2;
+            updateFuenteReducciones(cap);
+        });
+        const initialCap = parseInt(capacidadSelect.value, 10) || 2;
+        updateFuenteReducciones(initialCap);
     }
 
     // Event listeners de inputs
@@ -263,88 +286,88 @@ document.addEventListener('DOMContentLoaded', () => {
             const val = parseFloat(ufInput.value);
             if (!isNaN(val) && val > 0) {
                 currentUFValue = val;
-                calculateJardinAucoPesos('uf-manual');
+                calculateFuenteAucoPesos('uf-manual');
             }
         });
     }
 
-    const refUfInput = document.getElementById('ref-uf-input');
-    if (refUfInput) refUfInput.addEventListener('input', () => calculateJardinAucoPesos('ref-uf'));
-
     const refClpInput = document.getElementById('ref-clp-input');
     if (refClpInput) {
-        refClpInput.addEventListener('input', () => calculateJardinAucoPesos('ref-clp'));
+        refClpInput.addEventListener('input', () => calculateFuenteAucoPesos('ref-clp'));
         refClpInput.addEventListener('blur', () => {
             const val = parseCLP(refClpInput.value);
             if (val > 0) setCLPValue(refClpInput, val);
         });
     }
 
-    const descPercentEl = document.getElementById('porcentaje-descuento-main');
-    if (descPercentEl) descPercentEl.addEventListener('input', () => calculateJardinAucoPesos('desc-percent'));
+    const refUfInput = document.getElementById('ref-uf-input');
+    if (refUfInput) refUfInput.addEventListener('input', () => calculateFuenteAucoPesos('ref-uf'));
 
-    const descuentoUfInput = document.getElementById('descuento-uf-input');
-    if (descuentoUfInput) descuentoUfInput.addEventListener('input', () => calculateJardinAucoPesos('desc-uf'));
+    const descPercentEl = document.getElementById('porcentaje-descuento-main');
+    if (descPercentEl) descPercentEl.addEventListener('input', () => calculateFuenteAucoPesos('desc-percent'));
 
     const descuentoClpInput = document.getElementById('descuento-clp-input');
     if (descuentoClpInput) {
-        descuentoClpInput.addEventListener('input', () => calculateJardinAucoPesos('desc-clp'));
+        descuentoClpInput.addEventListener('input', () => calculateFuenteAucoPesos('desc-clp'));
         descuentoClpInput.addEventListener('blur', () => {
             const val = parseCLP(descuentoClpInput.value);
             if (val > 0) setCLPValue(descuentoClpInput, val);
         });
     }
 
-    const capitalAnteriorUfInput = document.getElementById('capital-anterior-uf-input');
-    if (capitalAnteriorUfInput) capitalAnteriorUfInput.addEventListener('input', () => calculateJardinAucoPesos('cap-ant-uf'));
+    const descuentoUfInput = document.getElementById('descuento-uf-input');
+    if (descuentoUfInput) descuentoUfInput.addEventListener('input', () => calculateFuenteAucoPesos('desc-uf'));
 
     const capitalAnteriorClpInput = document.getElementById('capital-anterior-clp-input');
     if (capitalAnteriorClpInput) {
-        capitalAnteriorClpInput.addEventListener('input', () => calculateJardinAucoPesos('cap-ant-clp'));
+        capitalAnteriorClpInput.addEventListener('input', () => calculateFuenteAucoPesos('cap-ant-clp'));
         capitalAnteriorClpInput.addEventListener('blur', () => {
             const val = parseCLP(capitalAnteriorClpInput.value);
             if (val > 0) setCLPValue(capitalAnteriorClpInput, val);
         });
     }
 
-    const valorNiUf = document.getElementById('valor-ni-uf');
-    if (valorNiUf) valorNiUf.addEventListener('input', () => calculateJardinAucoPesos('ni-uf'));
+    const capitalAnteriorUfInput = document.getElementById('capital-anterior-uf-input');
+    if (capitalAnteriorUfInput) capitalAnteriorUfInput.addEventListener('input', () => calculateFuenteAucoPesos('cap-ant-uf'));
 
     const valorNiClpInput = document.getElementById('valor-ni-clp-input');
     if (valorNiClpInput) {
-        valorNiClpInput.addEventListener('input', () => calculateJardinAucoPesos('ni-clp'));
+        valorNiClpInput.addEventListener('input', () => calculateFuenteAucoPesos('ni-clp'));
         valorNiClpInput.addEventListener('blur', () => {
             const val = parseCLP(valorNiClpInput.value);
             if (val > 0) setCLPValue(valorNiClpInput, val);
         });
     }
 
-    const piePercentEl = document.getElementById('pie-percent');
-    if (piePercentEl) piePercentEl.addEventListener('input', () => calculateJardinAucoPesos('pie-percent'));
+    const valorNiUf = document.getElementById('valor-ni-uf');
+    if (valorNiUf) valorNiUf.addEventListener('input', () => calculateFuenteAucoPesos('ni-uf'));
 
-    const pieUfInput = document.getElementById('pie-uf');
-    if (pieUfInput) pieUfInput.addEventListener('input', () => calculateJardinAucoPesos('pie-uf'));
+    const piePercentEl = document.getElementById('pie-percent');
+    if (piePercentEl) piePercentEl.addEventListener('input', () => calculateFuenteAucoPesos('pie-percent'));
 
     const pieClpInput = document.getElementById('pie-clp-input');
     if (pieClpInput) {
-        pieClpInput.addEventListener('input', () => calculateJardinAucoPesos('pie-clp'));
+        pieClpInput.addEventListener('input', () => calculateFuenteAucoPesos('pie-clp'));
         pieClpInput.addEventListener('blur', () => {
             const val = parseCLP(pieClpInput.value);
             if (val > 0) setCLPValue(pieClpInput, val);
         });
     }
 
-    const saldoFinanciarUfInput = document.getElementById('saldo-financiar-uf-input');
-    if (saldoFinanciarUfInput) saldoFinanciarUfInput.addEventListener('input', () => calculateJardinAucoPesos('saldo-uf'));
+    const pieUfInput = document.getElementById('pie-uf');
+    if (pieUfInput) pieUfInput.addEventListener('input', () => calculateFuenteAucoPesos('pie-uf'));
 
     const saldoFinanciarClpInput = document.getElementById('saldo-financiar-clp-input');
     if (saldoFinanciarClpInput) {
-        saldoFinanciarClpInput.addEventListener('input', () => calculateJardinAucoPesos('saldo-clp'));
+        saldoFinanciarClpInput.addEventListener('input', () => calculateFuenteAucoPesos('saldo-clp'));
         saldoFinanciarClpInput.addEventListener('blur', () => {
             const val = parseCLP(saldoFinanciarClpInput.value);
             if (val > 0) setCLPValue(saldoFinanciarClpInput, val);
         });
     }
+
+    const saldoFinanciarUfInput = document.getElementById('saldo-financiar-uf-input');
+    if (saldoFinanciarUfInput) saldoFinanciarUfInput.addEventListener('input', () => calculateFuenteAucoPesos('saldo-uf'));
 
     // Selector de cantidad de cuotas a mostrar
     const countSelect = document.getElementById('cuotas-count-select');
@@ -357,19 +380,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const ufCuota = document.getElementById(`cuota-${i}-uf`);
         const clpCuota = document.getElementById(`cuota-${i}-clp`);
 
-        if (ufCuota) ufCuota.addEventListener('input', () => calculateJardinAucoPesos(`cuota-${i}-uf`));
         if (clpCuota) {
-            clpCuota.addEventListener('input', () => calculateJardinAucoPesos(`cuota-${i}-clp`));
+            clpCuota.addEventListener('input', () => calculateFuenteAucoPesos(`cuota-${i}-clp`));
             clpCuota.addEventListener('blur', () => {
                 const val = parseCLP(clpCuota.value);
                 if (val > 0) setCLPValue(clpCuota, val);
             });
         }
+        if (ufCuota) ufCuota.addEventListener('input', () => calculateFuenteAucoPesos(`cuota-${i}-uf`));
     }
 
     fetchUFValue().then(() => {
-        calculateJardinAucoPesos('init');
+        calculateFuenteAucoPesos('init');
     }).catch(() => {
-        calculateJardinAucoPesos('init');
+        calculateFuenteAucoPesos('init');
     });
 });

@@ -306,7 +306,7 @@ function renderSepulturaGraphic(capacidad) {
     if (!container) return;
     container.innerHTML = '';
 
-    const isDoubleCol = capacidad > 4;
+    const isDoubleCol = capacidad >= 6;
     const compact = capacidad >= 4;
 
     const gridContainer = document.createElement('div');
@@ -317,22 +317,19 @@ function renderSepulturaGraphic(capacidad) {
     gridContainer.style.margin = '0 auto';
     gridContainer.style.justifyContent = 'center';
 
-    // Columna Izquierda (Capacidades 1 a 4 hacia abajo)
-    const leftCol = document.createElement('div');
-    leftCol.style.display = 'flex';
-    leftCol.style.flexDirection = 'column';
-    leftCol.style.gap = '6px';
-    leftCol.style.flex = '1';
-    leftCol.style.width = '100%';
+    if (capacidad === 6) {
+        const leftCol = document.createElement('div');
+        leftCol.style.display = 'flex';
+        leftCol.style.flexDirection = 'column';
+        leftCol.style.gap = '6px';
+        leftCol.style.flex = '1';
+        leftCol.style.width = '100%';
 
-    const leftCount = Math.min(capacidad, 4);
-    for (let i = 1; i <= leftCount; i++) {
-        leftCol.appendChild(createSarcofagoCard(i, compact));
-    }
-    gridContainer.appendChild(leftCol);
+        for (let i = 1; i <= 3; i++) {
+            leftCol.appendChild(createSarcofagoCard(i, compact));
+        }
+        gridContainer.appendChild(leftCol);
 
-    // Columna Derecha (Capacidades 5 a 8 hacia abajo)
-    if (capacidad > 4) {
         const rightCol = document.createElement('div');
         rightCol.style.display = 'flex';
         rightCol.style.flexDirection = 'column';
@@ -340,10 +337,48 @@ function renderSepulturaGraphic(capacidad) {
         rightCol.style.flex = '1';
         rightCol.style.width = '100%';
 
-        for (let i = 5; i <= capacidad; i++) {
+        for (let i = 4; i <= 6; i++) {
             rightCol.appendChild(createSarcofagoCard(i, compact));
         }
         gridContainer.appendChild(rightCol);
+
+    } else if (capacidad === 8) {
+        const leftCol = document.createElement('div');
+        leftCol.style.display = 'flex';
+        leftCol.style.flexDirection = 'column';
+        leftCol.style.gap = '6px';
+        leftCol.style.flex = '1';
+        leftCol.style.width = '100%';
+
+        for (let i = 1; i <= 4; i++) {
+            leftCol.appendChild(createSarcofagoCard(i, compact));
+        }
+        gridContainer.appendChild(leftCol);
+
+        const rightCol = document.createElement('div');
+        rightCol.style.display = 'flex';
+        rightCol.style.flexDirection = 'column';
+        rightCol.style.gap = '6px';
+        rightCol.style.flex = '1';
+        rightCol.style.width = '100%';
+
+        for (let i = 5; i <= 8; i++) {
+            rightCol.appendChild(createSarcofagoCard(i, compact));
+        }
+        gridContainer.appendChild(rightCol);
+
+    } else {
+        const col = document.createElement('div');
+        col.style.display = 'flex';
+        col.style.flexDirection = 'column';
+        col.style.gap = '6px';
+        col.style.flex = '1';
+        col.style.width = '100%';
+
+        for (let i = 1; i <= capacidad; i++) {
+            col.appendChild(createSarcofagoCard(i, compact));
+        }
+        gridContainer.appendChild(col);
     }
 
     container.appendChild(gridContainer);

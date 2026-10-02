@@ -14,37 +14,90 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #ffffff;
+    background-color: #f2f5f4;
     color: var(--text-dark);
     margin: 0;
-    padding: 0;
+    padding: 20px 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
+    min-height: 100vh;
     overflow-x: hidden;
 }
 
-/* Desktop specific */
-@media (min-width: 801px) {
+.container {
+    width: 100%;
+    max-width: 1260px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 30px 35px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    box-sizing: border-box;
+    transition: padding 0.2s ease, width 0.2s ease;
+}
+
+/* Full Desktop Screens (>= 1200px) */
+@media (min-width: 1200px) {
     body {
-        padding: 40px 20px;
+        padding: 35px 20px;
     }
     .container {
-        width: 1260px; 
-        min-width: 1200px;
-        max-width: 95vw;
-        padding: 45px 50px;
-        box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+        padding: 40px 48px;
+    }
+    .section-header {
+        display: flex;
+        flex-direction: row;
+        gap: 28px;
+        align-items: flex-start;
+    }
+    .left-col {
+        flex: 1 1 54%;
+        max-width: 58%;
+    }
+    .right-col {
+        flex: 1 1 43%;
+        max-width: 45%;
     }
     table {
-        font-size: 15px;
+        font-size: 14.5px;
     }
     th, td {
         padding: 8px 12px;
     }
     .park-logo {
-        height: 130px;
+        height: 120px;
+    }
+    .header-title-container h1 {
+        font-size: 24px !important;
+    }
+    .park-display {
+        font-size: 26px !important;
+    }
+    .btn {
+        padding: 10px 22px;
+        font-size: 15px;
+    }
+    .product-selector-container {
+        padding: 12px 16px;
+        font-size: 15px;
+    }
+}
+
+/* Large Screens (>= 1440px) */
+@media (min-width: 1440px) {
+    .container {
+        max-width: 1360px;
+        padding: 45px 52px;
+    }
+    table {
+        font-size: 15.5px;
+    }
+    th, td {
+        padding: 9px 13px;
+    }
+    .park-logo {
+        height: 135px;
     }
     .header-title-container h1 {
         font-size: 26px !important;
@@ -52,51 +105,67 @@ body {
     .park-display {
         font-size: 28px !important;
     }
-    .btn {
-        padding: 10px 22px;
-        font-size: 15px;
-    }
-    .product-selector-container {
-        padding: 14px 18px;
-        font-size: 16px;
-    }
-    .product-selector-container select {
-        font-size: 16px !important;
-        padding: 6px 12px !important;
-    }
 }
 
-/* Large screens (Full HD / 2K) */
-@media (min-width: 1400px) {
+/* Intermediate / Half-Screen / Split-Screen (801px to 1199px) */
+@media (min-width: 801px) and (max-width: 1199px) {
+    body {
+        padding: 12px 10px;
+    }
     .container {
-        width: 1380px;
-        padding: 50px 60px;
+        width: 100%;
+        max-width: 100%;
+        padding: 20px 22px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.06);
     }
-    table {
-        font-size: 16px;
-    }
-    th, td {
-        padding: 10px 14px;
+    .header-title-container {
+        padding: 14px 18px 12px 18px;
+        margin-bottom: 16px;
     }
     .park-logo {
-        height: 155px;
+        height: 85px;
     }
     .header-title-container h1 {
-        font-size: 28px !important;
+        font-size: 19px !important;
     }
     .park-display {
-        font-size: 32px !important;
+        font-size: 20px !important;
+        margin-top: 6px;
+    }
+    .section-header {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+    .left-col, .right-col, .visual-col {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: none !important;
+    }
+    #jardin-output, #sepultura-output, #cremacion-output, #aumento-output {
+        max-width: 520px;
+        margin: 0 auto;
+        width: 100%;
+    }
+    table {
+        font-size: 13.5px;
+    }
+    th, td {
+        padding: 6px 9px;
+    }
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
     }
 }
-
 
 .header-title-container {
     display: flex;
     flex-direction: column;
-    margin-bottom: 25px;
+    margin-bottom: 22px;
     background: linear-gradient(135deg, #189860 0%, #23C27E 55%, #2ad88d 100%);
     border-radius: 12px;
-    padding: 20px 24px 16px 24px;
+    padding: 18px 22px 14px 22px;
     box-shadow: 0 4px 15px rgba(35, 194, 126, 0.2);
     border-bottom: 3px solid #168053;
 }
@@ -109,7 +178,7 @@ body {
 }
 
 .park-logo {
-    height: 120px;
+    height: 110px;
     width: auto;
     object-fit: contain;
     background: transparent;
@@ -123,7 +192,7 @@ body {
 
 .header-title-container h1 {
     color: #ffffff;
-    font-size: clamp(18px, 4vw, 24px);
+    font-size: clamp(17px, 3.5vw, 24px);
     text-transform: uppercase;
     margin: 0;
     font-weight: bold;
@@ -135,22 +204,22 @@ body {
 
 .park-display {
     color: #ffffff;
-    font-size: clamp(20px, 4vw, 26px);
+    font-size: clamp(19px, 3.8vw, 26px);
     text-transform: uppercase;
     font-weight: 800;
     text-align: center;
     line-height: 1.2;
-    margin-top: 12px;
+    margin-top: 10px;
     width: 100%;
     letter-spacing: 1px;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* Mobile specific (Android/iOS) */
+/* Mobile specific (<= 800px) */
 @media (max-width: 800px) {
     body {
         padding: 0;
-        background-color: white;
+        background-color: #ffffff;
         width: 100% !important;
         min-width: 100% !important;
         overflow-x: hidden !important;
@@ -158,8 +227,9 @@ body {
     .container {
         width: 100%;
         max-width: 100%;
-        padding: 10px;
+        padding: 12px 14px;
         border: none;
+        border-radius: 0;
         box-shadow: none;
         overflow-x: hidden !important;
     }
@@ -167,17 +237,21 @@ body {
         align-items: center;
     }
     .park-logo {
-        height: 75px;
+        height: 70px;
         padding: 0;
         border: none;
         background: transparent;
     }
+    .header-title-container {
+        padding: 12px 14px;
+        margin-bottom: 14px;
+    }
     .header-title-container h1 {
-        font-size: 15px !important;
+        font-size: 16px !important;
     }
     .park-display {
-        font-size: 16px !important;
-        margin-top: 8px;
+        font-size: 17px !important;
+        margin-top: 6px;
     }
     .section-header {
         flex-direction: column;
@@ -186,14 +260,20 @@ body {
     .left-col, .right-col, .visual-col {
         max-width: 100% !important;
         width: 100% !important;
+        flex: none !important;
     }
     .visual-col {
         order: 3;
     }
+    #jardin-output, #sepultura-output, #cremacion-output, #aumento-output {
+        max-width: 100%;
+        margin: 0 auto;
+        width: 100%;
+    }
     
     /* Optimizar tablas en celular */
     table {
-        font-size: 11px !important;
+        font-size: 11.5px !important;
     }
     th, td {
         padding: 4px 6px !important;
@@ -203,29 +283,29 @@ body {
     }
     input.editable-field, input.input-inline {
         padding: 2px 4px !important;
-        font-size: 11px !important;
+        font-size: 11.5px !important;
     }
     .currency-input-wrapper {
-        font-size: 11px !important;
+        font-size: 11.5px !important;
     }
     .currency-input-wrapper span {
-        font-size: 11px !important;
+        font-size: 11.5px !important;
         margin-right: 2px;
     }
     .currency-input-wrapper input {
-        font-size: 11px !important;
+        font-size: 11.5px !important;
     }
     
     /* Reducir inputs de porcentaje de Pie y Descuento en celular */
     #pie-percent, #porcentaje-descuento-main {
-        width: 32px !important;
-        font-size: 11px !important;
+        width: 34px !important;
+        font-size: 11.5px !important;
     }
 }
 
 .section-header {
     display: flex;
-    gap: 30px;
+    gap: 24px;
     margin-bottom: 20px;
 }
 
@@ -358,6 +438,27 @@ input[type=number] {
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
 }
 
+/* Inputs de porcentaje de Pie y Descuento con borde visible y fondo nítido */
+#pie-percent, #porcentaje-descuento-main {
+    border: 1px solid #b0c4b8 !important;
+    background-color: #ffffff !important;
+    border-radius: 4px !important;
+    padding: 2px 4px !important;
+    font-weight: bold !important;
+    text-align: center !important;
+    color: #111 !important;
+    cursor: text !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+}
+
+#pie-percent:hover, #porcentaje-descuento-main:hover,
+#pie-percent:focus, #porcentaje-descuento-main:focus {
+    border-color: var(--primary-green) !important;
+    background-color: #f0fdf4 !important;
+    outline: 2px solid rgba(35, 194, 126, 0.3) !important;
+    box-shadow: 0 0 0 2px rgba(35, 194, 126, 0.2) !important;
+}
+
 .currency-input-wrapper {
     display: flex;
     align-items: center;
@@ -405,6 +506,37 @@ input[type=number] {
 
 .btn-share { background-color: #28a745; }
 .btn-pdf { background-color: #dc3545; }
+
+.mode-btn {
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid var(--primary-green);
+    border-radius: 25px;
+    background: #ffffff;
+    color: #168053;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.mode-btn:hover {
+    background: #eef9f3;
+}
+.mode-btn.active {
+    background: var(--primary-green);
+    color: #ffffff;
+    border-color: var(--primary-green);
+    box-shadow: 0 3px 10px rgba(35, 194, 126, 0.35);
+}
+
+@media (max-width: 900px) {
+    .mode-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+}
 
 .label-cell { font-weight: normal; }
 .bold { font-weight: bold; }

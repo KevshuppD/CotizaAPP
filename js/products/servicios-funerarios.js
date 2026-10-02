@@ -229,8 +229,15 @@ document.addEventListener('DOMContentLoaded', () => {
         productSelector.addEventListener('change', () => {
             const productPageMap = {
                 'sepultacion': 'index.html',
-                'sepultura-auco-uf': 'sepultura-auco-uf.html',
-                'sepultura-auco-pesos': 'sepultura-auco-pesos.html',
+                'sepultura-auco': 'sepultura-auco.html',
+                'sepultura-auco-uf': 'sepultura-auco.html',
+                'sepultura-auco-pesos': 'sepultura-auco.html',
+                'jardin-auco': 'jardin-auco.html',
+                'jardin-auco-uf': 'jardin-auco.html',
+                'jardin-auco-pesos': 'jardin-auco.html',
+                'fuente-auco': 'fuente-auco.html',
+                'fuente-auco-uf': 'fuente-auco.html',
+                'fuente-auco-pesos': 'fuente-auco.html',
                 'cremacion': 'cremacion.html',
                 'aumento-capacidad': 'aumento-capacidad.html',
                 'mantencion': 'mantencion.html',
