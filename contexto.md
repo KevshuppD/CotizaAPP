@@ -18,7 +18,6 @@ CotizaAPP/
 ├── cremacion.html              # Cotizador Cremación
 ├── aumento-capacidad.html      # Cotizador Aumento de Capacidad
 ├── mantencion.html             # Cotizador Mantención Perpetua
-├── servicios-funerarios.html   # Cotizador Servicios Funerarios
 ├── vercel.json                 # Configuración de despliegue en Vercel (cleanUrls)
 ├── package.json                # Configuración de dependencias y scripts de desarrollo (serve)
 ├── style.css                   # Sistema de diseño, variables CSS (#23C27E), modal y responsive
@@ -33,8 +32,7 @@ CotizaAPP/
 │       ├── fuente-auco.js      # Lógica unificada Fuente de Auco (UF, Pesos, Contado/Sin Interés)
 │       ├── cremacion.js        # Lógica financiera y selector de ánforas de Cremación
 │       ├── aumento-capacidad.js# Lógica manual de Aumento de Capacidad
-│       ├── mantencion.js       # Lógica de Planes de Mantención
-│       └── servicios-funerarios.js# Lógica de Servicios Funerarios
+│       └── mantencion.js       # Lógica de Planes de Mantención
 ├── anfora.png                  # Asset gráfico para representación de ánforas (cremación)
 ├── sarcofago.png               # Asset gráfico para representación de sarcófagos (sepultura)
 ├── jardin.jpg                  # Fotografía institucional para Jardín Familiar Parque Auco
@@ -131,9 +129,6 @@ La aplicación gestiona los siguientes módulos seleccionables en el encabezado:
      $$\text{Valor Cuota} = \frac{\text{Saldo a Financiar}}{\text{N° de Cuotas}}$$
      calculado tanto en UF como en $ CLP.
    * Panel lateral con Fecha, UF Hoy y Beneficios/Coberturas editables.
-
-9. **Servicios Funerarios** (`servicios-funerarios.html`):
-   * Cotizador para planes de sepelio y servicios funerarios.
 
 ---
 
