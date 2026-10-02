@@ -507,9 +507,27 @@ input[type=number] {
 .btn-share { background-color: #28a745; }
 .btn-pdf { background-color: #dc3545; }
 
+.mode-selector-container {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    background: #f8faf9;
+    padding: 8px 12px;
+    border-radius: 30px;
+    border: 1px solid #e0e8e3;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .mode-btn {
-    padding: 8px 18px;
-    font-size: 14px;
+    flex: 1 1 0;
+    justify-content: center;
+    text-align: center;
+    padding: 8px 14px;
+    font-size: 13px;
     font-weight: bold;
     border: 2px solid var(--primary-green);
     border-radius: 25px;
@@ -520,6 +538,7 @@ input[type=number] {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    white-space: nowrap;
 }
 .mode-btn:hover {
     background: #eef9f3;
@@ -532,9 +551,31 @@ input[type=number] {
 }
 
 @media (max-width: 900px) {
+    .mode-selector-container {
+        padding: 6px 10px;
+        gap: 6px;
+        margin-bottom: 15px;
+    }
     .mode-btn {
-        padding: 6px 12px;
+        padding: 6px 8px;
         font-size: 12px;
+        gap: 4px;
+    }
+}
+
+@media (max-width: 600px) {
+    .mode-selector-container {
+        padding: 4px 6px;
+        gap: 4px;
+        margin-bottom: 12px;
+        border-radius: 20px;
+    }
+    .mode-btn {
+        padding: 6px 4px;
+        font-size: 11px;
+        border-width: 1.5px;
+        border-radius: 16px;
+        gap: 3px;
     }
 }
 
