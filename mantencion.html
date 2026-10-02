@@ -7,19 +7,24 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
     <link rel="stylesheet" href="style.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div class="controls">
-        <button class="btn" onclick="window.print()">Imprimir</button>
+        <button class="btn" onclick="exportAsImage()">Descargar Imagen</button>
+        <button class="btn btn-share" onclick="shareAsImage()">Compartir Imagen</button>
+        <button class="btn btn-pdf" onclick="shareAsPDF()">Compartir PDF</button>
     </div>
 
     <div class="container" id="capture-area">
         <div class="header-title-container">
             <div class="title-logo-wrapper">
-                <h1 id="main-title">Mantención Perpetua</h1>
+                <h1 id="main-title">Cotización Mantención Perpetua</h1>
                 <img src="logo-parque.png" alt="Logo" class="park-logo" onerror="this.style.display='none'">
             </div>
-            <div id="park-name-display" class="park-display">NUESTROS PARQUES</div>
+            <div id="park-name-display" class="park-display">PARQUE AUCO</div>
         </div>
 
         <div class="product-selector-container no-export">
@@ -36,11 +41,79 @@
             </select>
         </div>
 
-        <div style="min-height: 350px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 16px;">
-            <p>Sección en desarrollo...</p>
+        <div class="section-header">
+            <div class="left-col" style="flex: 1 1 54%;">
+                <div id="mantencion-fields">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td class="bold" style="width: 50%;">Valor Plan + IVA (UF)</td>
+                            <td>
+                                <input type="number" id="valor-plan-uf" class="input-inline editable-field" value="28" placeholder="0.00" step="0.01">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bold">Descuento (%)</td>
+                            <td>
+                                <input type="number" id="descuento-porcentaje" class="input-inline editable-field" value="0" placeholder="0" min="0" max="100" step="1">
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div id="mantencion-resumen" style="margin-top: 15px; padding: 12px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px;"></div>
+
+                    <div id="mantencion-cuotas-container" style="margin-top: 15px;">
+                        <div class="cuotas table-responsive" style="margin-top: 10px;">
+                            <table style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Plazo</th>
+                                        <th>Cuota Base</th>
+                                        <th>Gasto Adm.</th>
+                                        <th>Seguro</th>
+                                        <th>IVA</th>
+                                        <th>Total UF</th>
+                                        <th>Total CLP</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mantencion-cuotas-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-col" style="flex: 1 1 43%;">
+                <table style="margin-bottom: 20px;">
+                    <tr>
+                        <td class="bold">FECHA</td>
+                        <td id="current-date" style="text-align: right;">--/--/----</td>
+                    </tr>
+                    <tr>
+                        <td class="bold">UF HOY</td>
+                        <td style="text-align: right; font-weight: bold;">
+                            <div class="currency-input-wrapper">
+                                <span>$</span>
+                                <input type="number" id="uf-value-input" class="input-inline editable-field" value="40844.79" step="0.01">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <div id="mantencion-output">
+                    <div style="border: 1px solid black; padding: 10px; margin-bottom: 10px; border-radius: 4px; background: #fff;">
+                        <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px; color: #333;">Beneficios y Coberturas</div>
+                        <div id="beneficios-text" class="editable-textarea-mimic" contenteditable="true" placeholder="Escribir beneficios aquí...">• Mantención perpetua del parque
+• Cuidado de áreas verdes y jardinería
+• Seguridad y vigilancia permanente
+• Conservación de infraestructura general</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="js/core.js"></script>
+    <script src="js/products/mantencion.js"></script>
 </body>
 </html>
