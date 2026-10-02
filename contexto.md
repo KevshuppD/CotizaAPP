@@ -110,8 +110,17 @@ La aplicación gestiona los siguientes módulos seleccionables en el encabezado:
    * Cuadro editable de Beneficios, Fecha y UF Hoy.
 
 6. **Aumento de Capacidad** (`aumento-capacidad.html`):
-   * Cotizador con campos en blanco para cálculo comercial manual.
-   * Cuadro de cuotas rellenables de 12 a 48 cuotas y panel de Beneficios.
+   * Módulo unificado con selector interactivo de **Modalidad de Financiamiento**:
+     * 🔹 **Financiamiento UF (0,55% mens.)**: Factores 12 (0,08630), 24 (0,04459), 36 (0,03069), 48 (0,02376) + Gasto Adm. **0,10 UF**.
+     * 💵 **Financiamiento Pesos ($)**: Factores 12 (0,09204), 24 (0,04992), 36 (0,03615), 48 (0,02938) + Gasto Adm. **$3.964 CLP**.
+     * ⚡ **Cuota Contado / Sin Interés**: $\text{Cuota Base} = \frac{\text{Saldo}}{\text{Plazo}}$ + Gasto Adm. sin interés adicional (1 a 48 cuotas).
+   * **Estructura Financiera**:
+     $$\text{Valor Promocional} = \text{Valor Real} - \text{Descuento} - \text{Capital Anterior}$$
+     $$\text{Pie} = \text{Valor Promocional} \times \left(\frac{\%\text{ Pie}}{100}\right) \quad (\text{10\% por defecto, editable})$$
+     $$\text{Saldo a Financiar} = \text{Valor Promocional} - \text{Pie}$$
+   * Descuento y Pie multidireccionales en `%`, UF o $ CLP, con fila editable de **Capital Anterior**.
+   * Selector interactivo de cuotas con checkboxes ("Todas", filtros de plazos 12, 24, 36, 48 o plazos contado).
+   * Panel lateral con Fecha, UF Hoy y cuadro de Beneficios editable.
 
 8. **Mantención Perpetua** (`mantencion.html`):
    * Cuadro especial superior separado: **Valor Mantención Anual (IVA incluido)** en UF y $ CLP.

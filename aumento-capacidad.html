@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cotización Aumento de Capacidad</title>
+    <title>COTIZACIÓN AUMENTO DE CAPACIDAD</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
     <link rel="stylesheet" href="style.css">
@@ -21,7 +21,7 @@
     <div class="container" id="capture-area">
         <div class="header-title-container">
             <div class="title-logo-wrapper">
-                <h1 id="main-title">Cotización Aumento de Capacidad</h1>
+                <h1 id="main-title">COTIZACIÓN AUMENTO DE CAPACIDAD</h1>
                 <img src="logo-parque.png" alt="Logo" class="park-logo" onerror="this.style.display='none'">
             </div>
             <div id="park-name-display" class="park-display">PARQUE AUCO</div>
@@ -41,125 +41,136 @@
             </select>
         </div>
 
+        <!-- SELECTOR DE MODALIDAD DE FINANCIAMIENTO -->
+        <div class="mode-selector-container no-export" style="margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; background: #f8faf9; padding: 10px 16px; border-radius: 30px; border: 1px solid #e0e8e3;">
+            <button type="button" class="mode-btn active" data-mode="uf" id="btn-mode-uf">
+                <span>🔹</span> Financiamiento UF (0,55%)
+            </button>
+            <button type="button" class="mode-btn" data-mode="pesos" id="btn-mode-pesos">
+                <span>💵</span> Financiamiento Pesos ($)
+            </button>
+            <button type="button" class="mode-btn" data-mode="contado" id="btn-mode-contado">
+                <span>⚡</span> Cuota Contado / Sin Interés
+            </button>
+        </div>
+
         <div class="section-header">
             <div class="left-col" style="flex: 1 1 54%;">
                 <div id="sepultacion-fields">
                     <table style="width: 100%;">
-                        <tr>
-                            <td style="width: 40%;"></td>
-                            <td class="bold uf-col">UF</td>
-                            <td class="bold clp-col">$</td>
-                        </tr>
-                        <tr>
-                            <td id="label-valor-real" class="bold">Valor Real</td>
-                            <td class="uf-col">
-                                <input type="number" id="ref-uf-input" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
-                            </td>
-                            <td class="clp-col">
-                                <div class="currency-input-wrapper">
-                                    <input type="text" id="ref-clp-input" class="input-inline editable-field" value="" placeholder="$0">
-                                </div>
-                            </td>
-                        </tr>
-                        <tr id="discount-row-main">
-                            <td class="bold">Descuento</td>
-                            <td class="uf-col">
-                                <input type="number" id="descuento-uf-input" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
-                            </td>
-                            <td class="clp-col" id="label-descuento-output" style="font-weight: bold; text-align: right; padding: 6px;">
-                                $0
-                            </td>
-                        </tr>
-                        <tr>
-                            <td id="label-valor-ni" class="bold">Valor Promocional</td>
-                            <td class="uf-col">
-                                <input type="number" id="valor-ni-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
-                            </td>
-                            <td class="clp-col yellow-bg">
-                                <div class="currency-input-wrapper">
-                                    <input type="text" id="valor-ni-clp-input" class="input-inline editable-field" value="" placeholder="$0">
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="bold">Pie</td>
-                            <td class="uf-col">
-                                <input type="number" id="pie-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
-                            </td>
-                            <td class="clp-col yellow-bg">
-                                <div class="currency-input-wrapper">
-                                    <input type="text" id="pie-clp-input" class="input-inline editable-field" value="" placeholder="$0">
-                                </div>
-                            </td>
-                        </tr>
-                        <tr id="saldo-financiar-row">
-                            <td class="bold">Saldo a Financiar</td>
-                            <td class="uf-col gray-bg">
-                                <input type="number" id="saldo-financiar-uf-input" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
-                            </td>
-                            <td class="clp-col">
-                                <div class="currency-input-wrapper">
-                                    <input type="text" id="saldo-financiar-clp-input" class="input-inline editable-field" value="" placeholder="$0">
-                                </div>
-                            </td>
-                        </tr>
+                        <thead>
+                            <tr>
+                                <th style="width: 40%; text-align: left; background: #e8e8e8;">Concepto</th>
+                                <th class="bold uf-col" style="background: #e8e8e8; text-align: center;">UF</th>
+                                <th class="bold clp-col" style="background: #e8e8e8; text-align: center;">$</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="label-valor-real" class="bold">Valor Real</td>
+                                <td class="uf-col">
+                                    <input type="number" id="ref-uf-input" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                </td>
+                                <td class="clp-col">
+                                    <div class="currency-input-wrapper">
+                                        <input type="text" id="ref-clp-input" class="input-inline editable-field" value="" placeholder="$0">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="discount-row-main">
+                                <td class="bold">
+                                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                                        <span>Descuento</span>
+                                        <div style="display: inline-flex; align-items: center; gap: 2px;">
+                                            <input type="number" id="porcentaje-descuento-main" class="input-inline editable-field" value="" placeholder="0" min="0" max="100" step="any" style="width: 46px; text-align: center; padding: 2px 4px; font-size: 12px; font-weight: bold;">
+                                            <span style="font-size: 12px; font-weight: bold;">%</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="uf-col">
+                                    <input type="number" id="descuento-uf-input" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                </td>
+                                <td class="clp-col">
+                                    <div class="currency-input-wrapper">
+                                        <input type="text" id="descuento-clp-input" class="input-inline editable-field" value="" placeholder="$0">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="capital-anterior-row">
+                                <td class="bold">Capital Anterior</td>
+                                <td class="uf-col">
+                                    <input type="number" id="capital-anterior-uf-input" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                </td>
+                                <td class="clp-col">
+                                    <div class="currency-input-wrapper">
+                                        <input type="text" id="capital-anterior-clp-input" class="input-inline editable-field" value="" placeholder="$0">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td id="label-valor-ni" class="bold">Valor Promocional</td>
+                                <td class="uf-col">
+                                    <input type="number" id="valor-ni-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                </td>
+                                <td class="clp-col yellow-bg">
+                                    <div class="currency-input-wrapper">
+                                        <input type="text" id="valor-ni-clp-input" class="input-inline editable-field" value="" placeholder="$0">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bold">
+                                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                                        <span>Pie</span>
+                                        <div style="display: inline-flex; align-items: center; gap: 2px;">
+                                            <input type="number" id="pie-percent" class="input-inline editable-field" value="10" min="0" max="100" step="any" style="width: 46px; text-align: center; padding: 2px 4px; font-size: 12px; font-weight: bold;">
+                                            <span style="font-size: 12px; font-weight: bold;">%</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="uf-col">
+                                    <input type="number" id="pie-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                </td>
+                                <td class="clp-col yellow-bg">
+                                    <div class="currency-input-wrapper">
+                                        <input type="text" id="pie-clp-input" class="input-inline editable-field" value="" placeholder="$0">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="saldo-financiar-row">
+                                <td class="bold">Saldo a Financiar</td>
+                                <td class="uf-col gray-bg">
+                                    <input type="number" id="saldo-financiar-uf-input" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
+                                </td>
+                                <td class="clp-col">
+                                    <div class="currency-input-wrapper">
+                                        <input type="text" id="saldo-financiar-clp-input" class="input-inline editable-field" value="" placeholder="$0">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
 
                     <div id="aumento-cuotas-container" style="margin-top: 15px;">
-                        <div class="cuotas table-responsive" style="margin-top: 10px;">
+                        <!-- SELECTOR DE CUOTAS A MOSTRAR -->
+                        <div class="cuotas-filter-container no-export" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; background: #f0f7f3; padding: 6px 12px; border-radius: 6px; border: 1px solid #cce5d6;">
+                            <span class="bold" style="font-size: 12px; color: #168053; text-transform: uppercase;">
+                                Cuotas a mostrar:
+                            </span>
+                            <div id="plazos-checkboxes-container" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <!-- Checkboxes generados dinámicamente según modalidad -->
+                            </div>
+                        </div>
+
+                        <div class="cuotas table-responsive" style="margin-top: 6px;">
                             <table style="width: 100%;">
                                 <thead>
-                                    <tr>
-                                        <th style="width: 40%;">Plazo</th>
-                                        <th class="uf-col">Total Cuota UF</th>
-                                        <th class="clp-col">Total Cuota CLP</th>
+                                    <tr id="cuotas-header-row">
+                                        <!-- Generado dinámicamente según la modalidad activa -->
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="bold">12 cuotas</td>
-                                        <td class="uf-col">
-                                            <input type="number" id="cuota-12-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
-                                        </td>
-                                        <td class="clp-col yellow-bg">
-                                            <div class="currency-input-wrapper">
-                                                <input type="text" id="cuota-12-clp" class="input-inline editable-field" value="" placeholder="$0">
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="bold">24 cuotas</td>
-                                        <td class="uf-col">
-                                            <input type="number" id="cuota-24-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
-                                        </td>
-                                        <td class="clp-col yellow-bg">
-                                            <div class="currency-input-wrapper">
-                                                <input type="text" id="cuota-24-clp" class="input-inline editable-field" value="" placeholder="$0">
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="bold">36 cuotas</td>
-                                        <td class="uf-col">
-                                            <input type="number" id="cuota-36-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
-                                        </td>
-                                        <td class="clp-col yellow-bg">
-                                            <div class="currency-input-wrapper">
-                                                <input type="text" id="cuota-36-clp" class="input-inline editable-field" value="" placeholder="$0">
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="bold">48 cuotas</td>
-                                        <td class="uf-col">
-                                            <input type="number" id="cuota-48-uf" class="input-inline editable-field" value="" placeholder="0.00" step="0.01">
-                                        </td>
-                                        <td class="clp-col yellow-bg">
-                                            <div class="currency-input-wrapper">
-                                                <input type="text" id="cuota-48-clp" class="input-inline editable-field" value="" placeholder="$0">
-                                            </div>
-                                        </td>
-                                    </tr>
+                                <tbody id="aumento-cuotas-body">
+                                    <!-- Generado dinámicamente -->
                                 </tbody>
                             </table>
                         </div>
@@ -171,14 +182,14 @@
                 <table style="margin-bottom: 20px;">
                     <tr>
                         <td class="bold">FECHA</td>
-                        <td id="current-date" style="text-align: right;">--/--/----</td>
+                        <td id="current-date" style="text-align: right; font-weight: bold;">--/--/----</td>
                     </tr>
                     <tr>
                         <td class="bold">UF HOY</td>
                         <td style="text-align: right; font-weight: bold;">
-                            <div class="currency-input-wrapper">
+                            <div class="currency-input-wrapper" style="justify-content: flex-end;">
                                 <span>$</span>
-                                <input type="number" id="uf-value-input" class="input-inline editable-field" value="40844.79" step="0.01">
+                                <input type="number" id="uf-value-input" class="input-inline editable-field" value="40844.79" step="0.01" style="font-weight: bold; width: 95px; text-align: right;">
                             </div>
                         </td>
                     </tr>
