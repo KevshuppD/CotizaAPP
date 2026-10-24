@@ -59,9 +59,9 @@ La aplicación gestiona los siguientes módulos seleccionables en el encabezado:
 
 2. **Sepultura Parque Auco** (`sepultura-auco.html`):
    * Módulo unificado con selector interactivo de **Modalidad de Financiamiento**:
-     * 🔹 **Financiamiento UF (0,55% mens.)**: Factores 24 (0,04459), 36 (0,03069), 48 (0,02376), 60 (0,01961), 72 (0,01686) + Gasto Adm. **0,10 UF**.
-     * 💵 **Financiamiento Pesos ($)**: Factores 24 (0,04992), 36 (0,03615), 48 (0,02938), 60 (0,02808), 72 (0,025603) + Gasto Adm. **$3.964 CLP**.
-     * ⚡ **Cuota Contado / Sin Interés**: $\text{Cuota Base} = \frac{\text{Saldo}}{\text{Plazo}}$ + Gasto Adm. (0,10 UF / $3.964 CLP) sin interés adicional (1 a 72 cuotas).
+     * 🔹 **Financiamiento UF (0,55% mens.)**: Factores 24 (0,044863), 36 (0,030969), 48 (0,024039), 60 (0,019896), 72 (0,017145) + Gasto Adm. **0,10 UF**.
+     * 💵 **Financiamiento Pesos ($)**: Factores 24 (0,049924), 36 (0,036152), 48 (0,029375), 60 (0,028076), 72 (0,025603) + Gasto Adm. **$4.110 CLP**.
+     * ⚡ **Cuota Contado / Sin Interés**: $\text{Cuota Base} = \frac{\text{Saldo}}{\text{Plazo}}$ + Gasto Adm. (0,10 UF / $4.110 CLP) sin interés adicional (1 a 72 cuotas).
    * **Estructura Financiera**:
      $$\text{Valor Promocional} = \text{Valor Real} - \text{Descuento} - \text{Capital Anterior}$$
      $$\text{Pie} = \text{Valor Promocional} \times \left(\frac{\%\text{ Pie}}{100}\right) \quad (\text{10\% por defecto})$$
@@ -72,7 +72,7 @@ La aplicación gestiona los siguientes módulos seleccionables en el encabezado:
 3. **Jardín Familiar Parque Auco** (`jardin-auco.html`):
    * Módulo unificado con selector interactivo de **Modalidad de Financiamiento**:
      * 🔹 **Financiamiento UF (0,55% mens.)**: Factores 24 a 72 + Gasto Adm. **0,10 UF**.
-     * 💵 **Financiamiento Pesos ($)**: Factores 24 a 72 + Gasto Adm. **$3.964 CLP**.
+     * 💵 **Financiamiento Pesos ($)**: Factores 24 a 72 + Gasto Adm. **$4.110 CLP**.
      * ⚡ **Cuota Contado / Sin Interés**: $\text{Cuota Base} = \frac{\text{Saldo}}{\text{Plazo}}$ + Gasto Adm. sin interés adicional (1 a 72 cuotas).
    * **Estructura Financiera**:
      $$\text{Valor Promocional} = \text{Valor Real} - \text{Descuento} - \text{Capital Anterior}$$
@@ -86,7 +86,7 @@ La aplicación gestiona los siguientes módulos seleccionables en el encabezado:
 4. **Fuente de Auco** (`fuente-auco.html`):
    * Módulo unificado con selector interactivo de **Modalidad de Financiamiento**:
      * 🔹 **Financiamiento UF (0,55% mens.)**: Factores 24 a 72 + Gasto Adm. **0,10 UF**.
-     * 💵 **Financiamiento Pesos ($)**: Factores 24 a 72 + Gasto Adm. **$3.964 CLP**.
+     * 💵 **Financiamiento Pesos ($)**: Factores 24 a 72 + Gasto Adm. **$4.110 CLP**.
      * ⚡ **Cuota Contado / Sin Interés**: $\text{Cuota Base} = \frac{\text{Saldo}}{\text{Plazo}}$ + Gasto Adm. sin interés adicional (1 a 72 cuotas).
    * Título institucional: `COTIZACIÓN FUENTE DE AUCO`.
    * Estructura financiera: Valor Real, Descuento %, Capital Anterior, Pie %, Saldo a Financiar.
@@ -97,7 +97,7 @@ La aplicación gestiona los siguientes módulos seleccionables en el encabezado:
 5. **Cremación** (`cremacion.html`):
    * Módulo unificado con selector interactivo de **Modalidad de Financiamiento**:
      * 🔹 **Financiamiento UF**: $\text{Total Cuota UF} = \frac{\text{Saldo a Financiar UF}}{\text{Plazo}} + 0,10\text{ UF (Gasto Adm.)}$.
-     * 💵 **Financiamiento Pesos ($)**: $\text{Total Cuota CLP} = \frac{\text{Saldo a Financiar CLP}}{\text{Plazo}} + \$3.964\text{ CLP (Gasto Adm.)}$.
+     * 💵 **Financiamiento Pesos ($)**: $\text{Total Cuota CLP} = \frac{\text{Saldo a Financiar CLP}}{\text{Plazo}} + \$4.110\text{ CLP (Gasto Adm.)}$.
    * **Estructura Financiera**:
      $$\text{Valor Promocional} = \text{Valor Real} - \text{Descuento} - \text{Capital Anterior}$$
      $$\text{Pie} = \text{Valor Promocional} \times \left(\frac{\%\text{ Pie}}{100}\right) \quad (\text{10\% por defecto, editable})$$
@@ -109,8 +109,8 @@ La aplicación gestiona los siguientes módulos seleccionables en el encabezado:
 
 6. **Aumento de Capacidad** (`aumento-capacidad.html`):
    * Módulo unificado con selector interactivo de **Modalidad de Financiamiento**:
-     * 🔹 **Financiamiento UF (0,55% mens.)**: Factores 12 (0,08630), 24 (0,04459), 36 (0,03069), 48 (0,02376) + Gasto Adm. **0,10 UF**.
-     * 💵 **Financiamiento Pesos ($)**: Factores 12 (0,09204), 24 (0,04992), 36 (0,03615), 48 (0,02938) + Gasto Adm. **$3.964 CLP**.
+     * 🔹 **Financiamiento UF (0,55% mens.)**: Factores 12 (0,086619), 24 (0,044863), 36 (0,030969), 48 (0,024039) + Gasto Adm. **0,10 UF**.
+     * 💵 **Financiamiento Pesos ($)**: Factores 12 (0,091680), 24 (0,049924), 36 (0,036152), 48 (0,029375) + Gasto Adm. **$4.110 CLP**.
      * ⚡ **Cuota Contado / Sin Interés**: $\text{Cuota Base} = \frac{\text{Saldo}}{\text{Plazo}}$ + Gasto Adm. sin interés adicional (1 a 48 cuotas).
    * **Estructura Financiera**:
      $$\text{Valor Promocional} = \text{Valor Real} - \text{Descuento} - \text{Capital Anterior}$$

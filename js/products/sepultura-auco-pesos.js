@@ -96,16 +96,16 @@ function calculateSepulturaAucoPesos(triggeredBy = '') {
         if (saldoFinanciarUfInput && saldoCLP > 0) saldoFinanciarUfInput.value = (saldoCLP / currentUFValue).toFixed(2);
     }
 
-    // 3. Cálculo de Cuotas en Pesos con Factores y Gasto Administrativo de $3.964 CLP
+    // 3. Cálculo de Cuotas en Pesos con Factores y Gasto Administrativo de $4.110 CLP
     const plazosPesos = [
-        { plazo: 24, factor: 0.04992 },
-        { plazo: 36, factor: 0.03615 },
-        { plazo: 48, factor: 0.02938 },
-        { plazo: 60, factor: 0.02808 },
+        { plazo: 24, factor: 0.049924 },
+        { plazo: 36, factor: 0.036152 },
+        { plazo: 48, factor: 0.029375 },
+        { plazo: 60, factor: 0.028076 },
         { plazo: 72, factor: 0.025603 }
     ];
     
-    const gastoAdminCLP = 3964;
+    const gastoAdminCLP = 4110;
     let tablaCuotasHTML = '';
     
     plazosPesos.forEach(item => {
@@ -127,7 +127,7 @@ function calculateSepulturaAucoPesos(triggeredBy = '') {
             <tr>
                 <td style="font-weight: bold;">${plazo} cuotas</td>
                 <td style="text-align: center;">${item.factor === 0 ? '-' : item.factor.toString().replace('.', ',')}</td>
-                <td style="text-align: center;">$3.964</td>
+                <td style="text-align: center;">$4.110</td>
                 <td style="font-weight: bold;">${totalCuotaUF > 0 ? totalCuotaUF.toFixed(2).replace('.', ',') : '-'}</td>
                 <td style="font-weight: bold; font-size: 15px; color: var(--primary-green);">${totalCuotaCLP > 0 ? formatCurrency(totalCuotaCLP) : '$0'}</td>
             </tr>

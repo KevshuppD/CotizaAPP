@@ -251,17 +251,17 @@ function renderCuotasTable(saldoUF) {
         // Modalidad UF (0,55% tasa mensual)
         headerHTML = `
             <th style="width: 22%; text-align: left;">Plazo</th>
-            <th style="width: 20%; text-align: center;">Factor (0,55%)</th>
+            <th class="no-export" style="width: 20%; text-align: center;">Factor (0,55%)</th>
             <th style="width: 18%; text-align: center;">Gasto Adm.</th>
             <th class="uf-col" style="width: 20%; text-align: center;">Total Cuota UF</th>
             <th class="clp-col" style="width: 20%; text-align: right;">Total Cuota CLP</th>
         `;
 
         const plazosUF = [
-            { plazo: 12, factor: 0.08630 },
-            { plazo: 24, factor: 0.04459 },
-            { plazo: 36, factor: 0.03069 },
-            { plazo: 48, factor: 0.02376 }
+            { plazo: 12, factor: 0.086619 },
+            { plazo: 24, factor: 0.044863 },
+            { plazo: 36, factor: 0.030969 },
+            { plazo: 48, factor: 0.024039 }
         ];
 
         let rowsCount = 0;
@@ -278,7 +278,7 @@ function renderCuotasTable(saldoUF) {
             bodyHTML += `
                 <tr>
                     <td style="font-weight: bold; color: #333; text-align: left;">${item.plazo} cuotas</td>
-                    <td style="text-align: center; color: #444;">${item.factor.toFixed(5).replace('.', ',')}</td>
+                    <td class="no-export" style="text-align: center; color: #444;">${item.factor.toFixed(6).replace('.', ',')}</td>
                     <td style="text-align: center; color: #666;">0,10 UF</td>
                     <td class="uf-col" style="font-weight: bold; text-align: center; color: #168053;">
                         ${totalCuotaUF > 0 ? totalCuotaUF.toFixed(2).replace('.', ',') + ' UF' : '-'}
@@ -298,20 +298,20 @@ function renderCuotasTable(saldoUF) {
         // Modalidad Pesos ($)
         headerHTML = `
             <th style="width: 22%; text-align: left;">Plazo</th>
-            <th style="width: 20%; text-align: center;">Factor Pesos</th>
+            <th class="no-export" style="width: 20%; text-align: center;">Factor Pesos</th>
             <th style="width: 18%; text-align: center;">Gasto Adm.</th>
             <th class="uf-col" style="width: 20%; text-align: center;">Total Cuota UF</th>
             <th class="clp-col" style="width: 20%; text-align: right;">Total Cuota CLP</th>
         `;
 
         const plazosPesos = [
-            { plazo: 12, factor: 0.09204 },
-            { plazo: 24, factor: 0.04992 },
-            { plazo: 36, factor: 0.03615 },
-            { plazo: 48, factor: 0.02938 }
+            { plazo: 12, factor: 0.091680 },
+            { plazo: 24, factor: 0.049924 },
+            { plazo: 36, factor: 0.036152 },
+            { plazo: 48, factor: 0.029375 }
         ];
 
-        const gastoAdminCLP = 3964;
+        const gastoAdminCLP = 4110;
         let rowsCount = 0;
 
         plazosPesos.forEach(item => {
@@ -325,8 +325,8 @@ function renderCuotasTable(saldoUF) {
             bodyHTML += `
                 <tr>
                     <td style="font-weight: bold; color: #333; text-align: left;">${item.plazo} cuotas</td>
-                    <td style="text-align: center; color: #444;">${item.factor.toString().replace('.', ',')}</td>
-                    <td style="text-align: center; color: #666;">$3.964</td>
+                    <td class="no-export" style="text-align: center; color: #444;">${item.factor.toString().replace('.', ',')}</td>
+                    <td style="text-align: center; color: #666;">$4.110</td>
                     <td class="uf-col" style="font-weight: bold; text-align: center; color: #168053;">
                         ${totalCuotaUF > 0 ? totalCuotaUF.toFixed(2).replace('.', ',') + ' UF' : '-'}
                     </td>
@@ -369,7 +369,7 @@ function renderCuotasTable(saldoUF) {
                 <tr>
                     <td style="font-weight: bold; color: #333; text-align: left;">${labelPlazo}</td>
                     <td style="text-align: center; color: #168053; font-weight: bold;">Sin Interés (0%)</td>
-                    <td style="text-align: center; color: #666;">0,10 UF ($3.964)</td>
+                    <td style="text-align: center; color: #666;">0,10 UF ($4.110)</td>
                     <td class="uf-col" style="font-weight: bold; text-align: center; color: #168053;">
                         ${totalCuotaUF > 0 ? totalCuotaUF.toFixed(2).replace('.', ',') + ' UF' : '-'}
                     </td>

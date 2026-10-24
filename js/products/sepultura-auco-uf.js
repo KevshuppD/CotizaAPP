@@ -95,11 +95,11 @@ function calculateSepulturaAucoUF(triggeredBy = '') {
 
     // Tabla de Factores y Cuotas UF (0,55% mensual)
     const plazosUF = [
-        { plazo: 24, factor: 0.04459 },
-        { plazo: 36, factor: 0.03069 },
-        { plazo: 48, factor: 0.02376 },
-        { plazo: 60, factor: 0.01961 },
-        { plazo: 72, factor: 0.01686 }
+        { plazo: 24, factor: 0.044863 },
+        { plazo: 36, factor: 0.030969 },
+        { plazo: 48, factor: 0.024039 },
+        { plazo: 60, factor: 0.019896 },
+        { plazo: 72, factor: 0.017145 }
     ];
     
     let tablaCuotasHTML = '';
