@@ -154,7 +154,11 @@ Al pulsar cualquiera de los botones de salida (**Descargar Imagen**, **Compartir
   * Escala tipografías, márgenes de tabla y paddings de encabezado para una lectura y edición inmediata sin necesidad de scroll horizontal.
 * En modo pantalla completa (>= 1200px) mantiene la disposición de 2 columnas panorámicas.
 
-### E. Protección de Aspect Ratio en Imágenes
+### E. Fecha "Cotización válida hasta"
+* Campo de fecha junto al selector de Tipo de Producto (los 7 cotizadores). Se conserva al cambiar de producto (`sessionStorage`).
+* Al exportar se muestra como `dd-mm-aaaa` alineada a la derecha; si está vacía, no aparece.
+
+### F. Protección de Aspect Ratio en Imágenes
 * El logotipo institucional (`.park-logo`), los sarcófagos, las ánforas y la fotografía del jardín cuentan con dimensionamiento encapsulado que impide deformaciones o aplastamientos al exportar.
 
 ---
@@ -178,3 +182,15 @@ npm run dev
   }
   ```
 * **Repositorio GitHub:** [https://github.com/KevshuppD/CotizaAPP.git](https://github.com/KevshuppD/CotizaAPP.git) en rama `main`.
+
+---
+
+## 6. Firebase (Configuración Financiera)
+* **Proyecto:** `cotizaapp-1e7a7` · Firestore en `southamerica-west1`. SDK modular v11 cargado por CDN (sin bundler).
+* **`js/firebase.js`**: inicializa Firebase y lee el documento `config/financiero`; al llegar llama `applyAppConfig()` (core.js), que guarda en `localStorage` y emite el evento `cotiza:config` para que cada cotizador recalcule.
+* **`window.appConfig`** (core.js): `gastoAdmUF`, `gastoAdmCLP`, `factoresUF{12..72}`, `factoresCLP{12..72}`. Valores por defecto en `DEFAULT_APP_CONFIG`. Los productos leen de aquí (ya no hay factores escritos en el código).
+* **`configuracion.html` + `js/configuracion.js`**: panel para editar gasto adm. y factores. Sin login; botón "⚙️ Configuración" en cada cotizador.
+* **`firestore.rules`**: lectura pública de `config/financiero`, escritura pública validada por estructura y rangos.
+
+## 7. Pendientes
+* [ ] Historial de cotizaciones en Firestore (opcional).

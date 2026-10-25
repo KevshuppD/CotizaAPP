@@ -334,6 +334,23 @@ body {
     border: 1px dashed #ccc;
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.valida-hasta-group {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* En la exportación solo queda la línea de validez, sin el recuadro del selector */
+.product-selector-container.export-validez {
+    background: transparent;
+    border: none;
+    padding: 0 4px;
+    margin-bottom: 12px;
+    justify-content: flex-end;
 }
 
 .anfora-wrapper {
@@ -506,6 +523,7 @@ input[type=number] {
 
 .btn-share { background-color: #28a745; }
 .btn-pdf { background-color: #dc3545; }
+.btn-config { background-color: #6c757d; text-decoration: none; display: inline-block; }
 
 .mode-selector-container {
     margin-bottom: 20px;

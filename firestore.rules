@@ -1,0 +1,17 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Configuración financiera: lectura y escritura públicas,
+    // pero solo se aceptan datos con la estructura y rangos esperados.
+    match /config/financiero {
+      allow read: if true;
+      allow write: if request.resource.data.keys().hasOnly(['gastoAdmUF', 'gastoAdmCLP', 'factoresUF', 'factoresCLP', 'actualizadoEn'])
+                   && request.resource.data.gastoAdmUF is number
+                   && request.resource.data.gastoAdmUF >= 0 && request.resource.data.gastoAdmUF <= 5
+                   && request.resource.data.gastoAdmCLP is number
+                   && request.resource.data.gastoAdmCLP >= 0 && request.resource.data.gastoAdmCLP <= 200000
+                   && request.resource.data.factoresUF is map
+                   && request.resource.data.factoresCLP is map;
+    }
+  }
+}

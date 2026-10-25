@@ -246,7 +246,7 @@ function renderCuotasTable(saldoUF) {
     const availablePlazos = getAvailablePlazosForMode();
 
     if (currentMode === 'uf') {
-        // Modalidad UF: Saldo UF / Plazo + Gasto Adm. 0,10 UF
+        // Modalidad UF: Saldo UF / Plazo + Gasto Adm. (appConfig.gastoAdmUF)
         headerHTML = `
             <th style="width: 22%; text-align: left;">Plazo</th>
             <th style="width: 20%; text-align: center;">Cuota Base UF</th>
@@ -255,7 +255,7 @@ function renderCuotasTable(saldoUF) {
             <th class="clp-col" style="width: 20%; text-align: right;">Total Cuota CLP</th>
         `;
 
-        const gastoAdminUF = 0.10;
+        const gastoAdminUF = appConfig.gastoAdmUF;
         let rowsCount = 0;
 
         availablePlazos.forEach(plazo => {
@@ -270,7 +270,7 @@ function renderCuotasTable(saldoUF) {
                 <tr>
                     <td style="font-weight: bold; color: #333; text-align: left;">${plazo} cuotas</td>
                     <td style="text-align: center; color: #444;">${baseCuotaUF > 0 ? baseCuotaUF.toFixed(2).replace('.', ',') + ' UF' : '-'}</td>
-                    <td style="text-align: center; color: #666;">0,10 UF</td>
+                    <td style="text-align: center; color: #666;">${formatGastoAdmUF()}</td>
                     <td class="uf-col" style="font-weight: bold; text-align: center; color: #168053;">
                         ${totalCuotaUF > 0 ? totalCuotaUF.toFixed(2).replace('.', ',') + ' UF' : '-'}
                     </td>
@@ -286,7 +286,7 @@ function renderCuotasTable(saldoUF) {
         }
 
     } else if (currentMode === 'pesos') {
-        // Modalidad Pesos ($): Saldo CLP / Plazo + Gasto Adm. $4.110 CLP
+        // Modalidad Pesos ($): Saldo CLP / Plazo + Gasto Adm. (appConfig.gastoAdmCLP)
         headerHTML = `
             <th style="width: 22%; text-align: left;">Plazo</th>
             <th style="width: 20%; text-align: center;">Cuota Base CLP</th>
@@ -295,7 +295,7 @@ function renderCuotasTable(saldoUF) {
             <th class="clp-col" style="width: 20%; text-align: right;">Total Cuota CLP</th>
         `;
 
-        const gastoAdminCLP = 4110;
+        const gastoAdminCLP = appConfig.gastoAdmCLP;
         let rowsCount = 0;
 
         availablePlazos.forEach(plazo => {
@@ -310,7 +310,7 @@ function renderCuotasTable(saldoUF) {
                 <tr>
                     <td style="font-weight: bold; color: #333; text-align: left;">${plazo} cuotas</td>
                     <td style="text-align: center; color: #444;">${baseCuotaCLP > 0 ? formatCurrency(baseCuotaCLP) : '-'}</td>
-                    <td style="text-align: center; color: #666;">$4.110</td>
+                    <td style="text-align: center; color: #666;">${formatCurrency(appConfig.gastoAdmCLP)}</td>
                     <td class="uf-col" style="font-weight: bold; text-align: center; color: #168053;">
                         ${totalCuotaUF > 0 ? totalCuotaUF.toFixed(2).replace('.', ',') + ' UF' : '-'}
                     </td>
@@ -398,6 +398,9 @@ function renderAnforasGraphic(count) {
 
     container.appendChild(gridContainer);
 }
+
+// Recalcular cuando llega la configuración desde Firebase
+document.addEventListener('cotiza:config', () => calculateCremacion());
 
 document.addEventListener('DOMContentLoaded', () => {
     initDOMElements();

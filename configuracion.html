@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración CotizaAPP</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .config-wrap { max-width: 760px; margin: 0 auto; }
+        .config-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 18px; margin-bottom: 18px; }
+        .config-card h2 { margin: 0 0 12px; font-size: 17px; color: var(--primary-green); }
+        .config-table { width: 100%; border-collapse: collapse; }
+        .config-table th, .config-table td { padding: 8px; border-bottom: 1px solid #eee; text-align: center; }
+        .config-table th:first-child, .config-table td:first-child { text-align: left; }
+        .config-table input, .config-gasto input { width: 120px; padding: 6px; text-align: right; font-weight: bold; border: 1px solid #ccc; border-radius: 4px; }
+        .config-gasto { display: flex; gap: 24px; flex-wrap: wrap; }
+        .config-gasto label { display: flex; flex-direction: column; gap: 6px; font-weight: bold; }
+        .config-status { text-align: center; margin: 10px 0; color: #555; }
+        .config-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        #config-form[hidden] { display: none; }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <a class="btn btn-config" href="/">← Volver al cotizador</a>
+    </div>
+
+    <div class="container config-wrap">
+        <div class="header-title-container">
+            <div class="title-logo-wrapper">
+                <h1>Configuración Financiera</h1>
+                <img src="logo-parque.png" alt="Logo" class="park-logo" onerror="this.style.display='none'">
+            </div>
+        </div>
+
+        <p id="config-status" class="config-status">Cargando configuración...</p>
+
+        <form id="config-form" hidden>
+            <div class="config-card">
+                <h2>Gasto Administrativo</h2>
+                <div class="config-gasto">
+                    <label>Gasto Adm. UF (modalidad UF y contado)
+                        <input type="number" id="gastoAdmUF" step="0.01" min="0" required>
+                    </label>
+                    <label>Gasto Adm. $ CLP (modalidad Pesos)
+                        <input type="number" id="gastoAdmCLP" step="1" min="0" required>
+                    </label>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <h2>Factores por Plazo</h2>
+                <table class="config-table">
+                    <thead>
+                        <tr><th>Plazo</th><th>Factor UF (0,55%)</th><th>Factor Pesos</th></tr>
+                    </thead>
+                    <tbody id="factores-body"></tbody>
+                </table>
+                <p style="font-size: 12px; color: #777; margin-top: 10px;">El plazo 12 lo usa Aumento de Capacidad; 60 y 72 los usan Sepultura, Jardín y Fuente.</p>
+            </div>
+
+            <div class="config-actions">
+                <button type="submit" class="btn btn-share">Guardar cambios</button>
+                <button type="button" id="btn-defaults" class="btn btn-config">Restaurar valores originales</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="js/core.js"></script>
+    <script type="module" src="js/configuracion.js"></script>
+</body>
+</html>

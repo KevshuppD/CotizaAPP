@@ -258,11 +258,11 @@ function renderCuotasTable(saldoUF) {
         `;
 
         const plazosUF = [
-            { plazo: 24, factor: 0.044863 },
-            { plazo: 36, factor: 0.030969 },
-            { plazo: 48, factor: 0.024039 },
-            { plazo: 60, factor: 0.019896 },
-            { plazo: 72, factor: 0.017145 }
+            { plazo: 24, factor: appConfig.factoresUF[24] },
+            { plazo: 36, factor: appConfig.factoresUF[36] },
+            { plazo: 48, factor: appConfig.factoresUF[48] },
+            { plazo: 60, factor: appConfig.factoresUF[60] },
+            { plazo: 72, factor: appConfig.factoresUF[72] }
         ];
 
         let rowsCount = 0;
@@ -272,7 +272,7 @@ function renderCuotasTable(saldoUF) {
             rowsCount++;
 
             const baseCuotaUF = saldoUF > 0 ? (saldoUF * item.factor) : 0;
-            const gastoAdminUF = 0.10;
+            const gastoAdminUF = appConfig.gastoAdmUF;
             const totalCuotaUF = baseCuotaUF > 0 ? (baseCuotaUF + gastoAdminUF) : 0;
             const totalCuotaCLP = Math.round(totalCuotaUF * currentUFValue);
 
@@ -280,7 +280,7 @@ function renderCuotasTable(saldoUF) {
                 <tr>
                     <td style="font-weight: bold; color: #333; text-align: left;">${item.plazo} cuotas</td>
                     <td class="no-export" style="text-align: center; color: #444;">${item.factor.toFixed(6).replace('.', ',')}</td>
-                    <td style="text-align: center; color: #666;">0,10 UF</td>
+                    <td style="text-align: center; color: #666;">${formatGastoAdmUF()}</td>
                     <td class="uf-col" style="font-weight: bold; text-align: center; color: #168053;">
                         ${totalCuotaUF > 0 ? totalCuotaUF.toFixed(2).replace('.', ',') + ' UF' : '-'}
                     </td>
@@ -306,14 +306,14 @@ function renderCuotasTable(saldoUF) {
         `;
 
         const plazosPesos = [
-            { plazo: 24, factor: 0.049924 },
-            { plazo: 36, factor: 0.036152 },
-            { plazo: 48, factor: 0.029375 },
-            { plazo: 60, factor: 0.028076 },
-            { plazo: 72, factor: 0.025603 }
+            { plazo: 24, factor: appConfig.factoresCLP[24] },
+            { plazo: 36, factor: appConfig.factoresCLP[36] },
+            { plazo: 48, factor: appConfig.factoresCLP[48] },
+            { plazo: 60, factor: appConfig.factoresCLP[60] },
+            { plazo: 72, factor: appConfig.factoresCLP[72] }
         ];
 
-        const gastoAdminCLP = 4110;
+        const gastoAdminCLP = appConfig.gastoAdmCLP;
         let rowsCount = 0;
 
         plazosPesos.forEach(item => {
@@ -328,7 +328,7 @@ function renderCuotasTable(saldoUF) {
                 <tr>
                     <td style="font-weight: bold; color: #333; text-align: left;">${item.plazo} cuotas</td>
                     <td class="no-export" style="text-align: center; color: #444;">${item.factor.toString().replace('.', ',')}</td>
-                    <td style="text-align: center; color: #666;">$4.110</td>
+                    <td style="text-align: center; color: #666;">${formatCurrency(appConfig.gastoAdmCLP)}</td>
                     <td class="uf-col" style="font-weight: bold; text-align: center; color: #168053;">
                         ${totalCuotaUF > 0 ? totalCuotaUF.toFixed(2).replace('.', ',') + ' UF' : '-'}
                     </td>
@@ -361,7 +361,7 @@ function renderCuotasTable(saldoUF) {
             rowsCount++;
 
             const cuotaBaseUF = saldoUF > 0 ? (saldoUF / plazo) : 0;
-            const gastoAdminUF = 0.10;
+            const gastoAdminUF = appConfig.gastoAdmUF;
             const totalCuotaUF = cuotaBaseUF > 0 ? (cuotaBaseUF + gastoAdminUF) : 0;
             const totalCuotaCLP = Math.round(totalCuotaUF * currentUFValue);
 
@@ -371,7 +371,7 @@ function renderCuotasTable(saldoUF) {
                 <tr>
                     <td style="font-weight: bold; color: #333; text-align: left;">${labelPlazo}</td>
                     <td style="text-align: center; color: #168053; font-weight: bold;">Sin Interés (0%)</td>
-                    <td style="text-align: center; color: #666;">0,10 UF ($4.110)</td>
+                    <td style="text-align: center; color: #666;">${formatGastoAdmUF()} (${formatCurrency(appConfig.gastoAdmCLP)})</td>
                     <td class="uf-col" style="font-weight: bold; text-align: center; color: #168053;">
                         ${totalCuotaUF > 0 ? totalCuotaUF.toFixed(2).replace('.', ',') + ' UF' : '-'}
                     </td>
@@ -392,6 +392,9 @@ function renderCuotasTable(saldoUF) {
 }
 
 // Inicialización de DOM y Event Listeners
+// Recalcular cuando llega la configuración desde Firebase
+document.addEventListener('cotiza:config', () => calculateJardinAuco());
+
 document.addEventListener('DOMContentLoaded', () => {
     initDOMElements();
 

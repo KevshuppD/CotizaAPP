@@ -92,6 +92,57 @@ if (document.readyState === 'loading') {
     initDOMElements();
 }
 
+// Configuración financiera (valores por defecto; se sobrescriben desde Firebase: config/financiero)
+const DEFAULT_APP_CONFIG = {
+    gastoAdmUF: 0.10,
+    gastoAdmCLP: 4110,
+    factoresUF: { 12: 0.086619, 24: 0.044863, 36: 0.030969, 48: 0.024039, 60: 0.019896, 72: 0.017145 },
+    factoresCLP: { 12: 0.091680, 24: 0.049924, 36: 0.036152, 48: 0.029375, 60: 0.028076, 72: 0.025603 }
+};
+
+function mergeAppConfig(data) {
+    const base = JSON.parse(JSON.stringify(DEFAULT_APP_CONFIG));
+    if (!data) return base;
+    return {
+        gastoAdmUF: Number(data.gastoAdmUF ?? base.gastoAdmUF),
+        gastoAdmCLP: Number(data.gastoAdmCLP ?? base.gastoAdmCLP),
+        factoresUF: { ...base.factoresUF, ...(data.factoresUF || {}) },
+        factoresCLP: { ...base.factoresCLP, ...(data.factoresCLP || {}) }
+    };
+}
+
+// Última configuración guardada localmente para que el primer render ya use los valores vigentes
+window.appConfig = (() => {
+    try { return mergeAppConfig(JSON.parse(localStorage.getItem('cotizaapp-config'))); }
+    catch (e) { return mergeAppConfig(null); }
+})();
+
+function applyAppConfig(data) {
+    window.appConfig = mergeAppConfig(data);
+    try { localStorage.setItem('cotizaapp-config', JSON.stringify(window.appConfig)); } catch (e) {}
+    document.dispatchEvent(new CustomEvent('cotiza:config'));
+}
+
+function formatGastoAdmUF() {
+    return appConfig.gastoAdmUF.toFixed(2).replace('.', ',') + ' UF';
+}
+
+// Fecha "Cotización válida hasta": se conserva al cambiar de producto
+function initValidaHasta() {
+    const input = document.getElementById('valida-hasta');
+    if (!input) return;
+    try { input.value = sessionStorage.getItem('cotizaapp-valida-hasta') || ''; } catch (e) {}
+    input.addEventListener('change', () => {
+        try { sessionStorage.setItem('cotizaapp-valida-hasta', input.value); } catch (e) {}
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initValidaHasta);
+} else {
+    initValidaHasta();
+}
+
 function formatCurrency(value) {
     if (value === '' || value === null || value === undefined || isNaN(value)) return '$0';
     return '$' + Math.round(parseFloat(value)).toLocaleString('de-DE');
@@ -154,6 +205,25 @@ function getCaptureOptions(orientation = 'horizontal') {
             if (clonedCaptureArea) {
                 clonedCaptureArea.classList.remove('export-horizontal', 'export-vertical');
                 clonedCaptureArea.classList.add(isVertical ? 'export-vertical' : 'export-horizontal');
+            }
+
+            // Fecha "válida hasta": se muestra formateada o se omite si está vacía
+            const clonedValida = clonedDoc.getElementById('valida-hasta');
+            if (clonedValida) {
+                const group = clonedDoc.getElementById('valida-hasta-group');
+                const container = group.closest('.product-selector-container');
+                const iso = document.getElementById('valida-hasta')?.value || '';
+                if (iso) {
+                    const [y, m, d] = iso.split('-');
+                    const span = clonedDoc.createElement('span');
+                    span.textContent = `${d}-${m}-${y}`;
+                    span.style.fontWeight = 'bold';
+                    span.style.color = '#111';
+                    clonedValida.replaceWith(span);
+                    container.classList.add('export-validez');
+                } else {
+                    container.remove();
+                }
             }
 
             // Reemplazar todos los inputs y selects por spans estáticos en el DOM clonado
